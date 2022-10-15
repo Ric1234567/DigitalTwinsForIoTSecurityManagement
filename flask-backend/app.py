@@ -3,6 +3,7 @@ from flask_cors import CORS
 import SshHandler
 import constants
 import jsonHandler
+from NmapHandler import NmapHandler
 
 # configuration
 DEBUG = True
@@ -15,25 +16,25 @@ app.config.from_object(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 
-# sanity check route
-@app.route('/ping', methods=['GET'])
-def ping_pong():
-    return jsonify('pong!')
+def nmap_test():
+    nmap_handler = NmapHandler()
+    nmap_report = nmap_handler.get_report()
+    s = 0
 
 
 @app.route('/daemon', methods=['GET'])
 def get_daemon_output():
-    sshHandler = SshHandler.SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,
+    ssh_handler = SshHandler.SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,
                                        constants.SSH_PASSWORD)
-    sshHandler.connect()
+    ssh_handler.connect()
 
-    file_name = "daemon_output.log"
-    localpath = '/Users/henrichager/Documents/Studium/Master/SoSe22/masterarbeit-flask-vue/flask-backend/' + file_name
-    remotepath = '/home/pi/osquery/logs/osqueryd.results.log'  # check permission of file; needs to be user 'pi'
+    file_name = 'daemon_output.log'
+    remote_path = '/home/pi/osquery/logs/osqueryd.results.log'  # check permission of file; needs to be user 'pi'
 
-    sshHandler.get_file_via_sftp(localpath, remotepath)
+    ssh_handler.get_file_via_sftp(constants.FILE_OUTPUT_DIRECTORY + file_name, remote_path)
+    ssh_handler.disconnect()
 
-    with open(file_name, 'r') as file:
+    with open(constants.FILE_OUTPUT_DIRECTORY + file_name, 'r') as file:
         data = file.read()
     return data  # not a json
 
@@ -51,4 +52,5 @@ def get_listening_ports():
 
 
 if __name__ == '__main__':
-    app.run()
+    # app.run()
+    nmap_test()

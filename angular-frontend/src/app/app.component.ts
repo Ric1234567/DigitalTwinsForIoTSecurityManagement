@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { Util } from './util';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
   title = 'angular-frontend';
 
@@ -12,22 +14,8 @@ export class AppComponent {
   async test() {
     console.log('get')
 
-    try{
-    const response = await fetch('http://localhost:5000/ping', {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json'
-    }
-  });
-
-    if (!response.ok) {
-      throw new Error(`Error! status: ${response.status}`);
-    }
-    const result = (await response.json());
-
-    console.log(JSON.stringify(result, null, 4));
-  } catch (error: any) {
-    console.error(error)
+    let util = new Util
+    let result = await util.fetchFromBackend('GET', 'listening_ports')
+    console.log(result)
   }
-} 
 }
