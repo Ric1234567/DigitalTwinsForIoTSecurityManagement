@@ -317,14 +317,21 @@
     <span>{{ title }} app is running!</span>
   </div>
 
+  <!-- Network Visualizer -->
+  <div
+  echarts
+  id="networkgraph"
+  [options]="options"
+  class="demo-chart"
+  style="height: 500px; width: 500px;"
+  ></div>
 
-  <p>Hi Henric</p>
 
   <input type="hidden" #selection>
 
   <div class="card-container">
-    <button class="card card-small" (click)="test()" tabindex="0">
-      <span>Click me</span>
+    <button class="card card-small" (click)="getNetworkReport()" tabindex="0">
+      <span>Scan Network</span>
     </button>
   </div>
 

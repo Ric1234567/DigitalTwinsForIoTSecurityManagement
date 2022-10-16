@@ -4,6 +4,7 @@ import SshHandler
 import constants
 import jsonHandler
 from NmapHandler import NmapHandler
+import json
 
 # configuration
 DEBUG = True
@@ -16,16 +17,16 @@ app.config.from_object(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 
-def nmap_test():
+@app.route('/network_scan', methods=['GET'])
+def get_network_report():
     nmap_handler = NmapHandler()
-    nmap_report = nmap_handler.get_report()
-    s = 0
+    return nmap_handler.get_report_as_json()
 
 
 @app.route('/daemon', methods=['GET'])
 def get_daemon_output():
     ssh_handler = SshHandler.SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,
-                                       constants.SSH_PASSWORD)
+                                        constants.SSH_PASSWORD)
     ssh_handler.connect()
 
     file_name = 'daemon_output.log'
@@ -52,5 +53,4 @@ def get_listening_ports():
 
 
 if __name__ == '__main__':
-    # app.run()
-    nmap_test()
+    app.run()
