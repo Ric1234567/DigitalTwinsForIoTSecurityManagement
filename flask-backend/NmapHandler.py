@@ -33,14 +33,21 @@ class NmapHandler:
     def get_report(self):
         nmap_xml_result = self.scan_network()
 
-        file_name = 'nmap_xml_result.xml'
-        self.save_report(nmap_xml_result, file_name)
+        self.save_report(nmap_xml_result)
 
         return self.parse_xml_result(nmap_xml_result)
 
-    def save_report(self, nmap_xml_result, file_name):
-        with open(constants.FILE_OUTPUT_DIRECTORY + file_name, 'w') as file:
+    def save_report(self, nmap_xml_result):
+        with open(constants.FILE_OUTPUT_DIRECTORY + constants.NPM_XML_REPORT_FILE_NAME, 'w') as file:
             file.write(nmap_xml_result)
+
+    def load_report(self):
+        with open(constants.FILE_OUTPUT_DIRECTORY + constants.NPM_XML_REPORT_FILE_NAME, 'r') as file:
+            return file.read()
+
+    def load_report_as_json(self):
+        report = self.load_report()
+        return jsonHandler.convert_xml_to_json(report)
 
     def get_report_as_json(self):
         nmap_xml_result = self.scan_network()

@@ -1,22 +1,14 @@
 export class Util {
-    async fetchFromBackend(method: string, route: string) {
-        try {
-            const response = await fetch('http://localhost:5000/' + route, {
-                method: method,
-                headers: {
-                    Accept: 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error! status: ${response.status}`);
+    async fetchFromBackend(method: string, route: string): Promise<string> {
+        const response = await fetch('http://localhost:5000/' + route, {
+            method: method,
+            headers: {
+                Accept: 'application/json'
             }
-
-            const result = await response.json();
-            //console.log(JSON.stringify(result, null, 4));
-            return result
-        } catch (error: any) {
-            console.error(error)
+        });
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`);
         }
+        return await response.json();
     }
 }

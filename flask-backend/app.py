@@ -23,6 +23,12 @@ def get_network_report():
     return nmap_handler.get_report_as_json()
 
 
+@app.route('/last_network_scan', methods=['GET'])
+def get_old_network_report():
+    nmap_handler = NmapHandler()
+    return nmap_handler.load_report_as_json()
+
+
 @app.route('/daemon', methods=['GET'])
 def get_daemon_output():
     ssh_handler = SshHandler.SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,

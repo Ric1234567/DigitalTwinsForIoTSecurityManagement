@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Util } from './util';
 import * as echarts from 'echarts';
+import { EChartsCoreOption, EChartsOption } from 'echarts';
 
 @Component({
   selector: 'app-root',
@@ -11,75 +12,17 @@ import * as echarts from 'echarts';
 export class AppComponent implements OnInit {
 
   networkgraphDOM!: HTMLElement;
-  networkgraph!: echarts.ECharts;
-  options: any;
+  networkGraph!: echarts.ECharts;
+  loadingScan: boolean = false;
 
   title = 'angular-frontend';
   networkScan: string = '';
 
   ngOnInit(): void {
     this.networkgraphDOM = document.getElementById("networkgraph")! as HTMLElement
-    this.networkgraph = echarts.init(this.networkgraphDOM)
+    this.networkGraph = echarts.init(this.networkgraphDOM)
 
-    let data = [
-      {
-        name: "karan",
-
-        label: {
-          show: true
-        },
-        itemStyle: { color: "#000" }
-      },
-      {
-        name: "max",
-
-        label: {
-          show: true
-        },
-        itemStyle: { color: "#45128C" }
-      },
-      {
-        name: "1800",
-
-        label: {
-          show: true
-        },
-        itemStyle: { color: "#45128C" }
-      },
-      {
-        name: "manish",
-
-        label: {
-          show: true
-        },
-        itemStyle: { color: "#45128C" }
-      },
-      {
-        name: "alan",
-
-        label: {
-          show: true
-        },
-        itemStyle: { color: "#45128C" }
-      },
-      {
-        name: "amy",
-
-        label: {
-          show: true
-        },
-        itemStyle: { color: "#45128C" }
-      },
-      {
-        name: "robert",
-
-        label: {
-          show: true
-        },
-        itemStyle: { color: "#d0d0d0" }
-      }
-    ];
-    this.options = {
+    let options: EChartsCoreOption = {
       title: {
         text: "Network"
       },
@@ -97,120 +40,230 @@ export class AppComponent implements OnInit {
           roam: true, // mouse moving
 
           label: {
-            position: "left"
+            position: "bottom"
           },
           draggable: false,
           force: {
-            repulsion: 2000,
-            gravity: 0.2
+            repulsion: 1500,
+            gravity: 0.2,
+            friction: 0.6,
+            layoutAnimation: true
           },
-          animation: true,
+          animation: false,
 
-          edgeSymbol: ["circle", "arrow"],
+          edgeSymbol: ["none", "none"],
           edgeSymbolSize: [4, 10],
           edgeLabel: {
             fontSize: 20
           },
           data: this.networkScan,
-          links: [],
-          /*links: [
-            {
-              source: "karan",
-              target: "max",
-              lineStyle: {
-                color: "#A063EB"
-              }
-            },
-            {
-              source: "max",
-              target: "robert",
-              lineStyle: {
-                color: "#A063EB"
-              }
-            },
-            {
-              source: "karan",
-              target: "manish",
-              lineStyle: {
-                color: "#A063EB"
-              }
-            },
-            {
-              source: "manish",
-              target: "alan",
-              lineStyle: {
-                color: "#A063EB"
-              }
-            },
-            {
-              source: "alan",
-              target: "robert",
-              lineStyle: {
-                color: "#A063EB"
-              }
-            },
-
-            {
-              source: "karan",
-              target: "manish",
-              lineStyle: {
-                color: "#A063EB"
-              }
-            },
-            {
-              source: "manish",
-              target: "amy",
-              lineStyle: {
-                color: "#A063EB"
-              }
-            },
-            {
-              source: "amy",
-              target: "robert",
-              lineStyle: {
-                color: "#A063EB"
-              }
-            }
-          ],
+          // links: [],
           lineStyle: {
-            opacity: 0.9,
-            width: 2,
+            opacity: 1,
+            // width: 1,
             curveness: 0
-          }*/
+          }
         }
       ]
     };
+    this.networkGraph.setOption(options)
+
+    this.getLastNetworkReport()
   }
 
+  async getLastNetworkReport() {
+    let util = new Util
+    this.loadingScan = true
+    let lastReport = await util.fetchFromBackend('GET', 'last_network_scan')
+    console.log(lastReport)
+    this.loadingScan = false
+
+    this.setNetworkReport(lastReport)
+  }
 
   async getNetworkReport() {
     let util = new Util
+    this.loadingScan = true
     let nmapNetworkScan = await util.fetchFromBackend('GET', 'network_scan')
     console.log(nmapNetworkScan)
+    this.loadingScan = false
 
-    const node = {
-      name: "name",
+    this.setNetworkReport(nmapNetworkScan)
+  }
 
+  setNetworkReport(nmapNetworkScan: any) {
+    let nodeList: any = []
+    let linkList: any = []
+
+    let { min, max } = this.getMaxMinRtt(nmapNetworkScan.nmaprun)
+
+    nmapNetworkScan.nmaprun.host.forEach((host: any) => {
+      let hostIp = ""
+      if (Array.isArray(host.address)) {
+        hostIp = host.address[0]["@addr"]
+      } else {
+        hostIp = host.address["@addr"]
+      }
+
+      let hostNameIp = hostIp + (host.hostnames?.hostname["@name"] ? '\n(' + host.hostnames?.hostname["@name"] + ')' : '')
+
+      // color / open ports
+      let nodeColor = "#b5b5b5"
+      if (host.ports.port?.length > 0 && host.ports.port?.length <= 3) {
+        nodeColor = "#00ff00"
+      } else if (host.ports.port?.length > 3 && host.ports.port?.length <= 6) {
+        nodeColor = "#ff8800"
+      } else if (host.ports.port?.length > 6) {
+        nodeColor = "#FF0000"
+      }
+
+      let tmpNode = {
+        name: hostNameIp,
+        label: {
+          show: true
+        },
+        itemStyle: { 
+          color: nodeColor 
+        }
+      }
+      nodeList.push(tmpNode)
+
+      // links / traces / hops
+      if (host.trace != null) {
+        let targetName = ""
+        let lastHop: string = "localhost"
+
+        if (Array.isArray(host.trace.hop)) {
+          host.trace.hop.forEach((hop: any) => {
+            targetName = hop["@ipaddr"] + (hop["@host"] ? '\n(' + hop["@host"] + ')' : '')
+            let tmpLink = {
+              source: lastHop,
+              target: targetName,
+              lineStyle: {
+                color: "#0096FF",
+                width: Math.min(this.normalize(min, max, hop["@rtt"]) * 2, 10)
+              }
+            }
+
+            // links to itself
+            if (tmpLink.source != tmpLink.target) {
+              linkList.push(tmpLink)
+            }
+
+            this.addNodes(nodeList, targetName)
+            lastHop = targetName
+          });
+        } else {
+          targetName = host.trace.hop["@ipaddr"] + (host.trace.hop["@host"] ? '\n(' + host.trace.hop["@host"] + ')' : '')
+          let tmpLink = {
+            source: lastHop,
+            target: targetName,
+            lineStyle: {
+              color: "#0096FF",
+              width: Math.min(this.normalize(min, max, host.trace.hop["@rtt"]) * 2, 10)
+            }
+          }
+
+          // links to itself
+          if (tmpLink.source != tmpLink.target) {
+            linkList.push(tmpLink)
+          }
+
+          this.addNodes(nodeList, targetName)
+          lastHop = targetName
+        }
+
+      } else {
+        // add no traceroute information link
+        let tmpLink = {
+          source: "localhost",
+          target: hostNameIp,
+          lineStyle: {
+            color: "#0096FF",
+            type: "dashed",
+          }
+        }
+
+        linkList.push(tmpLink)
+      }
+    });
+    let localhostNode = {
+      name: "localhost",
       label: {
         show: true
       },
       itemStyle: { color: "#000" }
     }
+    nodeList.push(localhostNode)
 
-    let node_list: any = []
-    nmapNetworkScan.nmaprun.host.forEach((host: any) => {
-      //console.log(host.hostnames.hostname["@name"])
-      let tmpNode = Object.assign({}, node)
-      tmpNode.name = host.hostnames.hostname["@name"]
-      node_list.push(tmpNode)
-    });
+    console.log(linkList.length);
 
-    this.networkScan = node_list
-    //this.options.series[0].data = node_list
-    /*if(this.networkgraph == null){
-      this.networkgraph = echarts.init(document.getElementById("networkgraph") as HTMLElement)
-    }*/
+    this.networkScan = nodeList
 
-    this.networkgraph.setOption({ series: { data: node_list } })
+    this.networkGraph.setOption({
+      series: {
+        data: nodeList,
+        links: linkList
+      }
+    })
+    console.log(this.networkGraph.getOption()["series"])
   }
+
+  getMaxMinRtt(nmaprun: any) {
+    let max = -1
+    let min = -1
+    nmaprun.host.forEach((host: any) => {
+      if (Array.isArray(host.trace?.hop)) {
+        host.trace?.hop.forEach((hop: any) => {
+          if (max < hop["@rtt"]) {
+            max = hop["@rtt"]
+          }
+          if (min > hop["@rtt"]) {
+            min = hop["@rtt"]
+          }
+        }
+        )
+      } else {
+        if (max < host.trace?.hop["@rtt"]) {
+          max = host.trace?.hop["@rtt"]
+        }
+        if (min > host.trace?.hop["@rtt"]) {
+          min = host.trace?.hop["@rtt"]
+        }
+      }
+    });
+    return { max, min }
+  }
+
+  normalize(min: number, max: number, value: number) {
+    // zi = (xi – min(x)) / (max(x) – min(x))
+    return (value - min) / (max - min)
+  }
+
+  addNodes(nodeList: any, targetName: string) {
+    // test
+    var found = false;
+    for (var i = 0; i < nodeList.length; i++) {
+      if (nodeList[i].name == targetName) {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      let tmpNode = {
+        name: targetName,
+        label: {
+          show: true
+        },
+        itemStyle: { 
+          color: "#535353",
+          borderWidth: 1
+        }
+      }
+      nodeList.push(tmpNode)
+    }
+    // end
+  }
+
 }

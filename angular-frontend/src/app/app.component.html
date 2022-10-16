@@ -321,17 +321,21 @@
   <div
   echarts
   id="networkgraph"
-  [options]="options"
   class="demo-chart"
-  style="height: 500px; width: 500px;"
+  style="height: 500px; width: 700px; border-style: solid;"
+  [class.spinner]="loadingScan"
   ></div>
 
 
   <input type="hidden" #selection>
 
   <div class="card-container">
-    <button class="card card-small" (click)="getNetworkReport()" tabindex="0">
-      <span>Scan Network</span>
+    <button mat-stroked-button
+    (click)="getNetworkReport()" 
+    color="accent"
+    [disabled]="loadingScan"
+    >
+      Scan Network
     </button>
   </div>
 
