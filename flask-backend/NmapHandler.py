@@ -32,9 +32,7 @@ class NmapHandler:
 
     def get_report(self):
         nmap_xml_result = self.scan_network()
-
         self.save_report(nmap_xml_result)
-
         return self.parse_xml_result(nmap_xml_result)
 
     def save_report(self, nmap_xml_result):
@@ -51,4 +49,5 @@ class NmapHandler:
 
     def get_report_as_json(self):
         nmap_xml_result = self.scan_network()
+        self.save_report(nmap_xml_result)
         return jsonHandler.convert_xml_to_json(nmap_xml_result)

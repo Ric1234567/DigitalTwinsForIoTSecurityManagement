@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Util } from './util';
 import * as echarts from 'echarts';
 import { EChartsCoreOption, EChartsOption } from 'echarts';
+import GraphNode from 'src/models/graphNode';
+import GraphLink from 'src/models/graphLink';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +18,7 @@ export class AppComponent implements OnInit {
   loadingScan: boolean = false;
 
   title = 'angular-frontend';
-  networkScan: string = '';
+  // networkScan: string = '';
 
   ngOnInit(): void {
     this.networkgraphDOM = document.getElementById("networkgraph")! as HTMLElement
@@ -56,7 +58,7 @@ export class AppComponent implements OnInit {
           edgeLabel: {
             fontSize: 20
           },
-          data: this.networkScan,
+          // data: this.networkScan,
           // links: [],
           lineStyle: {
             opacity: 1,
@@ -81,7 +83,7 @@ export class AppComponent implements OnInit {
     this.setNetworkReport(lastReport)
   }
 
-  async getNetworkReport() {
+  async onClickGetNetworkReport() {
     let util = new Util
     this.loadingScan = true
     let nmapNetworkScan = await util.fetchFromBackend('GET', 'network_scan')
@@ -92,7 +94,7 @@ export class AppComponent implements OnInit {
   }
 
   setNetworkReport(nmapNetworkScan: any) {
-    let nodeList: any = []
+    let nodeList: GraphNode[] = []
     let linkList: any = []
 
     let { min, max } = this.getMaxMinRtt(nmapNetworkScan.nmaprun)
@@ -117,15 +119,7 @@ export class AppComponent implements OnInit {
         nodeColor = "#FF0000"
       }
 
-      let tmpNode = {
-        name: hostNameIp,
-        label: {
-          show: true
-        },
-        itemStyle: { 
-          color: nodeColor 
-        }
-      }
+      let tmpNode:GraphNode = new GraphNode(hostNameIp, nodeColor)
       nodeList.push(tmpNode)
 
       // links / traces / hops
@@ -136,69 +130,48 @@ export class AppComponent implements OnInit {
         if (Array.isArray(host.trace.hop)) {
           host.trace.hop.forEach((hop: any) => {
             targetName = hop["@ipaddr"] + (hop["@host"] ? '\n(' + hop["@host"] + ')' : '')
-            let tmpLink = {
-              source: lastHop,
-              target: targetName,
-              lineStyle: {
-                color: "#0096FF",
-                width: Math.min(this.normalize(min, max, hop["@rtt"]) * 2, 10)
-              }
-            }
+            let tmpLink = new GraphLink(lastHop, targetName)
+            tmpLink.setColor("#0096FF")
+            tmpLink.setWidth(Math.min(this.normalize(min, max, hop["@rtt"]) * 2, 10))
 
             // links to itself
             if (tmpLink.source != tmpLink.target) {
               linkList.push(tmpLink)
             }
 
-            this.addNodes(nodeList, targetName)
+            this.addNodesFoundInTraces(nodeList, targetName)
             lastHop = targetName
           });
         } else {
           targetName = host.trace.hop["@ipaddr"] + (host.trace.hop["@host"] ? '\n(' + host.trace.hop["@host"] + ')' : '')
-          let tmpLink = {
-            source: lastHop,
-            target: targetName,
-            lineStyle: {
-              color: "#0096FF",
-              width: Math.min(this.normalize(min, max, host.trace.hop["@rtt"]) * 2, 10)
-            }
-          }
+          let tmpLink = new GraphLink(lastHop, targetName)
+          tmpLink.setColor("#0096FF")
+          tmpLink.setWidth(Math.min(this.normalize(min, max, host.trace.hop["@rtt"]) * 2, 10))
 
           // links to itself
           if (tmpLink.source != tmpLink.target) {
             linkList.push(tmpLink)
           }
 
-          this.addNodes(nodeList, targetName)
+          this.addNodesFoundInTraces(nodeList, targetName)
           lastHop = targetName
         }
 
       } else {
         // add no traceroute information link
-        let tmpLink = {
-          source: "localhost",
-          target: hostNameIp,
-          lineStyle: {
-            color: "#0096FF",
-            type: "dashed",
-          }
-        }
+        let tmpLink = new GraphLink("localhost", hostNameIp)
+        tmpLink.setColor("#0096FF")
+        tmpLink.setLineType("dashed")
 
         linkList.push(tmpLink)
       }
     });
-    let localhostNode = {
-      name: "localhost",
-      label: {
-        show: true
-      },
-      itemStyle: { color: "#000" }
-    }
+    let localhostNode = new GraphNode("localhost", "#000")
     nodeList.push(localhostNode)
 
     console.log(linkList.length);
 
-    this.networkScan = nodeList
+    // this.networkScan = nodeList
 
     this.networkGraph.setOption({
       series: {
@@ -209,7 +182,7 @@ export class AppComponent implements OnInit {
     console.log(this.networkGraph.getOption()["series"])
   }
 
-  getMaxMinRtt(nmaprun: any) {
+  private getMaxMinRtt(nmaprun: any) {
     let max = -1
     let min = -1
     nmaprun.host.forEach((host: any) => {
@@ -235,13 +208,12 @@ export class AppComponent implements OnInit {
     return { max, min }
   }
 
-  normalize(min: number, max: number, value: number) {
+  private normalize(min: number, max: number, value: number) {
     // zi = (xi – min(x)) / (max(x) – min(x))
     return (value - min) / (max - min)
   }
 
-  addNodes(nodeList: any, targetName: string) {
-    // test
+  private addNodesFoundInTraces(nodeList: any, targetName: string) {
     var found = false;
     for (var i = 0; i < nodeList.length; i++) {
       if (nodeList[i].name == targetName) {
@@ -263,7 +235,6 @@ export class AppComponent implements OnInit {
       }
       nodeList.push(tmpNode)
     }
-    // end
   }
 
 }
