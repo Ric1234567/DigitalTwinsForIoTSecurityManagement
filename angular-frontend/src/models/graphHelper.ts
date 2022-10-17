@@ -9,7 +9,7 @@ type AverageRtt = {
 type GraphContent = {
     nodeList: GraphNode[]
     linkList: GraphLink[]
-} 
+}
 
 export default class GraphHelper {
     nodeList: GraphNode[] = []
@@ -18,7 +18,15 @@ export default class GraphHelper {
 
 
     getGraphContent(nmaprun: any): GraphContent {
-        this.averageRtt = GraphHelper.getMaxMinRtt(nmaprun)
+        if (!Array.isArray(nmaprun.host)) {
+            let tmpArray = []
+            tmpArray.push(nmaprun.host)
+            nmaprun.host = tmpArray
+        }
+
+        if (nmaprun.host != null) {
+            this.averageRtt = GraphHelper.getMaxMinRtt(nmaprun)
+        }
 
         nmaprun.host.forEach((host: any) => {
             let hostIp = ""
@@ -135,7 +143,7 @@ export default class GraphHelper {
         });
         return { min, max }
     }
-    
+
     static getNodeColorOnPorts(host: any): string {
         if (host.ports.port?.length > 0 && host.ports.port?.length <= 3) {
             return "#00ff00"

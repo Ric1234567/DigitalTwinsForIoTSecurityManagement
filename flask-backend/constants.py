@@ -1,6 +1,9 @@
 FILE_OUTPUT_DIRECTORY = './output/'
 
-NPM_XML_REPORT_FILE_NAME = 'nmap_xml_result.xml'
+NMAP_XML_REPORT_FILE_NAME = 'nmap_xml_result.xml'
+NMAP_STANDARD_COMMAND_PREFIX = 'sudo nmap -oX - '  # space char at the end required
+NMAP_COMMAND_FULL_SCAN_PREFIX = '-sS -T4 -F 192.168.178.* --traceroute'
+
 
 SSH_HOSTNAME = '192.168.178.51'
 SSH_PORT = '22'

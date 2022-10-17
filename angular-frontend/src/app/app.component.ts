@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output } from '@angular/core';
 import { Util } from './util';
 import * as echarts from 'echarts';
-import { EChartsCoreOption, EChartsOption } from 'echarts';
-import GraphNode from 'src/models/graphNode';
-import GraphLink from 'src/models/graphLink';
+import { EChartsCoreOption } from 'echarts';
 import GraphHelper from 'src/models/graphHelper';
 
 @Component({
@@ -13,6 +11,7 @@ import GraphHelper from 'src/models/graphHelper';
 })
 
 export class AppComponent implements OnInit {
+  nmapCustomCommandSuffix = "-sS -T4 -F 192.168.178.* --traceroute";
 
   networkgraphDOM!: HTMLElement;
   networkGraph!: echarts.ECharts;
@@ -74,6 +73,27 @@ export class AppComponent implements OnInit {
     this.getLastNetworkReport()
   }
 
+  async onClickExecuteCustomNetworkScan() {
+    console.log(this.nmapCustomCommandSuffix);
+
+    let util = new Util
+    this.loadingScan = true
+
+    let nmapCustomNetworkScan
+    try {
+      nmapCustomNetworkScan = await util.fetchFromBackend('GET', 'custom_network_scan/' + this.nmapCustomCommandSuffix) as any
+    } catch (error: any) {
+      alert(error.message)
+
+      this.loadingScan = false
+      return
+    }
+
+    this.loadingScan = false
+
+    this.setNetworkReport(nmapCustomNetworkScan.nmaprun)
+  }
+
   async getLastNetworkReport() {
     let util = new Util
     this.loadingScan = true
@@ -95,6 +115,13 @@ export class AppComponent implements OnInit {
   }
 
   setNetworkReport(nmapRun: any) {
+    // check if hosts found
+    if (nmapRun.host == null) {
+      console.log("No hosts found!");
+
+      return
+    }
+
     let graphHelper: GraphHelper = new GraphHelper()
     let graphContent = graphHelper.getGraphContent(nmapRun)
 

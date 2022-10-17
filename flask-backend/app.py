@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import SshHandler
 import constants
 import jsonHandler
@@ -17,10 +17,16 @@ app.config.from_object(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 
+@app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
+def get_custom_network_report(nmap_command):
+    nmap_handler = NmapHandler()
+    return nmap_handler.get_report_as_json(nmap_command)
+
+
 @app.route('/network_scan', methods=['GET'])
 def get_network_report():
     nmap_handler = NmapHandler()
-    return nmap_handler.get_report_as_json()
+    return nmap_handler.get_report_as_json(constants.NMAP_COMMAND_FULL_SCAN_PREFIX)
 
 
 @app.route('/last_network_scan', methods=['GET'])
