@@ -16,9 +16,7 @@ export class AppComponent implements OnInit {
   networkgraphDOM!: HTMLElement;
   networkGraph!: echarts.ECharts;
   loadingScan: boolean = false;
-
-  title = 'angular-frontend';
-  // networkScan: string = '';
+  networkScan: any;
 
   ngOnInit(): void {
     this.networkgraphDOM = document.getElementById("networkgraph")! as HTMLElement
@@ -74,47 +72,44 @@ export class AppComponent implements OnInit {
   }
 
   async onClickExecuteCustomNetworkScan() {
-    console.log(this.nmapCustomCommandSuffix);
-
-    let util = new Util
-    this.loadingScan = true
-
-    let nmapCustomNetworkScan
-    try {
-      nmapCustomNetworkScan = await util.fetchFromBackend('GET', 'custom_network_scan/' + this.nmapCustomCommandSuffix) as any
-    } catch (error: any) {
-      alert(error.message)
-
-      this.loadingScan = false
-      return
-    }
-
-    this.loadingScan = false
+    let nmapCustomNetworkScan = await this.fetchNetworkScan('GET', 'custom_network_scan/' + this.nmapCustomCommandSuffix) as any
+    this.networkScan = nmapCustomNetworkScan
 
     this.setNetworkReport(nmapCustomNetworkScan.nmaprun)
   }
 
   async getLastNetworkReport() {
-    let util = new Util
-    this.loadingScan = true
-    let lastReport = await util.fetchFromBackend('GET', 'last_network_scan') as any
-    console.log(lastReport)
-    this.loadingScan = false
+    let lastReport = await this.fetchNetworkScan('GET', 'last_network_scan') as any
+    this.networkScan = lastReport
 
     this.setNetworkReport(lastReport.nmaprun)
   }
 
   async onClickGetNetworkReport() {
-    let util = new Util
-    this.loadingScan = true
-    let nmapNetworkScan = await util.fetchFromBackend('GET', 'network_scan') as any
-    console.log(nmapNetworkScan)
-    this.loadingScan = false
+    let nmapNetworkScan = await this.fetchNetworkScan('GET', 'network_scan') as any
+
+    this.networkScan = nmapNetworkScan
 
     this.setNetworkReport(nmapNetworkScan.nmaprun)
   }
 
-  setNetworkReport(nmapRun: any) {
+  private async fetchNetworkScan(method: string, route: string) {
+    let networkScanReport
+    try {
+      let util = new Util
+      this.loadingScan = true
+      networkScanReport = await util.fetchFromBackend(method, route) as any
+    } catch (error: any) {
+      alert(error.message)
+      return
+    } finally {
+      this.loadingScan = false
+    }
+
+    return networkScanReport
+  }
+
+  private setNetworkReport(nmapRun: any) {
     // check if hosts found
     if (nmapRun.host == null) {
       console.log("No hosts found!");
@@ -124,8 +119,6 @@ export class AppComponent implements OnInit {
 
     let graphHelper: GraphHelper = new GraphHelper()
     let graphContent = graphHelper.getGraphContent(nmapRun)
-
-    // this.networkScan = nodeList
 
     this.networkGraph.setOption({
       series: {

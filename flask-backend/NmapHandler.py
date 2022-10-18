@@ -46,8 +46,8 @@ class NmapHandler:
             file.write(nmap_xml_result)
 
     def load_report(self):
-        with open(constants.FILE_OUTPUT_DIRECTORY + constants.NMAP_XML_REPORT_FILE_NAME, 'r') as file:
-            return file.read()
+            with open(constants.FILE_OUTPUT_DIRECTORY + constants.NMAP_XML_REPORT_FILE_NAME, 'r') as file:
+                return file.read()
 
     def load_report_as_json(self):
         report = self.load_report()

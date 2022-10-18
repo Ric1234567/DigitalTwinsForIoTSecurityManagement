@@ -7,7 +7,7 @@ export class Util {
             }
         });
         if (!response.ok) {
-            throw new Error(`HttpError: ${response.status}!`);
+            throw new Error(`${response.status}! ${response.statusText}. ${await response.text()}`);
         }
         return await response.json();
     }

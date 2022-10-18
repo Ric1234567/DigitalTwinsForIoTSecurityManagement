@@ -11,6 +11,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 
+import { NgxJsonViewerModule } from 'ngx-json-viewer';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -23,6 +25,7 @@ import { FormsModule } from '@angular/forms';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    NgxJsonViewerModule,
     NgxEchartsModule.forRoot({
       /**
        * This will import all modules from echarts.

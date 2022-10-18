@@ -1,5 +1,5 @@
-from flask import Flask, jsonify
-from flask_cors import CORS, cross_origin
+from flask import Flask, Response
+from flask_cors import CORS
 import SshHandler
 import constants
 import jsonHandler
@@ -19,20 +19,29 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
 def get_custom_network_report(nmap_command):
-    nmap_handler = NmapHandler()
-    return nmap_handler.get_report_as_json(nmap_command)
+    try:
+        nmap_handler = NmapHandler()
+        return nmap_handler.get_report_as_json(nmap_command)
+    except FileNotFoundError as e:
+        return Response(str(e), status=404, mimetype='application/json')
 
 
 @app.route('/network_scan', methods=['GET'])
 def get_network_report():
-    nmap_handler = NmapHandler()
-    return nmap_handler.get_report_as_json(constants.NMAP_COMMAND_FULL_SCAN_PREFIX)
+    try:
+        nmap_handler = NmapHandler()
+        return nmap_handler.get_report_as_json(constants.NMAP_COMMAND_FULL_SCAN_PREFIX)
+    except FileNotFoundError as e:
+        return Response(str(e), status=404, mimetype='application/json')
 
 
 @app.route('/last_network_scan', methods=['GET'])
 def get_old_network_report():
-    nmap_handler = NmapHandler()
-    return nmap_handler.load_report_as_json()
+    try:
+        nmap_handler = NmapHandler()
+        return nmap_handler.load_report_as_json()
+    except FileNotFoundError as e:
+        return Response(str(e), status=404, mimetype='application/json')
 
 
 @app.route('/daemon', methods=['GET'])
