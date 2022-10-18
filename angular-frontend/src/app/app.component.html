@@ -70,7 +70,7 @@
     display: flex;
     margin: 82px auto 32px;
     padding: 0 16px;
-    max-width: 960px;
+    max-width: 1200px;
     flex-direction: column;
     align-items: center;
   }
@@ -274,6 +274,7 @@
 
   mat-card {
     width: fit-content;
+    height: fit-content;
     margin: 10px;
   }
 
@@ -334,8 +335,38 @@
       [class.spinner]="loadingScan"></div>
     <mat-card>
       <mat-card-title>Legend</mat-card-title>
-      <mat-card-content>
-        <p>todo</p>
+      <mat-card-content >
+          <div>
+            <p style="font-weight: bold; margin-top: 5px;">Computer</p>
+            <div style="justify-content: left; display: flex;">
+              <div class="circle" style="background: gray;"></div>
+              <div style="padding: 4px 0px 0px 4px;">host was not port scanned</div>
+            </div>
+            <div style="justify-content: left; display: flex;">
+              <div class="circle" style="background: greenyellow;"></div>
+              <div style="padding: 4px 0px 0px 4px;">host with fewer than 3 open ports</div>
+            </div>
+            <div style="justify-content: left; display: flex;">
+              <div class="circle" style="background: yellow; "></div>
+              <div style="padding: 4px 0px 0px 4px;">host with 3 to 6 open ports</div>
+            </div>
+            <div style="justify-content: left; display: flex;">
+              <div class="circle"></div>
+              <div style="padding: 4px 0px 0px 4px;">host with more than 6 open ports</div>
+            </div>
+          </div>
+          <div>
+            <p style="font-weight: bold; margin-top: 5px;">Traceroutes</p>
+            <p style="margin: 0px 0px 0px 10px;">thicker line means higher round-trip time</p>
+            <div style="justify-content: left; display: flex;">
+              <div class="line"></div>
+              <div style="margin-left: 5px;">primary traceroute connection</div>
+            </div>
+            <div style="justify-content: left; display: flex;">
+              <div class="line" style="border-bottom: 2px dashed black;"></div>
+              <div style="margin-left: 5px;">no traceroute information</div>
+            </div>
+          </div>
       </mat-card-content>
     </mat-card>
   </div>

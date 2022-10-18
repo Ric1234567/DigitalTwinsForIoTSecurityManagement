@@ -92,7 +92,7 @@ export default class GraphHelper {
             hops.forEach((hop: any) => {
                 targetName = hop["@ipaddr"] + (hop["@host"] ? '\n(' + hop["@host"] + ')' : '')
                 let tmpLink = new GraphLink(lastHop, targetName)
-                tmpLink.setColor("#0096FF")
+                tmpLink.setColor("DodgerBlue")
                 tmpLink.setWidth(Math.min(GraphHelper.normalize(this.averageRtt.min, this.averageRtt.max, hop["@rtt"]) * 2, 10))
 
                 // links to itself
@@ -106,7 +106,7 @@ export default class GraphHelper {
         } else {
             // add no traceroute information link
             let noTracerouteLink = new GraphLink("localhost", hostNameIp)
-            noTracerouteLink.setColor("#0096FF")
+            noTracerouteLink.setColor("black")
             noTracerouteLink.setLineType("dashed")
 
             this.linkList.push(noTracerouteLink)
@@ -145,13 +145,16 @@ export default class GraphHelper {
     }
 
     static getNodeColorOnPorts(host: any): string {
-        if (host.ports.port?.length > 0 && host.ports.port?.length <= 3) {
-            return "#00ff00"
-        } else if (host.ports.port?.length > 3 && host.ports.port?.length <= 6) {
-            return "#ff8800"
-        } else if (host.ports.port?.length > 6) {
-            return "#FF0000"
+        if (host.ports == null) {
+            return "gray"
+        } else if (host.ports?.port?.length >= 3 && host.ports.port?.length <= 6) {
+            return "yellow"
+        } else if (host.ports?.port?.length > 6) {
+            return "red"
+        } else if (host.ports?.port?.length < 3 || host.ports.extraports) {
+            return "greenyellow"
+        } else {
+            return "lightgray"
         }
-        return "#b5b5b5"
     }
 }
