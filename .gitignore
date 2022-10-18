@@ -1,4 +1,5 @@
 
-./flask-backend/__pycache__
-./flask-backend/env
-./flask-backend/venv
+./flask-backend/__pycache__/
+./flask-backend/env/
+./flask-backend/venv/
+./idea
