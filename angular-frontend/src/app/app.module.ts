@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxEchartsModule } from "ngx-echarts";
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatButtonModule} from '@angular/material/button';
-import {MatInputModule} from '@angular/material/input';
-import {MatCardModule} from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,13 +12,24 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { NetworkScanComponent } from './network-scan/network-scan.component';
+import { AnalysisComponent } from './analysis/analysis.component'
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NetworkScanComponent,
+    AnalysisComponent
   ],
   imports: [
     BrowserModule,
+    MatSidenavModule,
+    MatListModule,
+    MatToolbarModule,
     FormsModule,
     AppRoutingModule,
     MatButtonModule,
@@ -26,18 +37,13 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
     MatCardModule,
     MatProgressSpinnerModule,
     NgxJsonViewerModule,
+    MatIconModule,
     NgxEchartsModule.forRoot({
-      /**
-       * This will import all modules from echarts.
-       * If you only need custom modules,
-       * please refer to [Custom Build] section.
-       */
       echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
     }),
     BrowserAnimationsModule,
-
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

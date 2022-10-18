@@ -1,0 +1,72 @@
+<h2>Nmap Network Scanning</h2>
+
+  <!-- Network Visualizer -->
+  <div class="card-container">
+    <div echarts id="networkgraph" class="demo-chart" style="height: 500px; width: 700px; border-style: solid;"
+      [class.spinner]="loadingScan"></div>
+    <mat-card>
+      <mat-card-title>Legend</mat-card-title>
+      <mat-card-content>
+        <div>
+          <p style="font-weight: bold; margin-top: 5px;">Computer</p>
+          <div style="justify-content: left; display: flex;">
+            <div class="circle" style="background: gray;"></div>
+            <div style="padding: 4px 0px 0px 4px;">host was not port scanned</div>
+          </div>
+          <div style="justify-content: left; display: flex;">
+            <div class="circle" style="background: greenyellow;"></div>
+            <div style="padding: 4px 0px 0px 4px;">host with fewer than 3 open ports</div>
+          </div>
+          <div style="justify-content: left; display: flex;">
+            <div class="circle" style="background: yellow; "></div>
+            <div style="padding: 4px 0px 0px 4px;">host with 3 to 6 open ports</div>
+          </div>
+          <div style="justify-content: left; display: flex;">
+            <div class="circle"></div>
+            <div style="padding: 4px 0px 0px 4px;">host with more than 6 open ports</div>
+          </div>
+        </div>
+        <div>
+          <p style="font-weight: bold; margin-top: 5px;">Traceroutes</p>
+          <p style="margin: 0px 0px 0px 10px;">thicker line means higher round-trip time</p>
+          <div style="justify-content: left; display: flex;">
+            <div class="line"></div>
+            <div style="margin-left: 5px;">primary traceroute connection</div>
+          </div>
+          <div style="justify-content: left; display: flex;">
+            <div class="line" style="border-bottom: 2px dashed black;"></div>
+            <div style="margin-left: 5px;">no traceroute information</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="card-container">
+    <mat-card>
+      <mat-card-title>Network Scan</mat-card-title>
+      <mat-card-content>
+        <div class="card-container">
+          <mat-form-field appearance="fill" style="width: 300px;">
+            <mat-label>Custom Nmap Command</mat-label>
+            <input matInput [(ngModel)]="nmapCustomCommandSuffix" placeholder="nmap..." type="text"
+              [disabled]="loadingScan" />
+          </mat-form-field>
+          <button mat-stroked-button (click)="onClickExecuteCustomNetworkScan()" color="accent"
+            [disabled]="loadingScan" style="height: 50px; margin-left: 5px;">
+            Scan
+          </button>
+        </div>
+        <button mat-stroked-button (click)="onClickGetNetworkReport()" color="accent" [disabled]="loadingScan">
+          Full-Scan Network
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card style="max-width: 500px;">
+      <mat-card-title>Network Scan Result</mat-card-title>
+      <mat-card-content>
+        <ngx-json-viewer [json]="networkScan" [depth]="2"></ngx-json-viewer>
+      </mat-card-content>
+    </mat-card>
+  </div>
