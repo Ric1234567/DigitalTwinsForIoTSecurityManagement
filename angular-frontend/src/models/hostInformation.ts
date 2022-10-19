@@ -1,43 +1,3 @@
-// type HostInformationType = {
-//     endtime: string 
-//     starttime: string 
-//     address: []
-//     hostnames: []
-//     ports: {
-//         extraports: {
-
-//         },
-//         port: [{
-//             portid: '',
-//             protocol: '',
-//             service: {
-//                 conf: '',
-//                 method: '',
-//                 name: ''
-//             },
-//             state: {
-//                 reason: '',
-//                 reason_ttl: '',
-//                 state: ''
-//             }
-//         }]
-//     }
-//     status: {
-//         reason: '',
-//         reasons_ttl: '',
-//         state: ''
-//     }
-//     times: {
-//         rttvar: '',
-//         srtt: '',
-//         to: ''
-//     }
-//     trace : {
-//         hop: []
-//     }
-
-// }
-
 export class HostInformation {
     hostInformationType?: any;
 
@@ -139,6 +99,15 @@ export class HostInformation {
         }
         let array = []
         array.push(this.hostInformationType?.trace.hop)
+        return array
+    }
+
+    getOsArray() {
+        if (Array.isArray(this.hostInformationType?.os?.osmatch)) {
+            return this.hostInformationType?.os?.osmatch
+        }
+        let array = []
+        array.push(this.hostInformationType?.os?.osmatch)
         return array
     }
 }

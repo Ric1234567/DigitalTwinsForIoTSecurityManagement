@@ -156,7 +156,7 @@
           <!-- table open ports -->
           <table mat-table *ngIf="hostInformation!" [dataSource]="hostInformation.getOpenPortsArray()"
             style="width: 100%;">
-            <ng-container matColumnDef="portid" >
+            <ng-container matColumnDef="portid">
               <th mat-header-cell *matHeaderCellDef class="table-cell"> PortId </th>
               <td mat-cell *matCellDef="let element" class="table-cell"> {{element['@portid']}} </td>
             </ng-container>
@@ -208,7 +208,8 @@
             <label>Reason:</label>
             <label *ngIf="hostInformation!" [innerHtml]="hostInformation.hostInformationType.status['@reason']"></label>
             <label>Reason_ttl:</label>
-            <label *ngIf="hostInformation!" [innerHtml]="hostInformation.hostInformationType.status['@reason_ttl']"></label>
+            <label *ngIf="hostInformation!"
+              [innerHtml]="hostInformation.hostInformationType.status['@reason_ttl']"></label>
             <label>State:</label>
             <label *ngIf="hostInformation!" [innerHtml]="hostInformation.hostInformationType.status['@state']"></label>
           </div>
@@ -220,7 +221,7 @@
               <label class="label-title">Times</label>
             </mat-panel-title>
             <mat-panel-description>
-              
+
             </mat-panel-description>
           </mat-expansion-panel-header>
           <div style="display: grid; grid-template-columns: auto auto;">
@@ -243,8 +244,7 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
           <!-- table open ports -->
-          <table mat-table *ngIf="hostInformation!" [dataSource]="hostInformation.getTraceArray()"
-            style="width: 100%;">
+          <table mat-table *ngIf="hostInformation!" [dataSource]="hostInformation.getTraceArray()" style="width: 100%;">
             <ng-container matColumnDef="host">
               <th mat-header-cell *matHeaderCellDef class="table-cell"> Host </th>
               <td mat-cell *matCellDef="let element" class="table-cell"> {{element['@host']}} </td>
@@ -263,6 +263,34 @@
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="['host', 'ipAddress', 'rtt', 'ttl']"></tr>
             <tr mat-row *matRowDef="let row; columns: ['host', 'ipAddress', 'rtt', 'ttl'];"></tr>
+          </table>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel *ngIf="hostInformation?.hostInformationType?.os?.osmatch">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <label class="label-title">Operating System</label>
+            </mat-panel-title>
+            <mat-panel-description>
+
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!-- table open ports -->
+          <table mat-table *ngIf="hostInformation!" [dataSource]="hostInformation.getOsArray()" style="width: 100%;">
+            <ng-container matColumnDef="accuracy">
+              <th mat-header-cell *matHeaderCellDef class="table-cell"> Accuracy </th>
+              <td mat-cell *matCellDef="let element" class="table-cell"> {{element['@accuracy']}} </td>
+            </ng-container>
+            <ng-container matColumnDef="line">
+              <th mat-header-cell *matHeaderCellDef class="table-cell"> Line </th>
+              <td mat-cell *matCellDef="let element" class="table-cell"> {{element['@line']}} </td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="table-cell"> Name </th>
+              <td mat-cell *matCellDef="let element" class="table-cell"> {{element['@name']}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['accuracy', 'line', 'name']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['accuracy', 'line', 'name'];"></tr>
           </table>
         </mat-expansion-panel>
 

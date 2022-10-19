@@ -4,7 +4,7 @@ import SshHandler
 import constants
 import jsonHandler
 from NmapHandler import NmapHandler
-import json
+import sqlite3
 
 # configuration
 DEBUG = True
