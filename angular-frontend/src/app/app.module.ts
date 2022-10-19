@@ -17,7 +17,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { NetworkScanComponent } from './network-scan/network-scan.component';
-import { AnalysisComponent } from './analysis/analysis.component'
+import { AnalysisComponent } from './analysis/analysis.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table'
 
 @NgModule({
   declarations: [
@@ -30,9 +32,11 @@ import { AnalysisComponent } from './analysis/analysis.component'
     MatSidenavModule,
     MatListModule,
     MatToolbarModule,
+    MatExpansionModule,
     FormsModule,
     AppRoutingModule,
     MatButtonModule,
+    MatTableModule,
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,

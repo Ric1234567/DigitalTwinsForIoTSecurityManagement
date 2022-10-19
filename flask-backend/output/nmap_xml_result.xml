@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Tue Oct 18 21:24:13 2022 as: nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.* -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.*" start="1666121053" startstr="Tue Oct 18 21:24:13 2022" version="7.93" xmloutputversion="1.05">
+<!-- Nmap 7.93 scan initiated Wed Oct 19 12:28:47 2022 as: nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.* -->
+<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.*" start="1666175327" startstr="Wed Oct 19 12:28:47 2022" version="7.93" xmloutputversion="1.05">
 <scaninfo type="syn" protocol="tcp" numservices="100" services="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 <verbose level="0"/>
 <debugging level="0"/>
@@ -24,7 +24,13 @@
 <hostnames>
 </hostnames>
 </hosthint>
-<host starttime="1666121056" endtime="1666121056"><status state="up" reason="arp-response" reason_ttl="0"/>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.178.27" addrtype="ipv4"/>
+<address addr="06:B0:D8:A3:1B:39" addrtype="mac"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1666175341" endtime="1666175341"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.1" addrtype="ipv4"/>
 <address addr="3C:37:12:8F:0E:88" addrtype="mac" vendor="AVM Audiovisuelles Marketing und Computersysteme GmbH"/>
 <hostnames>
@@ -39,28 +45,44 @@
 <port protocol="tcp" portid="5060"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="sip" method="table" conf="3"/></port>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.1" rtt="20.09" host="fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.1" rtt="5.62" host="fritz.box"/>
 </trace>
-<times srtt="20087" rttvar="5189" to="100000"/>
+<times srtt="5625" rttvar="1286" to="100000"/>
 </host>
-<host starttime="1666121056" endtime="1666121056"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1666175341" endtime="1666175348"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.23" addrtype="ipv4"/>
 <address addr="9C:8C:6E:5D:43:9E" addrtype="mac" vendor="Samsung Electronics"/>
 <hostnames>
 <hostname name="Samsung.fritz.box" type="PTR"/>
 </hostnames>
-<ports><extraports state="closed" count="98">
-<extrareasons reason="reset" count="98" proto="tcp" ports="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8081,8443,8888,9100,9999-10000,49152-49157"/>
+<ports><extraports state="filtered" count="100">
+<extrareasons reason="no-response" count="100" proto="tcp" ports="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 </extraports>
-<port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http-proxy" method="table" conf="3"/></port>
-<port protocol="tcp" portid="32768"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="filenet-tms" method="table" conf="3"/></port>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.23" rtt="22.63" host="Samsung.fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.23" rtt="124.26" host="Samsung.fritz.box"/>
 </trace>
-<times srtt="22631" rttvar="6387" to="100000"/>
+<times srtt="124264" rttvar="124264" to="621320"/>
 </host>
-<host starttime="1666121056" endtime="1666121057"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1666175341" endtime="1666175345"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.178.27" addrtype="ipv4"/>
+<address addr="06:B0:D8:A3:1B:39" addrtype="mac"/>
+<hostnames>
+<hostname name="iPad-von-Rainer.fritz.box" type="PTR"/>
+</hostnames>
+<ports><extraports state="filtered" count="97">
+<extrareasons reason="no-response" count="97" proto="tcp" ports="13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49154,49156-49157"/>
+</extraports>
+<port protocol="tcp" portid="7"><state state="closed" reason="reset" reason_ttl="64"/><service name="echo" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9"><state state="closed" reason="reset" reason_ttl="64"/><service name="discard" method="table" conf="3"/></port>
+<port protocol="tcp" portid="49155"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
+</ports>
+<trace>
+<hop ttl="1" ipaddr="192.168.178.27" rtt="353.79" host="iPad-von-Rainer.fritz.box"/>
+</trace>
+<times srtt="353787" rttvar="461741" to="1250000"/>
+</host>
+<host starttime="1666175341" endtime="1666175342"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.47" addrtype="ipv4"/>
 <address addr="6C:3B:E5:01:95:35" addrtype="mac" vendor="Hewlett Packard"/>
 <hostnames>
@@ -78,11 +100,11 @@
 <port protocol="tcp" portid="9100"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="jetdirect" method="table" conf="3"/></port>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.47" rtt="276.00" host="HP1AC068.fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.47" rtt="156.11" host="HP1AC068.fritz.box"/>
 </trace>
-<times srtt="275998" rttvar="236283" to="1221130"/>
+<times srtt="156109" rttvar="222180" to="1044829"/>
 </host>
-<host starttime="1666121057" endtime="1666121057"><status state="up" reason="localhost-response" reason_ttl="0"/>
+<host starttime="1666175348" endtime="1666175348"><status state="up" reason="localhost-response" reason_ttl="0"/>
 <address addr="192.168.178.65" addrtype="ipv4"/>
 <hostnames>
 <hostname name="Henrics-MBP.fritz.box" type="PTR"/>
@@ -91,8 +113,8 @@
 <extrareasons reason="reset" count="100" proto="tcp" ports="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 </extraports>
 </ports>
-<times srtt="12" rttvar="1" to="100000"/>
+<times srtt="13" rttvar="2" to="100000"/>
 </host>
-<runstats><finished time="1666121057" timestr="Tue Oct 18 21:24:17 2022" summary="Nmap done at Tue Oct 18 21:24:17 2022; 256 IP addresses (4 hosts up) scanned in 3.51 seconds" elapsed="3.51" exit="success"/><hosts up="4" down="252" total="256"/>
+<runstats><finished time="1666175348" timestr="Wed Oct 19 12:29:08 2022" summary="Nmap done at Wed Oct 19 12:29:08 2022; 256 IP addresses (5 hosts up) scanned in 21.00 seconds" elapsed="21.00" exit="success"/><hosts up="5" down="251" total="256"/>
 </runstats>
 </nmaprun>

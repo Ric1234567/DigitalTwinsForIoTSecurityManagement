@@ -45,3 +45,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
       transform: rotate(-5deg);
     }
   }
+
+  .label-title {
+    font-weight: bold;
+    margin-right: 5ex;
+  }

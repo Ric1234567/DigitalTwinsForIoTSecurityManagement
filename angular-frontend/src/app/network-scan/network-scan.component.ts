@@ -3,6 +3,7 @@ import * as echarts from 'echarts';
 import { EChartsCoreOption } from 'echarts';
 import { Util } from 'src/app/util';
 import GraphHelper from 'src/models/graphHelper';
+import { HostInformation } from 'src/models/hostInformation';
 
 @Component({
   selector: 'app-network-scan',
@@ -18,9 +19,11 @@ export class NetworkScanComponent implements OnInit {
   loadingScan: boolean = false;
   networkScan: any;
 
+  hostInformation!:HostInformation;
+
   constructor() { }
 
-  
+
   ngOnInit(): void {
     this.networkgraphDOM = document.getElementById("networkgraph")! as HTMLElement
     this.networkGraph = echarts.init(this.networkgraphDOM)
@@ -69,6 +72,9 @@ export class NetworkScanComponent implements OnInit {
         }
       ]
     };
+
+    this.networkGraph.on('click', (params) => this.onClickGraph(params))
+
     this.networkGraph.setOption(options)
 
     this.getLastNetworkReport()
@@ -79,6 +85,28 @@ export class NetworkScanComponent implements OnInit {
     this.networkScan = nmapCustomNetworkScan
 
     this.setNetworkReport(nmapCustomNetworkScan.nmaprun)
+  }
+
+  private onClickGraph(params: any) {
+    if (params.dataType == 'node') {
+      console.log((params.name));
+
+      for (const host of this.networkScan.nmaprun.host) {
+        let hostIp = ""
+        if (Array.isArray(host.address)) {
+            hostIp = host.address[0]["@addr"]
+        } else {
+            hostIp = host.address["@addr"]
+        }
+
+        let hostNameIp = hostIp + (host.hostnames?.hostname["@name"] ? '\n(' + host.hostnames?.hostname["@name"] + ')' : '')
+        if(hostNameIp == params.name){
+          this.hostInformation = new HostInformation(host)
+        }
+      }
+    } else if (params.dataType == 'edge') {
+      // todo
+    }
   }
 
   async getLastNetworkReport() {
@@ -120,6 +148,9 @@ export class NetworkScanComponent implements OnInit {
       return
     }
 
+    this.hostInformation = new HostInformation(nmapRun.host[0])
+
+    // graph
     let graphHelper: GraphHelper = new GraphHelper()
     let graphContent = graphHelper.getGraphContent(nmapRun)
 

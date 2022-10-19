@@ -34,3 +34,8 @@
     border-bottom: 2px solid DodgerBlue;
     padding: 5px;
 }
+
+.table-cell {
+    padding-left: 5px;
+    padding-right: 5px;
+}
