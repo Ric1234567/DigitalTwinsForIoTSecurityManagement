@@ -1,10 +1,14 @@
-from flask import Flask, Response
+import json
+from multiprocessing import Process
+
+from flask import Flask, Response, request
 from flask_cors import CORS
+
+import ProcessHandler
 import SshHandler
 import constants
 import jsonHandler
 from NmapHandler import NmapHandler
-import sqlite3
 
 # configuration
 DEBUG = True
@@ -30,7 +34,7 @@ def get_custom_network_report(nmap_command):
 def get_network_report():
     try:
         nmap_handler = NmapHandler()
-        return nmap_handler.get_report_as_json(constants.NMAP_COMMAND_FULL_SCAN_PREFIX)
+        return nmap_handler.get_report_as_json(constants.NMAP_COMMAND_FULL_SCAN_SUFFIX)
     except FileNotFoundError as e:
         return Response(str(e), status=404, mimetype='application/json')
 
@@ -73,5 +77,47 @@ def get_listening_ports():
     return jsonHandler.filter_json_array(json_data.split('\n'), 'name', 'listening_ports')
 
 
+@app.route('/stop/<process_name>', methods=['GET'])
+def stop_process(process_name):
+    try:
+        p = ProcessHandler.get_process_by_name(process_name)
+        p.terminate()
+        print("terminated process " + p.name)
+
+        response_json = {"response": 'Success! Stopped process ' + p.name}
+        return Response(json.dumps(response_json), status=200, mimetype='application/json')
+    except Exception as e:
+        return Response(str(e), status=500, mimetype='application/json')
+
+
+@app.route('/start/<process_name>', methods=['GET'])
+def start_process(process_name):
+    try:
+        if ProcessHandler.get_process_by_name(process_name) is not None:
+            response_json = {"response": 'Process with name ' + process_name + ' already running!'}
+            return Response(json.dumps(response_json), status=409, mimetype='application/json')
+
+        if process_name == constants.PROCESS_ENDLESS_NETWORK_SCAN_NAME:
+            delay = int(request.args.get('delay'))
+
+            p = Process(name=process_name, target=ProcessHandler.endless_network_scan,
+                        args=(constants.NMAP_COMMAND_FULL_SCAN_SUFFIX, delay,))
+            p.start()
+            print("start process " + p.name)
+
+            response_json = {"response": 'Success! Started process ' + p.name}
+            return Response(json.dumps(response_json), status=200, mimetype='application/json')
+        elif process_name == 'todo':
+            # todo
+
+            response_json = {"response": 'Success! Started process ' + p.name}
+            return Response(json.dumps(response_json), status=200, mimetype='application/json')
+        else:
+            response_json = {"response": 'Process not found!'}
+            return Response(json.dumps(response_json), status=500, mimetype='application/json')
+    except Exception as e:
+        return Response(str(e), status=500, mimetype='application/json')
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(use_reloader=False)

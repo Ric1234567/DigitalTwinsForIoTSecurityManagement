@@ -23,22 +23,17 @@ class NmapHandler:
     def parse_xml_result(self, xml_result):
         return NmapParser.parse_fromstring(xml_result)
 
-    # NmapParser.parse_fromfile()
-
     def scan_network(self, command_suffix):
-        # nmap_xml_result = self.run_command("nmap -oX - -sT -T4 -F 192.168.178.*")
-        # nmap_xml_result = self.run_command("sudo nmap -oX - -sS -T4 -F 192.168.178.* --traceroute")
         nmap_xml_result = self.run_command(constants.NMAP_STANDARD_COMMAND_PREFIX + command_suffix)
+        self.save_report(nmap_xml_result)
         return nmap_xml_result
 
     def get_report(self, command_suffix):
         nmap_xml_result = self.scan_network(command_suffix)
-        self.save_report(nmap_xml_result)
         return self.parse_xml_result(nmap_xml_result)
 
     def get_report_as_json(self, command_suffix):
         nmap_xml_result = self.scan_network(command_suffix)
-        self.save_report(nmap_xml_result)
         return jsonHandler.convert_xml_to_json(nmap_xml_result)
 
     def save_report(self, nmap_xml_result):
@@ -46,8 +41,8 @@ class NmapHandler:
             file.write(nmap_xml_result)
 
     def load_report(self):
-            with open(constants.FILE_OUTPUT_DIRECTORY + constants.NMAP_XML_REPORT_FILE_NAME, 'r') as file:
-                return file.read()
+        with open(constants.FILE_OUTPUT_DIRECTORY + constants.NMAP_XML_REPORT_FILE_NAME, 'r') as file:
+            return file.read()
 
     def load_report_as_json(self):
         report = self.load_report()

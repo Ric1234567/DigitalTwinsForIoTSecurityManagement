@@ -19,7 +19,7 @@ export class NetworkScanComponent implements OnInit {
   loadingScan: boolean = false;
   networkScan: any;
 
-  hostInformation!:HostInformation;
+  hostInformation!: HostInformation;
 
   constructor() { }
 
@@ -87,6 +87,24 @@ export class NetworkScanComponent implements OnInit {
     this.setNetworkReport(nmapCustomNetworkScan.nmaprun)
   }
 
+  async onClickEndlessNetworkScan() {
+    let delay = 30
+    let util = new Util
+    let route = 'start/endless_network_scan?delay=' + delay
+    try {
+      let resp = await util.fetchFromBackend('GET', route) as any
+    } catch (error) {
+      
+    }
+    console.log('hi');
+
+    //let that:any = this
+    setInterval(() => {
+      console.log("refresh");
+      this.getLastNetworkReport()
+    }, delay * 1000);
+  }
+
   private onClickGraph(params: any) {
     if (params.dataType == 'node') {
       console.log((params.name));
@@ -94,13 +112,13 @@ export class NetworkScanComponent implements OnInit {
       for (const host of this.networkScan.nmaprun.host) {
         let hostIp = ""
         if (Array.isArray(host.address)) {
-            hostIp = host.address[0]["@addr"]
+          hostIp = host.address[0]["@addr"]
         } else {
-            hostIp = host.address["@addr"]
+          hostIp = host.address["@addr"]
         }
 
         let hostNameIp = hostIp + (host.hostnames?.hostname["@name"] ? '\n(' + host.hostnames?.hostname["@name"] + ')' : '')
-        if(hostNameIp == params.name){
+        if (hostNameIp == params.name) {
           this.hostInformation = new HostInformation(host)
         }
       }
