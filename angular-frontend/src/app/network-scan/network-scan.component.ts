@@ -12,7 +12,7 @@ import { HostInformation } from 'src/models/hostInformation';
 })
 export class NetworkScanComponent implements OnInit {
 
-  nmapCustomCommandSuffix = "-sS -T4 -F 192.168.178.* --traceroute";
+  nmapCustomCommandSuffix = "-sS -T4 -F --traceroute 192.168.178.*";
 
   networkgraphDOM!: HTMLElement;
   networkGraph!: echarts.ECharts;
@@ -30,7 +30,7 @@ export class NetworkScanComponent implements OnInit {
 
     let options: EChartsCoreOption = {
       title: {
-        text: "Network Topology"
+        text: "Topology"
       },
       tooltip: {},
       // animationDurationUpdate: 1000,
@@ -94,11 +94,9 @@ export class NetworkScanComponent implements OnInit {
     try {
       let resp = await util.fetchFromBackend('GET', route) as any
     } catch (error) {
-      
+      // ignore
     }
-    console.log('hi');
 
-    //let that:any = this
     setInterval(() => {
       console.log("refresh");
       this.getLastNetworkReport()

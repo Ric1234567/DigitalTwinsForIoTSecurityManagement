@@ -2,8 +2,11 @@
 
 <!-- Network Visualizer -->
 <div class="card-container">
-  <div echarts id="networkgraph" class="demo-chart" style="height: 500px; width: 700px; border-style: solid;"
-    [class.spinner]="loadingScan"></div>
+  <mat-card>
+    <mat-card-title>Network</mat-card-title>
+    <div echarts id="networkgraph" class="demo-chart" style="height: 500px; width: 700px;"
+      [class.spinner]="loadingScan"></div>
+  </mat-card>
   <mat-card>
     <mat-card-title>Legend</mat-card-title>
     <mat-card-content>
@@ -52,16 +55,16 @@
           <input matInput [(ngModel)]="nmapCustomCommandSuffix" placeholder="nmap..." type="text"
             [disabled]="loadingScan" />
         </mat-form-field>
-        <button mat-stroked-button (click)="onClickExecuteCustomNetworkScan()" color="accent" [disabled]="loadingScan"
+        <button mat-stroked-button (click)="onClickExecuteCustomNetworkScan()" color="primary" [disabled]="loadingScan"
           style="height: 50px; margin-left: 5px;">
           Scan
         </button>
       </div>
-      <button mat-stroked-button (click)="onClickGetNetworkReport()" color="accent" [disabled]="loadingScan">
+      <button mat-stroked-button (click)="onClickGetNetworkReport()" color="primary" [disabled]="loadingScan">
         Full-Scan Network
       </button>
 
-      <button mat-stroked-button (click)="onClickEndlessNetworkScan()" color="accent" [disabled]="loadingScan">
+      <button mat-stroked-button (click)="onClickEndlessNetworkScan()" color="primary" [disabled]="loadingScan">
         Endless Network Scan
       </button>
     </mat-card-content>

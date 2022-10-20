@@ -1,0 +1,24 @@
+<h2>Home</h2>
+
+<table mat-table *ngIf="services.length > 0" [dataSource]="services" style="width: 100%;">
+    <ng-container matColumnDef="pid">
+        <th mat-header-cell *matHeaderCellDef class="table-cell"> PId </th>
+        <td mat-cell *matCellDef="let element" class="table-cell"> {{element.pid}} </td>
+    </ng-container>
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef class="table-cell"> Name </th>
+        <td mat-cell *matCellDef="let element" class="table-cell"> {{element.name}} </td>
+    </ng-container>
+    <ng-container matColumnDef="isalive">
+        <th mat-header-cell *matHeaderCellDef class="table-cell"> Alive </th>
+        <td mat-cell *matCellDef="let element" class="table-cell"> {{element.isalive}} </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef class="table-cell"> Action </th>
+        <td mat-cell *matCellDef="let element" class="table-cell"> 
+        <button mat-stroked-button (click)="onClickStartStopService(element)">Start/Stop</button>    
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['pid', 'name', 'isalive', 'action']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['pid', 'name', 'isalive', 'action'];"></tr>
+</table>

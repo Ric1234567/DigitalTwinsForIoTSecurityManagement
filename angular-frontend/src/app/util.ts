@@ -11,4 +11,19 @@ export class Util {
         }
         return await response.json();
     }
+
+    async postToBackend(route: string, data: any): Promise<any> {
+        const response = await fetch('http://localhost:5000/' + route, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            throw new Error(`${response.status}! ${response.statusText}. ${await response.text()}`);
+        }
+        return await response.json();
+
+    }
 }

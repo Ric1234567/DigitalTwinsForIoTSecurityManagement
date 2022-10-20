@@ -19,13 +19,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { NetworkScanComponent } from './network-scan/network-scan.component';
 import { AnalysisComponent } from './analysis/analysis.component';
 import {MatExpansionModule} from '@angular/material/expansion';
-import { MatTableModule } from '@angular/material/table'
+import { MatTableModule } from '@angular/material/table';
+import { HomeComponent } from './home/home.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     NetworkScanComponent,
-    AnalysisComponent
+    AnalysisComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

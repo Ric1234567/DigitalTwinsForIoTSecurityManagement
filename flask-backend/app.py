@@ -110,13 +110,35 @@ def start_process(process_name):
         elif process_name == 'todo':
             # todo
 
-            response_json = {"response": 'Success! Started process ' + p.name}
+            response_json = {"response": 'todo'}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         else:
             response_json = {"response": 'Process not found!'}
             return Response(json.dumps(response_json), status=500, mimetype='application/json')
     except Exception as e:
         return Response(str(e), status=500, mimetype='application/json')
+
+
+@app.route('/services', methods=['GET'])
+def get_services():
+    response_json = {"response": constants.SERVICES}
+    return Response(json.dumps(response_json), status=200, mimetype='application/json')
+
+
+@app.route('/running_services', methods=['GET'])
+def get_running_services():
+    result = ProcessHandler.get_processes()
+
+    array = []
+    for service in result:
+        array.append({
+            'pid': service.pid,
+            'name': service.name,
+            'isalive': service.is_alive()
+        })
+
+    response = {"response": array}
+    return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
 if __name__ == '__main__':
