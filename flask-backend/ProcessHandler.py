@@ -4,6 +4,8 @@ from multiprocessing import active_children, current_process
 
 from NmapHandler import NmapHandler
 
+process_dict = {}
+
 
 def get_processes():
     return active_children()

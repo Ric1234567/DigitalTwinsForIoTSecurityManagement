@@ -21,6 +21,7 @@ import { AnalysisComponent } from './analysis/analysis.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
 import { HomeComponent } from './home/home.component'
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { HomeComponent } from './home/home.component'
     MatExpansionModule,
     FormsModule,
     AppRoutingModule,
+    MatCheckboxModule,
     MatButtonModule,
     MatTableModule,
     MatInputModule,

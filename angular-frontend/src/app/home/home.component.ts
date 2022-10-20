@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import Constants from '../constants';
 import { Util } from '../util';
 
 @Component({
@@ -10,76 +11,49 @@ export class HomeComponent implements OnInit {
 
   services: any = []
   isRefreshing: boolean = false
+  loadingRefresh: boolean = false
+
+  refreshIntervalId: any
 
   constructor() { }
 
   ngOnInit(): void {
-    this.getAllServices()
+    this.getRunningServices()
     this.startRefreshInterval()
   }
 
   private startRefreshInterval() {
-    if (!this.isRefreshing) {
       this.isRefreshing = true
-      setInterval(() => {
-        console.log("refresh");
-        this.getAllServices()
+      console.log('auto-refresh started');
+      
+      this.refreshIntervalId = setInterval(() => {
+        this.getRunningServices()
       }, 3000);
-    }
-  }
-
-  async getAllServices() {
-    let runningServices = await this.getRunningServices()
-    let availableServices = await this.getServices()
-
-    this.services = runningServices
-
-    for (const availableService of availableServices) {
-      if (this.services.filter((s: any) => s.name === availableService).length > 0) {
-        continue
-      }
-      this.services.push({
-        'pid': null,
-        'name': availableService,
-        'isalive': false
-      })
-    }
-  }
-
-  async getServices() {
-    let util = new Util
-    let response = await util.fetchFromBackend('GET', 'services') as any
-
-    return response.response
   }
 
   async getRunningServices() {
     let util = new Util
     let response = await util.fetchFromBackend('GET', 'running_services') as any
 
-    return response.response
+    this.services = response.response
   }
 
   async stopService(element: any) {
     let util = new Util
-    let response = await util.fetchFromBackend('GET', 'stop/' + element.name) as any
+    // stop with pid
+    let response = await util.fetchFromBackend('GET', 'stop/' + element.pid) as any
 
-    this.getAllServices()
+    this.getRunningServices()
   }
 
-  async startService(element: any) {
-    let util = new Util
-    let delay = 60
-    let response = await util.fetchFromBackend('GET', 'start/' + element.name + '?delay=' + delay) as any
-
-    this.getAllServices()
-  }
-
-  async onClickStartStopService(element: any) {
-    if (element.isalive) {
-      await this.stopService(element)
+  onChangeAutoRefresh(event:any) {
+    if (this.isRefreshing) {
+      this.startRefreshInterval()
     } else {
-      await this.startService(element)
+      console.log('auto-refresh stopped');
+
+      clearInterval(this.refreshIntervalId)
     }
   }
+
 }

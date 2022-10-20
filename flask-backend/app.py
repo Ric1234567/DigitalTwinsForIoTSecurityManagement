@@ -77,10 +77,10 @@ def get_listening_ports():
     return jsonHandler.filter_json_array(json_data.split('\n'), 'name', 'listening_ports')
 
 
-@app.route('/stop/<process_name>', methods=['GET'])
-def stop_process(process_name):
+@app.route('/stop/<process_pid>', methods=['GET'])
+def stop_process(process_pid):
     try:
-        p = ProcessHandler.get_process_by_name(process_name)
+        p = ProcessHandler.process_dict.pop(int(process_pid))
         p.terminate()
         print("terminated process " + p.name)
 
@@ -93,16 +93,20 @@ def stop_process(process_name):
 @app.route('/start/<process_name>', methods=['GET'])
 def start_process(process_name):
     try:
-        if ProcessHandler.get_process_by_name(process_name) is not None:
-            response_json = {"response": 'Process with name ' + process_name + ' already running!'}
-            return Response(json.dumps(response_json), status=409, mimetype='application/json')
+        # get process_name without additional information
+        process_name = process_name.split(constants.PROCESS_SPLIT_CHAR)[0]
 
         if process_name == constants.PROCESS_ENDLESS_NETWORK_SCAN_NAME:
+            nmap_command = request.args.get('cmd')
             delay = int(request.args.get('delay'))
 
-            p = Process(name=process_name, target=ProcessHandler.endless_network_scan,
-                        args=(constants.NMAP_COMMAND_FULL_SCAN_SUFFIX, delay,))
+            # use nmap_command in name
+            p = Process(name=process_name + constants.PROCESS_SPLIT_CHAR + nmap_command,
+                        target=ProcessHandler.endless_network_scan,
+                        args=(nmap_command, delay,))
             p.start()
+            ProcessHandler.process_dict[p.pid] = p
+
             print("start process " + p.name)
 
             response_json = {"response": 'Success! Started process ' + p.name}
@@ -119,21 +123,17 @@ def start_process(process_name):
         return Response(str(e), status=500, mimetype='application/json')
 
 
-@app.route('/services', methods=['GET'])
-def get_services():
-    response_json = {"response": constants.SERVICES}
-    return Response(json.dumps(response_json), status=200, mimetype='application/json')
-
-
 @app.route('/running_services', methods=['GET'])
 def get_running_services():
     result = ProcessHandler.get_processes()
 
     array = []
     for service in result:
+        process_name = service.name.split(constants.PROCESS_SPLIT_CHAR)
         array.append({
             'pid': service.pid,
-            'name': service.name,
+            'name': process_name[0],
+            'additional_information': process_name[1],
             'isalive': service.is_alive()
         })
 

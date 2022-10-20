@@ -1,5 +1,7 @@
 <h2>Home</h2>
 
+<mat-checkbox [(ngModel)]="isRefreshing" (change)="onChangeAutoRefresh($event)">Auto-Refresh</mat-checkbox>
+
 <table mat-table *ngIf="services.length > 0" [dataSource]="services" style="width: 100%;">
     <ng-container matColumnDef="pid">
         <th mat-header-cell *matHeaderCellDef class="table-cell"> PId </th>
@@ -9,6 +11,10 @@
         <th mat-header-cell *matHeaderCellDef class="table-cell"> Name </th>
         <td mat-cell *matCellDef="let element" class="table-cell"> {{element.name}} </td>
     </ng-container>
+    <ng-container matColumnDef="info">
+        <th mat-header-cell *matHeaderCellDef class="table-cell"> Info </th>
+        <td mat-cell *matCellDef="let element" class="table-cell"> {{element.additional_information}} </td>
+    </ng-container>
     <ng-container matColumnDef="isalive">
         <th mat-header-cell *matHeaderCellDef class="table-cell"> Alive </th>
         <td mat-cell *matCellDef="let element" class="table-cell"> {{element.isalive}} </td>
@@ -16,9 +22,9 @@
     <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef class="table-cell"> Action </th>
         <td mat-cell *matCellDef="let element" class="table-cell"> 
-        <button mat-stroked-button (click)="onClickStartStopService(element)">Start/Stop</button>    
+        <button mat-stroked-button (click)="stopService(element)">Stop</button>    
         </td>
     </ng-container>
-    <tr mat-header-row *matHeaderRowDef="['pid', 'name', 'isalive', 'action']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['pid', 'name', 'isalive', 'action'];"></tr>
+    <tr mat-header-row *matHeaderRowDef="['pid', 'name', 'info', 'isalive', 'action']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['pid', 'name', 'info', 'isalive', 'action'];"></tr>
 </table>

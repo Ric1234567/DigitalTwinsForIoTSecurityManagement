@@ -4,6 +4,7 @@ import { EChartsCoreOption } from 'echarts';
 import { Util } from 'src/app/util';
 import GraphHelper from 'src/models/graphHelper';
 import { HostInformation } from 'src/models/hostInformation';
+import Constants from '../constants';
 
 @Component({
   selector: 'app-network-scan',
@@ -18,6 +19,9 @@ export class NetworkScanComponent implements OnInit {
   networkGraph!: echarts.ECharts;
   loadingScan: boolean = false;
   networkScan: any;
+
+  isRefreshing: boolean = false
+  refreshIntervalId: any
 
   hostInformation!: HostInformation;
 
@@ -88,19 +92,17 @@ export class NetworkScanComponent implements OnInit {
   }
 
   async onClickEndlessNetworkScan() {
-    let delay = 30
+    let delay = 60
     let util = new Util
-    let route = 'start/endless_network_scan?delay=' + delay
+    let route = 'start/endless_network_scan' + Constants.PROCESS_SPLIT_CHAR + this.nmapCustomCommandSuffix + '?cmd=' + this.nmapCustomCommandSuffix + '&delay=' + delay
     try {
       let resp = await util.fetchFromBackend('GET', route) as any
-    } catch (error) {
+      console.log(resp);
+      
+      alert(resp.response)
+    } catch (error:any) {
       // ignore
     }
-
-    setInterval(() => {
-      console.log("refresh");
-      this.getLastNetworkReport()
-    }, delay * 1000);
   }
 
   private onClickGraph(params: any) {
