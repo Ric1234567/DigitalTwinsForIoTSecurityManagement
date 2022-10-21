@@ -94,8 +94,8 @@ export class HostInformation {
     }
 
     getTraceArray() {
-        if (Array.isArray(this.hostInformationType?.trace)) {
-            return this.hostInformationType?.trace
+        if (Array.isArray(this.hostInformationType?.trace?.hop)) {
+            return this.hostInformationType?.trace?.hop
         }
         let array = []
         array.push(this.hostInformationType?.trace.hop)

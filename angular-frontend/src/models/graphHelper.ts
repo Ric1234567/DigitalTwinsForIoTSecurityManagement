@@ -42,7 +42,10 @@ export default class GraphHelper {
             let nodeColor = GraphHelper.getNodeColorOnPorts(host)
 
             let tmpNode: GraphNode = new GraphNode(hostNameIp, nodeColor)
-            this.nodeList.push(tmpNode)
+
+            if (!this.nodeList.filter(node => node.name === tmpNode.name)) {
+                this.nodeList.push(tmpNode)
+            }
 
             // links / traces / hops
             this.getTraces(host, hostNameIp)
