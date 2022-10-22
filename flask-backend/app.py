@@ -3,11 +3,13 @@ from multiprocessing import Process
 
 from flask import Flask, Response, request
 from flask_cors import CORS
+from flask_pymongo import PyMongo
 
 import ProcessHandler
 import SshHandler
 import constants
-import jsonHandler
+import JsonHandler
+from DatabaseHandler import DatabaseHandler
 from NmapHandler import NmapHandler
 
 # configuration
@@ -16,6 +18,8 @@ DEBUG = True
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.config["MONGO_URI"] = "mongodb://root:root@localhost:27017/pidb?authSource=admin"  # pi database
+mongo = PyMongo(app)
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
@@ -65,16 +69,31 @@ def get_daemon_output():
     return data  # not a json
 
 
+@app.route('/database', methods=['GET'])
+def database():
+    data = get_daemon_output()
+    database_handler = DatabaseHandler(mongo)
+    database_handler.write_to_database(constants.DAEMON_AND_COLLECTION_NAME_LISTENING_PORTS, data)
+    database_handler.write_to_database(constants.DAEMON_AND_COLLECTION_NAME_PROCESSES, data)
+
+    # result = mongo.db.test.insert_one({'name': 'bye'})
+    # result2 = mongo.db.test.find()
+    # for res in result2:
+    #   print(res['name'])
+    response_json = {"response": 'Success! Dummy '}
+    return Response(json.dumps(response_json), status=200, mimetype='application/json')
+
+
 @app.route('/processes', methods=['GET'])
 def get_processes():
     json_data = get_daemon_output()
-    return jsonHandler.filter_json_array(json_data.split('\n'), 'name', 'processes')
+    return JsonHandler.filter_json_array(json_data.split('\n'), 'name', 'processes')
 
 
 @app.route('/listening_ports', methods=['GET'])
 def get_listening_ports():
     json_data = get_daemon_output()
-    return jsonHandler.filter_json_array(json_data.split('\n'), 'name', 'listening_ports')
+    return JsonHandler.filter_json_array(json_data.split('\n'), 'name', 'listening_ports')
 
 
 @app.route('/stop/<process_pid>', methods=['GET'])
@@ -111,8 +130,7 @@ def start_process(process_name):
 
             response_json = {"response": 'Success! Started process ' + p.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
-        elif process_name == 'todo':
-            # todo
+        elif process_name == constants.PROCESS_GET_DAEMON_DATA:
 
             response_json = {"response": 'todo'}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')

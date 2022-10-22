@@ -3,7 +3,7 @@ from libnmap.parser import NmapParser
 import xmltodict
 
 import constants
-import jsonHandler
+import JsonHandler
 
 
 class NmapHandler:
