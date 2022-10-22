@@ -43,7 +43,7 @@ export default class GraphHelper {
 
             let tmpNode: GraphNode = new GraphNode(hostNameIp, nodeColor)
 
-            if (!this.nodeList.filter(node => node.name === tmpNode.name)) {
+            if (this.nodeList.filter(node => node.name === tmpNode.name)) {
                 this.nodeList.push(tmpNode)
             }
 
