@@ -1,4 +1,5 @@
 import json
+import string
 from multiprocessing import Process
 
 from flask import Flask, Response, request
@@ -26,10 +27,16 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
-def get_custom_network_report(nmap_command):
+def get_custom_network_report(nmap_command: string):
     try:
         nmap_handler = NmapHandler()
-        return nmap_handler.get_report_as_json(nmap_command)
+        nmap_report_json = nmap_handler.get_report_as_json(nmap_command)
+
+        # save to database
+        database_handler = DatabaseHandler(mongo)
+        database_handler.write_nmaprun_to_database(nmap_report_json)
+
+        return nmap_report_json
     except FileNotFoundError as e:
         return Response(str(e), status=404, mimetype='application/json')
 
@@ -37,8 +44,7 @@ def get_custom_network_report(nmap_command):
 @app.route('/network_scan', methods=['GET'])
 def get_network_report():
     try:
-        nmap_handler = NmapHandler()
-        return nmap_handler.get_report_as_json(constants.NMAP_COMMAND_FULL_SCAN_SUFFIX)
+        return get_custom_network_report(constants.NMAP_COMMAND_FULL_SCAN_SUFFIX)
     except FileNotFoundError as e:
         return Response(str(e), status=404, mimetype='application/json')
 

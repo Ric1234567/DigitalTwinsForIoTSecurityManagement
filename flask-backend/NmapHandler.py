@@ -34,7 +34,7 @@ class NmapHandler:
 
     def get_report_as_json(self, command_suffix):
         nmap_xml_result = self.scan_network(command_suffix)
-        return jsonHandler.convert_xml_to_json(nmap_xml_result)
+        return JsonHandler.convert_xml_to_json(nmap_xml_result)
 
     def save_report(self, nmap_xml_result):
         with open(constants.FILE_OUTPUT_DIRECTORY + constants.NMAP_XML_REPORT_FILE_NAME, 'w') as file:
@@ -46,4 +46,4 @@ class NmapHandler:
 
     def load_report_as_json(self):
         report = self.load_report()
-        return jsonHandler.convert_xml_to_json(report)
+        return JsonHandler.convert_xml_to_json(report)

@@ -1,3 +1,6 @@
+import json
+import string
+
 import constants
 
 
@@ -6,7 +9,15 @@ class DatabaseHandler:
     def __init__(self, mongo):
         self.mongo = mongo
 
-    def write_to_database(self, collection_name, data):
+    def write_nmaprun_to_database(self, nmap_report_json: string):
+        try:
+            nmap_report = json.loads(nmap_report_json)
+            self.insert_one_into(constants.COLLECTION_NAME_NMAPRUN, nmap_report)
+        except Exception as e:
+            print(e)
+            return
+
+    def write_to_database(self, collection_name: string, data: string):
         data = data.replace(':false,', ':False,').replace(':true,', ':True,')
         data_points = data.split('\n')
 
