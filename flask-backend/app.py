@@ -19,7 +19,7 @@ DEBUG = True
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config["MONGO_URI"] = "mongodb://root:root@localhost:27017/pidb?authSource=admin"  # pi database
+app.config["MONGO_URI"] = constants.MONGO_URI  # pi database
 mongo = PyMongo(app)
 
 # enable CORS
@@ -33,7 +33,7 @@ def get_custom_network_report(nmap_command: string):
         nmap_report_json = nmap_handler.get_report_as_json(nmap_command)
 
         # save to database
-        database_handler = DatabaseHandler(mongo)
+        database_handler = DatabaseHandler(constants.MONGO_URI)
         database_handler.write_nmaprun_to_database(nmap_report_json)
 
         return nmap_report_json
@@ -78,7 +78,7 @@ def get_daemon_output():
 @app.route('/database', methods=['GET'])
 def database():
     data = get_daemon_output()
-    database_handler = DatabaseHandler(mongo)
+    database_handler = DatabaseHandler(constants.MONGO_URI)
     database_handler.write_to_database(constants.DAEMON_AND_COLLECTION_NAME_LISTENING_PORTS, data)
     database_handler.write_to_database(constants.DAEMON_AND_COLLECTION_NAME_PROCESSES, data)
 
@@ -128,7 +128,7 @@ def start_process(process_name):
             # use nmap_command in name
             p = Process(name=process_name + constants.PROCESS_SPLIT_CHAR + nmap_command,
                         target=ProcessHandler.endless_network_scan,
-                        args=(nmap_command, delay,))
+                        args=(constants.MONGO_URI, nmap_command, delay,))
             p.start()
             ProcessHandler.process_dict[p.pid] = p
 
@@ -144,6 +144,7 @@ def start_process(process_name):
             response_json = {"response": 'Process not found!'}
             return Response(json.dumps(response_json), status=500, mimetype='application/json')
     except Exception as e:
+        print(e)
         return Response(str(e), status=500, mimetype='application/json')
 
 
@@ -167,3 +168,8 @@ def get_running_services():
 
 if __name__ == '__main__':
     app.run(use_reloader=False)
+
+    # wait for processes to complete
+    processes = ProcessHandler.get_processes()
+    for process in processes:
+        process.join()

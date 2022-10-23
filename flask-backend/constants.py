@@ -18,3 +18,6 @@ PROCESS_GET_DAEMON_DATA = 'get_daemon_data'
 DAEMON_AND_COLLECTION_NAME_LISTENING_PORTS = 'listening_ports'
 DAEMON_AND_COLLECTION_NAME_PROCESSES = 'processes'
 COLLECTION_NAME_NMAPRUN = 'nmaprun'
+
+MONGO_URI = 'mongodb://root:root@localhost:27017/pidb?authSource=admin'
+PI_DATABASE_NAME = 'pidb'

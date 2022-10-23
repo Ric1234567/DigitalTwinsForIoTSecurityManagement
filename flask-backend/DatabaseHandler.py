@@ -1,13 +1,15 @@
 import json
 import string
 
+from flask_pymongo import MongoClient
+
 import constants
 
 
 class DatabaseHandler:
 
-    def __init__(self, mongo):
-        self.mongo = mongo
+    def __init__(self, mongo_uri):
+        self.mongo = MongoClient(mongo_uri)# here mongo_client; but parameter is string to mongodb server
 
     def write_nmaprun_to_database(self, nmap_report_json: string):
         try:
@@ -40,10 +42,14 @@ class DatabaseHandler:
                 print('not added: \"' + data_point_string + '\"(' + str(e) + ')')
 
     def insert_one_into(self, collection_name, data_point):
-        self.mongo.db[collection_name].insert_one(data_point)
+        self.mongo[constants.PI_DATABASE_NAME][collection_name].insert_one(data_point)
 
     def get_max_timestamp(self, collection_name):
-        return self.mongo.db[collection_name].find().sort('unixTime', -1).limit(1)
+        return self.mongo[constants.PI_DATABASE_NAME][collection_name].find().sort('unixTime', -1).limit(1)
+
+    def get_max_timestamp_nmaprun(self):# todo test
+        #db.nmaprun.find().sort({'nmaprun.@start':-1}).collation({locale: 'en_US', numericOrdering: true}).limit(1)
+        return self.mongo[constants.PI_DATABASE_NAME]['nmaprun'].find().sort('nmaprun.@start', -1).collation({'locale': 'en_US', 'numericOrdering': True}).limit(1)
 
     def select_all(self, collection_name):
-        return self.mongo.db[collection_name].find()
+        return self.mongo[constants.PI_DATABASE_NAME][collection_name].find()

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Sun Oct 23 14:13:26 2022 as: nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.* -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.*" start="1666527206" startstr="Sun Oct 23 14:13:26 2022" version="7.93" xmloutputversion="1.05">
+<!-- Nmap 7.93 scan initiated Sun Oct 23 17:10:02 2022 as: nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.* -->
+<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.*" start="1666537802" startstr="Sun Oct 23 17:10:02 2022" version="7.93" xmloutputversion="1.05">
 <scaninfo type="syn" protocol="tcp" numservices="100" services="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 <verbose level="0"/>
 <debugging level="0"/>
@@ -24,7 +24,7 @@
 <hostnames>
 </hostnames>
 </hosthint>
-<host starttime="1666527209" endtime="1666527209"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1666537805" endtime="1666537805"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.1" addrtype="ipv4"/>
 <address addr="3C:37:12:8F:0E:88" addrtype="mac" vendor="AVM Audiovisuelles Marketing und Computersysteme GmbH"/>
 <hostnames>
@@ -39,11 +39,11 @@
 <port protocol="tcp" portid="5060"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="sip" method="table" conf="3"/></port>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.1" rtt="4.42" host="fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.1" rtt="4.72" host="fritz.box"/>
 </trace>
-<times srtt="4423" rttvar="757" to="100000"/>
+<times srtt="4725" rttvar="172" to="100000"/>
 </host>
-<host starttime="1666527209" endtime="1666527214"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1666537805" endtime="1666537808"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.23" addrtype="ipv4"/>
 <address addr="9C:8C:6E:5D:43:9E" addrtype="mac" vendor="Samsung Electronics"/>
 <hostnames>
@@ -54,11 +54,11 @@
 </extraports>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.23" rtt="102.24" host="Samsung.fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.23" rtt="68.96" host="Samsung.fritz.box"/>
 </trace>
-<times srtt="102238" rttvar="91508" to="468270"/>
+<times srtt="68962" rttvar="44036" to="245106"/>
 </host>
-<host starttime="1666527209" endtime="1666527209"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1666537805" endtime="1666537805"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.51" addrtype="ipv4"/>
 <address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
 <hostnames>
@@ -71,11 +71,11 @@
 <port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http-proxy" method="table" conf="3"/></port>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.51" rtt="13.66" host="raspberrypi.fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.51" rtt="14.54" host="raspberrypi.fritz.box"/>
 </trace>
-<times srtt="13658" rttvar="4279" to="100000"/>
+<times srtt="14543" rttvar="3557" to="100000"/>
 </host>
-<host starttime="1666527214" endtime="1666527214"><status state="up" reason="localhost-response" reason_ttl="0"/>
+<host starttime="1666537808" endtime="1666537808"><status state="up" reason="localhost-response" reason_ttl="0"/>
 <address addr="192.168.178.65" addrtype="ipv4"/>
 <hostnames>
 <hostname name="Henrics-MBP.fritz.box" type="PTR"/>
@@ -84,8 +84,8 @@
 <extrareasons reason="reset" count="100" proto="tcp" ports="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 </extraports>
 </ports>
-<times srtt="20" rttvar="3" to="100000"/>
+<times srtt="21" rttvar="3" to="100000"/>
 </host>
-<runstats><finished time="1666527214" timestr="Sun Oct 23 14:13:34 2022" summary="Nmap done at Sun Oct 23 14:13:34 2022; 256 IP addresses (4 hosts up) scanned in 7.82 seconds" elapsed="7.82" exit="success"/><hosts up="4" down="252" total="256"/>
+<runstats><finished time="1666537808" timestr="Sun Oct 23 17:10:08 2022" summary="Nmap done at Sun Oct 23 17:10:08 2022; 256 IP addresses (4 hosts up) scanned in 5.62 seconds" elapsed="5.62" exit="success"/><hosts up="4" down="252" total="256"/>
 </runstats>
 </nmaprun>
