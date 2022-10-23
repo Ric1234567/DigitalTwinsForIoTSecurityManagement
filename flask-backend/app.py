@@ -50,7 +50,7 @@ def get_network_report():
 
 
 @app.route('/last_network_scan', methods=['GET'])
-def get_old_network_report():
+def get_last_network_report():
     try:
         nmap_handler = NmapHandler()
         return nmap_handler.load_report_as_json()
@@ -58,47 +58,26 @@ def get_old_network_report():
         return Response(str(e), status=404, mimetype='application/json')
 
 
-@app.route('/daemon', methods=['GET'])
-def get_daemon_output():
-    ssh_handler = SshHandler.SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,
-                                        constants.SSH_PASSWORD)
-    ssh_handler.connect()
-
-    file_name = 'daemon_output.log'
-    remote_path = '/home/pi/osquery/logs/osqueryd.results.log'  # check permission of file; needs to be user 'pi'
-
-    ssh_handler.get_file_via_sftp(constants.FILE_OUTPUT_DIRECTORY + file_name, remote_path)
-    ssh_handler.disconnect()
-
-    with open(constants.FILE_OUTPUT_DIRECTORY + file_name, 'r') as file:
-        data = file.read()
-    return data  # not a json
-
-
-@app.route('/database', methods=['GET'])
+@app.route('/database', methods=['GET'])  # todo remove this function
 def database():
-    data = get_daemon_output()
+    data = ProcessHandler.download_osquery_output_file()
     database_handler = DatabaseHandler(constants.MONGO_URI)
-    database_handler.write_to_database(constants.DAEMON_AND_COLLECTION_NAME_LISTENING_PORTS, data)
-    database_handler.write_to_database(constants.DAEMON_AND_COLLECTION_NAME_PROCESSES, data)
+    database_handler.write_to_database(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, data)
+    database_handler.write_to_database(constants.OSQUERY_AND_COLLECTION_NAME_PROCESSES, data)
 
-    # result = mongo.db.test.insert_one({'name': 'bye'})
-    # result2 = mongo.db.test.find()
-    # for res in result2:
-    #   print(res['name'])
-    response_json = {"response": 'Success! Dummy '}
+    response_json = {"response": 'Success database!'}
     return Response(json.dumps(response_json), status=200, mimetype='application/json')
 
 
 @app.route('/processes', methods=['GET'])
 def get_processes():
-    json_data = get_daemon_output()
+    json_data = ProcessHandler.download_osquery_output_file()
     return JsonHandler.filter_json_array(json_data.split('\n'), 'name', 'processes')
 
 
 @app.route('/listening_ports', methods=['GET'])
 def get_listening_ports():
-    json_data = get_daemon_output()
+    json_data = ProcessHandler.download_osquery_output_file()
     return JsonHandler.filter_json_array(json_data.split('\n'), 'name', 'listening_ports')
 
 
@@ -118,27 +97,34 @@ def stop_process(process_pid):
 @app.route('/start/<process_name>', methods=['GET'])
 def start_process(process_name):
     try:
-        # get process_name without additional information
-        process_name = process_name.split(constants.PROCESS_SPLIT_CHAR)[0]
+        # get process_name (without additional information)
+        process_name = process_name.split(constants.PROCESS_NAME_SPLIT_CHAR)[0]
 
         if process_name == constants.PROCESS_ENDLESS_NETWORK_SCAN_NAME:
             nmap_command = request.args.get('cmd')
             delay = int(request.args.get('delay'))
 
             # use nmap_command in name
-            p = Process(name=process_name + constants.PROCESS_SPLIT_CHAR + nmap_command,
-                        target=ProcessHandler.endless_network_scan,
-                        args=(constants.MONGO_URI, nmap_command, delay,))
-            p.start()
-            ProcessHandler.process_dict[p.pid] = p
+            service_process = Process(name=process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,
+                                      target=ProcessHandler.endless_network_scan,
+                                      args=(constants.MONGO_URI, nmap_command, delay,))
+            service_process.start()
+            ProcessHandler.process_dict[service_process.pid] = service_process
 
-            print("start process " + p.name)
+            print("Start process " + service_process.name)
 
-            response_json = {"response": 'Success! Started process ' + p.name}
+            response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
-        elif process_name == constants.PROCESS_GET_DAEMON_DATA:
+        elif process_name == constants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
+            delay = int(request.args.get('delay'))
 
-            response_json = {"response": 'todo'}
+            service_process = Process(name=process_name + constants.PROCESS_NAME_SPLIT_CHAR + constants.SSH_HOSTNAME,
+                                      target=ProcessHandler.endless_osquery_scan,
+                                      args=(constants.SSH_HOSTNAME, delay,))
+            service_process.start()
+            ProcessHandler.process_dict[service_process.pid] = service_process
+
+            response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         else:
             response_json = {"response": 'Process not found!'}
@@ -154,7 +140,7 @@ def get_running_services():
 
     array = []
     for service in result:
-        process_name = service.name.split(constants.PROCESS_SPLIT_CHAR)
+        process_name = service.name.split(constants.PROCESS_NAME_SPLIT_CHAR)
         array.append({
             'pid': service.pid,
             'name': process_name[0],
