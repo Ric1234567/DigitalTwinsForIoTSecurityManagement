@@ -126,6 +126,17 @@ def start_process(process_name):
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
+        elif process_name == constants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
+            delay = int(request.args.get('delay'))
+
+            service_process = Process(name=process_name + constants.PROCESS_NAME_SPLIT_CHAR + constants.SSH_HOSTNAME,
+                                      target=ProcessHandler.endless_get_zigbee2mqtt_network_state,
+                                      args=(delay,))
+            service_process.start()
+            ProcessHandler.process_dict[service_process.pid] = service_process
+
+            response_json = {"response": 'Success! Started process ' + service_process.name}
+            return Response(json.dumps(response_json), status=200, mimetype='application/json')
         else:
             response_json = {"response": 'Process not found!'}
             return Response(json.dumps(response_json), status=500, mimetype='application/json')

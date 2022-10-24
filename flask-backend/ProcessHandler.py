@@ -43,7 +43,7 @@ def endless_network_scan(mongo_uri: string, nmap_command: string, delay: numbers
 
 def endless_osquery_scan(ip_address: string, delay: numbers):
     while True:
-        print("Get osquery information " + " (" + ip_address + "," + str(delay) + ")")
+        print("Get osquery information " + " (" + ip_address + "," + current_process().name + "," + str(delay) + ")")
 
         download_osquery_output_file()
         data = read_osquery_output_file()
@@ -71,3 +71,32 @@ def read_osquery_output_file():
     with open(constants.FILE_OUTPUT_DIRECTORY + constants.OSQUERY_DAEMON_LOCAL_OUTPUT_LOG_FILE_NAME, 'r') as file:
         data = file.read()
     return data  # not a json
+
+
+def endless_get_zigbee2mqtt_network_state(delay: numbers):
+    while True:
+        print("Get zigbee2mqtt network state " + " (" + constants.SSH_HOSTNAME + "," + current_process().name + "," + str(delay) + ")")
+        ssh_handler = SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,
+                                 constants.SSH_PASSWORD)
+        ssh_handler.connect()
+        ssh_handler.download_file_via_sftp(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME,
+                                           constants.ZIGBEE2MQTT_REMOTE_FILE_PATH)
+
+        with open(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME, 'r') as file:
+            data_point_string = file.read()
+        data_point = eval(data_point_string)
+
+        # add timestamp to data_point
+        data_point = {
+            'unixTime': round(time.time()),
+            'state': data_point
+        }
+
+        # write to database
+        database_handler = DatabaseHandler(constants.MONGO_URI)
+        print("Writing result of scan to database (" + current_process().name + ")")
+        database_handler.insert_one_into(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE,
+                                         data_point)
+        print(current_process().name + " sleeping for " + str(delay) + " seconds!")
+        time.sleep(delay)
+
