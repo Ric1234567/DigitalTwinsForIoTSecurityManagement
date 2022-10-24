@@ -2,7 +2,7 @@
 import numbers
 import string
 import time
-from multiprocessing import active_children, current_process
+from multiprocessing import active_children, current_process, Process
 
 from flask_pymongo import MongoClient
 
@@ -25,6 +25,16 @@ def get_process_by_name(name):
             return process
     # no match
     return None
+
+
+def start_process(process_name: string, target, args: tuple):
+    service_process = Process(name=process_name,
+                              target=target,
+                              args=args)
+    service_process.start()
+    process_dict[service_process.pid] = service_process
+    print("Start process " + service_process.name)
+    return service_process
 
 
 def endless_network_scan(mongo_uri: string, nmap_command: string, delay: numbers):
@@ -75,7 +85,9 @@ def read_osquery_output_file():
 
 def endless_get_zigbee2mqtt_network_state(delay: numbers):
     while True:
-        print("Get zigbee2mqtt network state " + " (" + constants.SSH_HOSTNAME + "," + current_process().name + "," + str(delay) + ")")
+        print(
+            "Get zigbee2mqtt network state " + " (" + constants.SSH_HOSTNAME + "," + current_process().name + "," + str(
+                delay) + ")")
         ssh_handler = SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,
                                  constants.SSH_PASSWORD)
         ssh_handler.connect()
@@ -99,4 +111,3 @@ def endless_get_zigbee2mqtt_network_state(delay: numbers):
                                          data_point)
         print(current_process().name + " sleeping for " + str(delay) + " seconds!")
         time.sleep(delay)
-

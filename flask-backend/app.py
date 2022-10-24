@@ -58,17 +58,6 @@ def get_last_network_report():
         return Response(str(e), status=404, mimetype='application/json')
 
 
-@app.route('/database', methods=['GET'])  # todo remove this function
-def database():
-    data = ProcessHandler.download_osquery_output_file()
-    database_handler = DatabaseHandler(constants.MONGO_URI)
-    database_handler.write_to_database(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, data)
-    database_handler.write_to_database(constants.OSQUERY_AND_COLLECTION_NAME_PROCESSES, data)
-
-    response_json = {"response": 'Success database!'}
-    return Response(json.dumps(response_json), status=200, mimetype='application/json')
-
-
 @app.route('/processes', methods=['GET'])
 def get_processes():
     json_data = ProcessHandler.download_osquery_output_file()
@@ -95,7 +84,7 @@ def stop_process(process_pid):
 
 
 @app.route('/start/<process_name>', methods=['GET'])
-def start_process(process_name):
+def start_service(process_name):
     try:
         # get process_name (without additional information)
         process_name = process_name.split(constants.PROCESS_NAME_SPLIT_CHAR)[0]
@@ -103,37 +92,34 @@ def start_process(process_name):
         if process_name == constants.PROCESS_ENDLESS_NETWORK_SCAN_NAME:
             nmap_command = request.args.get('cmd')
             delay = int(request.args.get('delay'))
+            if (not nmap_command) or (not delay):
+                raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
 
             # use nmap_command in name
-            service_process = Process(name=process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,
-                                      target=ProcessHandler.endless_network_scan,
-                                      args=(constants.MONGO_URI, nmap_command, delay,))
-            service_process.start()
-            ProcessHandler.process_dict[service_process.pid] = service_process
-
-            print("Start process " + service_process.name)
+            service_process = ProcessHandler.start_process(
+                process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,
+                ProcessHandler.endless_network_scan,
+                (constants.MONGO_URI, nmap_command, delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == constants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
             delay = int(request.args.get('delay'))
 
-            service_process = Process(name=process_name + constants.PROCESS_NAME_SPLIT_CHAR + constants.SSH_HOSTNAME,
-                                      target=ProcessHandler.endless_osquery_scan,
-                                      args=(constants.SSH_HOSTNAME, delay,))
-            service_process.start()
-            ProcessHandler.process_dict[service_process.pid] = service_process
+            service_process = ProcessHandler.start_process(
+                process_name + constants.PROCESS_NAME_SPLIT_CHAR + constants.SSH_HOSTNAME,
+                ProcessHandler.endless_osquery_scan,
+                (constants.SSH_HOSTNAME, delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == constants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
             delay = int(request.args.get('delay'))
 
-            service_process = Process(name=process_name + constants.PROCESS_NAME_SPLIT_CHAR + constants.SSH_HOSTNAME,
-                                      target=ProcessHandler.endless_get_zigbee2mqtt_network_state,
-                                      args=(delay,))
-            service_process.start()
-            ProcessHandler.process_dict[service_process.pid] = service_process
+            service_process = ProcessHandler.start_process(
+                process_name + constants.PROCESS_NAME_SPLIT_CHAR + constants.SSH_HOSTNAME,
+                ProcessHandler.endless_get_zigbee2mqtt_network_state,
+                (delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
@@ -143,6 +129,12 @@ def start_process(process_name):
     except Exception as e:
         print(e)
         return Response(str(e), status=500, mimetype='application/json')
+
+
+@app.route('/available_services', methods=['GET'])
+def get_available_services():
+    response = {"response": constants.PROCESS_LIST}
+    return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
 @app.route('/running_services', methods=['GET'])

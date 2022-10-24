@@ -9,7 +9,12 @@ import { Util } from '../util';
 })
 export class HomeComponent implements OnInit {
 
-  services: any = []
+  availableServices: any = []
+  selectedStartService: string = ''
+  serviceStartRequestParameter: string = '?delay=60'
+
+  runningServices: any = []
+
   isRefreshing: boolean = false
   loadingRefresh: boolean = false
 
@@ -20,33 +25,43 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.getRunningServices()
     this.startRefreshInterval()
+    this.getAvailableServices()
   }
 
   private startRefreshInterval() {
-      this.isRefreshing = true
-      console.log('auto-refresh started');
-      
-      this.refreshIntervalId = setInterval(() => {
-        this.getRunningServices()
-      }, 3000);
+    this.isRefreshing = true
+    console.log('auto-refresh started');
+
+    this.refreshIntervalId = setInterval(() => {
+      this.getRunningServices()
+      this.getAvailableServices()
+    }, 3000);
   }
 
   async getRunningServices() {
     let util = new Util
     let response = await util.fetchFromBackend('GET', 'running_services') as any
 
-    this.services = response.response
+    this.runningServices = response.response
+  }
+
+  async getAvailableServices() {
+    let util = new Util
+    let response = await util.fetchFromBackend('GET', 'available_services') as any
+
+    this.availableServices = response.response
   }
 
   async stopService(element: any) {
     let util = new Util
     // stop with pid
     let response = await util.fetchFromBackend('GET', 'stop/' + element.pid) as any
+    console.log(response.response);
 
     this.getRunningServices()
   }
 
-  onChangeAutoRefresh(event:any) {
+  onChangeAutoRefresh(event: any) {
     if (this.isRefreshing) {
       this.startRefreshInterval()
     } else {
@@ -56,4 +71,17 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  async onClickStartService(event: any) {
+    if (this.selectedStartService) {
+      let util = new Util
+      try {
+        let response = await util.fetchFromBackend('GET', 'start/' + this.selectedStartService + this.serviceStartRequestParameter) as any
+        alert(response.response)
+      } catch (error) {
+        alert(error)
+      }
+    } else {
+      alert('Select service first!')
+    }
+  }
 }

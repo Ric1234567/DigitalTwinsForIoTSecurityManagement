@@ -1,30 +1,54 @@
 <h2>Home</h2>
 
+<h3>Start Service</h3>
+<div class="card-container">
+    <mat-form-field appearance="fill" style="margin-right: 5px;">
+        <mat-label>Select service</mat-label>
+        <mat-select [(value)]="selectedStartService">
+            <mat-option *ngFor="let service of availableServices" [value]="service">
+                {{service}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 300px; margin-right: 5px;">
+        <mat-label>Custom Request Parameters</mat-label>
+        <input matInput [(ngModel)]="serviceStartRequestParameter" placeholder="?..." type="text" />
+    </mat-form-field>
+    <button mat-stroked-button (click)="onClickStartService($event)" color="primary" style="height: 50px;">
+        Start Service
+    </button>
+</div>
+
+
+<h3>Running Services</h3>
 <mat-checkbox [(ngModel)]="isRefreshing" (change)="onChangeAutoRefresh($event)">Auto-Refresh</mat-checkbox>
 
-<table mat-table *ngIf="services.length > 0" [dataSource]="services" style="width: 100%;">
-    <ng-container matColumnDef="pid">
-        <th mat-header-cell *matHeaderCellDef class="table-cell"> PId </th>
-        <td mat-cell *matCellDef="let element" class="table-cell"> {{element.pid}} </td>
-    </ng-container>
-    <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef class="table-cell"> Name </th>
-        <td mat-cell *matCellDef="let element" class="table-cell"> {{element.name}} </td>
-    </ng-container>
-    <ng-container matColumnDef="info">
-        <th mat-header-cell *matHeaderCellDef class="table-cell"> Info </th>
-        <td mat-cell *matCellDef="let element" class="table-cell"> {{element.additional_information}} </td>
-    </ng-container>
-    <ng-container matColumnDef="isalive">
-        <th mat-header-cell *matHeaderCellDef class="table-cell"> Alive </th>
-        <td mat-cell *matCellDef="let element" class="table-cell"> {{element.isalive}} </td>
-    </ng-container>
-    <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef class="table-cell"> Action </th>
-        <td mat-cell *matCellDef="let element" class="table-cell"> 
-        <button mat-stroked-button (click)="stopService(element)">Stop</button>    
-        </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="['pid', 'name', 'info', 'isalive', 'action']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['pid', 'name', 'info', 'isalive', 'action'];"></tr>
-</table>
+<div style="margin: auto; display: flex; justify-content: center;">
+    <table mat-table *ngIf="runningServices.length > 0" [dataSource]="runningServices">
+        <ng-container matColumnDef="pid">
+            <th mat-header-cell *matHeaderCellDef class="table-cell"> PId </th>
+            <td mat-cell *matCellDef="let element" class="table-cell"> {{element.pid}} </td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="table-cell"> Name </th>
+            <td mat-cell *matCellDef="let element" class="table-cell"> {{element.name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="info">
+            <th mat-header-cell *matHeaderCellDef class="table-cell"> Info </th>
+            <td mat-cell *matCellDef="let element" class="table-cell"> {{element.additional_information}} </td>
+        </ng-container>
+        <ng-container matColumnDef="isalive">
+            <th mat-header-cell *matHeaderCellDef class="table-cell"> Alive </th>
+            <td mat-cell *matCellDef="let element" class="table-cell"> {{element.isalive}} </td>
+        </ng-container>
+        <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef class="table-cell"> Action </th>
+            <td mat-cell *matCellDef="let element" class="table-cell">
+                <button mat-stroked-button (click)="stopService(element)">Stop</button>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['pid', 'name', 'info', 'isalive', 'action']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['pid', 'name', 'info', 'isalive', 'action'];"></tr>
+    </table>
+    <div *ngIf="runningServices.length == 0">No data.</div>
+</div>
