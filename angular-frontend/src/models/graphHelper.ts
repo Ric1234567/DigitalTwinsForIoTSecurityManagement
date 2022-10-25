@@ -17,7 +17,7 @@ export default class GraphHelper {
     averageRtt: AverageRtt = { min: -1, max: -1 }
 
 
-    getGraphContent(nmaprun: any): GraphContent {
+    getGraphContent(nmaprun: any, subnetwork: any): GraphContent {
         if (!Array.isArray(nmaprun.host)) {
             let tmpArray = []
             tmpArray.push(nmaprun.host)
@@ -42,13 +42,33 @@ export default class GraphHelper {
             let nodeColor = GraphHelper.getNodeColorOnPorts(host)
 
             let tmpNode: GraphNode = new GraphNode(hostNameIp, nodeColor)
-
+            // add if it does not exist already
             if (this.nodeList.filter(node => node.name === tmpNode.name)) {
                 this.nodeList.push(tmpNode)
             }
 
             // links / traces / hops
             this.getTraces(host, hostNameIp)
+
+            // subnetwork
+            if (subnetwork) {
+                for (const subnetworkDevice of subnetwork) {
+                    if (subnetworkDevice.host === hostIp) {
+                        let subnetworkDeviceName = subnetworkDevice.name + '\n' + subnetworkDevice.hex
+                        let tmpNode: GraphNode = new GraphNode(subnetworkDeviceName, '#FFC0CB')
+                        // add if it does not exist already
+                        if (this.nodeList.filter(node => node.name === tmpNode.name)) {
+                            this.nodeList.push(tmpNode)
+                        }
+
+                        let tmpLink = new GraphLink(hostNameIp, subnetworkDeviceName)
+                        // if it does not link to itself
+                        if (tmpLink.source != tmpLink.target) {
+                            this.linkList.push(tmpLink)
+                        }
+                    }
+                }
+            }
         });
 
         let localhostNode = new GraphNode("localhost", "#000")
@@ -98,7 +118,7 @@ export default class GraphHelper {
                 tmpLink.setColor("DodgerBlue")
                 tmpLink.setWidth(Math.min(GraphHelper.normalize(this.averageRtt.min, this.averageRtt.max, hop["@rtt"]) * 2, 10))
 
-                // links to itself
+                // if it does not link to itself
                 if (tmpLink.source != tmpLink.target) {
                     this.linkList.push(tmpLink)
                 }

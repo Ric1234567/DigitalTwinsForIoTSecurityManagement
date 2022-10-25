@@ -1,7 +1,9 @@
 FILE_OUTPUT_DIRECTORY = './output/'
 
 ZIGBEE2MQTT_FILE_NAME = 'zigbee2mqtt_network_state.json'
+ZIGBEE2MQTT_FILE_NAME_CONFIG = 'zigbee2mqtt_config.json'
 ZIGBEE2MQTT_REMOTE_FILE_PATH = '/home/pi/IoT-Stack/data/zigbee2mqtt/state.json'
+ZIGBEE2MQTT_REMOTE_FILE_PATH_CONFIG = '/home/pi/IoT-Stack/data/zigbee2mqtt/configuration.yaml'
 
 OSQUERY_DAEMON_LOCAL_OUTPUT_LOG_FILE_NAME = 'osquery_daemon_output.log'
 OSQUERY_REMOTE_LOG_FILE_PATH = '/home/pi/osquery/logs/osqueryd.results.log'  # check permission of file; needs to be user 'pi'
@@ -16,10 +18,13 @@ SSH_USER = 'pi'
 SSH_PASSWORD = 'raspberry'
 
 PROCESS_NAME_SPLIT_CHAR = '>'
-PROCESS_ENDLESS_NETWORK_SCAN_NAME = 'endless_network_scan'
+PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME = 'endless_full_network_scan'
+PROCESS_ENDLESS_NMAP_SCAN_NAME = 'endless_nmap_scan'
 PROCESS_ENDLESS_OSQUERY_SCAN_NAME = 'endless_osquery_scan'
 PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME = 'endless_zigbee2mqtt_state'
-PROCESS_LIST = [PROCESS_ENDLESS_NETWORK_SCAN_NAME, PROCESS_ENDLESS_OSQUERY_SCAN_NAME,
+PROCESS_LIST = [PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME,
+                PROCESS_ENDLESS_NMAP_SCAN_NAME,
+                PROCESS_ENDLESS_OSQUERY_SCAN_NAME,
                 PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME]
 
 # collection names

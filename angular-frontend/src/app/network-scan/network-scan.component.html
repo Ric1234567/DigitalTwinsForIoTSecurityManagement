@@ -57,16 +57,22 @@
         </mat-form-field>
         <button mat-stroked-button (click)="onClickExecuteCustomNetworkScan()" color="primary" [disabled]="loadingScan"
           style="height: 50px; margin-left: 5px;">
-          Scan Once
+          Nmap Scan
         </button>
-        <button mat-stroked-button (click)="onClickEndlessNetworkScan()" color="primary" [disabled]="loadingScan"
-        style="height: 50px; margin-left: 5px;">
-          Scan Endless
+        <button mat-stroked-button (click)="onClickGetFullNetworkReport()" color="primary" [disabled]="loadingScan"
+          style="height: 50px; margin-left: 5px;">
+          Full Network Scan
         </button>
       </div>
       <div class="card-container">
-        <button mat-stroked-button (click)="onClickGetNetworkReport()" color="primary" [disabled]="loadingScan">
-          Full-Scan Network
+        <div style="margin-top: auto; margin-bottom: auto;">Start Services:</div>
+        <button mat-stroked-button (click)="onClickStartNmapScanService()" color="primary" [disabled]="loadingScan"
+          style="height: 50px; margin-left: 5px;">
+          Nmap Scan
+        </button>
+        <button mat-stroked-button (click)="onClickStartFullNetworkScanService()" color="primary" [disabled]="loadingScan"
+          style="height: 50px; margin-left: 5px;">
+          Full Network Scan
         </button>
       </div>
 
@@ -314,7 +320,7 @@
   <mat-card style="max-width: 500px;">
     <mat-card-title>Network Scan Result</mat-card-title>
     <mat-card-content>
-      <ngx-json-viewer [json]="networkScan" [depth]="2"></ngx-json-viewer>
+      <ngx-json-viewer [json]="nmapNetworkScan" [depth]="2"></ngx-json-viewer>
     </mat-card-content>
   </mat-card>
 </div>

@@ -18,7 +18,8 @@ export class NetworkScanComponent implements OnInit {
   networkgraphDOM!: HTMLElement;
   networkGraph!: echarts.ECharts;
   loadingScan: boolean = false;
-  networkScan: any;
+  nmapNetworkScan: any;
+  subNetwork: any;
 
   isRefreshing: boolean = false
   refreshIntervalId: any
@@ -86,15 +87,30 @@ export class NetworkScanComponent implements OnInit {
 
   async onClickExecuteCustomNetworkScan() {
     let nmapCustomNetworkScan = await this.fetchNetworkScan('GET', 'custom_network_scan/' + this.nmapCustomCommandSuffix) as any
-    this.networkScan = nmapCustomNetworkScan
+    this.nmapNetworkScan = nmapCustomNetworkScan.response.nmaprun
+    this.subNetwork = null
 
-    this.setNetworkReport(nmapCustomNetworkScan.nmaprun)
+    this.setNetworkReport()
   }
 
-  async onClickEndlessNetworkScan() {
+  async onClickStartNmapScanService() {
     let delay = 60
     let util = new Util
-    let route = 'start/endless_network_scan' + Constants.PROCESS_SPLIT_CHAR + this.nmapCustomCommandSuffix + '?cmd=' + this.nmapCustomCommandSuffix + '&delay=' + delay
+    let route = 'start/endless_nmap_scan' + Constants.PROCESS_SPLIT_CHAR + this.nmapCustomCommandSuffix + '?cmd=' + this.nmapCustomCommandSuffix + '&delay=' + delay
+    try {
+      let resp = await util.fetchFromBackend('GET', route) as any
+      console.log(resp);
+      
+      alert(resp.response)
+    } catch (error:any) {
+      // ignore
+    }
+  }
+
+  async onClickStartFullNetworkScanService() {
+    let delay = 60
+    let util = new Util
+    let route = 'start/endless_full_network_scan' + Constants.PROCESS_SPLIT_CHAR + this.nmapCustomCommandSuffix + '?cmd=' + this.nmapCustomCommandSuffix + '&delay=' + delay
     try {
       let resp = await util.fetchFromBackend('GET', route) as any
       console.log(resp);
@@ -109,7 +125,7 @@ export class NetworkScanComponent implements OnInit {
     if (params.dataType == 'node') {
       console.log((params.name));
 
-      for (const host of this.networkScan.nmaprun.host) {
+      for (const host of this.nmapNetworkScan.host) {
         let hostIp = ""
         if (Array.isArray(host.address)) {
           hostIp = host.address[0]["@addr"]
@@ -129,17 +145,19 @@ export class NetworkScanComponent implements OnInit {
 
   async getLastNetworkReport() {
     let lastReport = await this.fetchNetworkScan('GET', 'last_network_scan') as any
-    this.networkScan = lastReport
+    this.nmapNetworkScan = lastReport.response.nmaprun
+    this.subNetwork = lastReport.response.subnetwork
 
-    this.setNetworkReport(lastReport.nmaprun)
+    this.setNetworkReport()
   }
 
-  async onClickGetNetworkReport() {
-    let nmapNetworkScan = await this.fetchNetworkScan('GET', 'network_scan') as any
+  async onClickGetFullNetworkReport() {
+    let networkScan = await this.fetchNetworkScan('GET', 'full_network_scan/' + this.nmapCustomCommandSuffix) as any
 
-    this.networkScan = nmapNetworkScan
+    this.nmapNetworkScan = networkScan.response.nmaprun
+    this.subNetwork = networkScan.response.subnetwork
 
-    this.setNetworkReport(nmapNetworkScan.nmaprun)
+    this.setNetworkReport()
   }
 
   private async fetchNetworkScan(method: string, route: string) {
@@ -158,19 +176,19 @@ export class NetworkScanComponent implements OnInit {
     return networkScanReport
   }
 
-  private setNetworkReport(nmapRun: any) {
+  private setNetworkReport() {
     // check if hosts found
-    if (nmapRun.host == null) {
+    if (this.nmapNetworkScan?.host == null) {
       console.log("No hosts found!");
 
       return
     }
 
-    this.hostInformation = new HostInformation(nmapRun.host[0])
+    this.hostInformation = new HostInformation(this.nmapNetworkScan.host[0])
 
     // graph
     let graphHelper: GraphHelper = new GraphHelper()
-    let graphContent = graphHelper.getGraphContent(nmapRun)
+    let graphContent = graphHelper.getGraphContent(this.nmapNetworkScan, this.subNetwork)
 
     this.networkGraph.setOption({
       series: {

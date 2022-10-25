@@ -1,6 +1,7 @@
 import array
 import json
 import string
+import time
 
 from flask_pymongo import MongoClient
 
@@ -36,7 +37,8 @@ class DatabaseHandler:
 
     def write_nmaprun_to_database(self, nmap_report_json: string):
         try:
-            nmap_report = json.loads(nmap_report_json)
+            test = '{"unixTime":' + str(round(time.time())) + ',' + nmap_report_json[1:-1] + '}'
+            nmap_report = json.loads(test)
             self.insert_one_into(constants.COLLECTION_NAME_NMAPRUN, nmap_report)
         except Exception as e:
             print(e)
@@ -58,6 +60,11 @@ class DatabaseHandler:
 
     def get_max_timestamp(self, collection_name):
         return self.mongo[constants.PI_DATABASE_NAME][collection_name].find().sort('unixTime', -1).limit(1)
+
+    def get_latest_entry(self, collection_name):
+        cursor = self.get_max_timestamp(collection_name)
+        for entry in cursor:
+            return entry
 
     def get_max_timestamp_nmaprun(self):  # todo test
         # db.nmaprun.find().sort({'nmaprun.@start':-1}).collation({locale: 'en_US', numericOrdering: true}).limit(1)

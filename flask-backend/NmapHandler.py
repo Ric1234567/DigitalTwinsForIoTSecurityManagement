@@ -1,9 +1,13 @@
+import string
 import subprocess
+from multiprocessing import current_process
+
 from libnmap.parser import NmapParser
 import xmltodict
 
 import constants
 import JsonHandler
+from DatabaseHandler import DatabaseHandler
 
 
 class NmapHandler:
@@ -47,3 +51,11 @@ class NmapHandler:
     def load_report_as_json(self):
         report = self.load_report()
         return JsonHandler.convert_xml_to_json(report)
+
+    def custom_network_scan(self, nmap_command: string):
+        nmap_report_json = self.get_report_as_json(nmap_command)
+
+        # save to database
+        print("Writing result of nmap scan to database (" + current_process().name + ")")
+        database_handler = DatabaseHandler(constants.MONGO_URI)
+        database_handler.write_nmaprun_to_database(nmap_report_json)

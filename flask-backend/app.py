@@ -1,17 +1,19 @@
 import json
 import string
-from multiprocessing import Process
 
 from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
 import ProcessHandler
-import SshHandler
+from SubnetworkHandler import SubnetworkHandler
 import constants
 import JsonHandler
 from DatabaseHandler import DatabaseHandler
 from NmapHandler import NmapHandler
+
+import io
+import yaml
 
 # configuration
 DEBUG = True
@@ -27,33 +29,60 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
-def get_custom_network_report(nmap_command: string):
+def get_custom_nmap_report(nmap_command: string):
     try:
         nmap_handler = NmapHandler()
-        nmap_report_json = nmap_handler.get_report_as_json(nmap_command)
+        nmap_handler.custom_network_scan(nmap_command)
 
-        # save to database
+        # get from database
         database_handler = DatabaseHandler(constants.MONGO_URI)
-        database_handler.write_nmaprun_to_database(nmap_report_json)
+        nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
-        return nmap_report_json
+        response_json = {
+            "response": {
+                'nmaprun': nmap_report_db['nmaprun']
+            }}
+        return Response(json.dumps(response_json), status=200, mimetype='application/json')
     except FileNotFoundError as e:
         return Response(str(e), status=404, mimetype='application/json')
 
 
-@app.route('/network_scan', methods=['GET'])
-def get_network_report():
-    try:
-        return get_custom_network_report(constants.NMAP_COMMAND_FULL_SCAN_SUFFIX)
-    except FileNotFoundError as e:
-        return Response(str(e), status=404, mimetype='application/json')
+@app.route('/full_network_scan/<nmap_command>', methods=['GET'])
+def get_full_network_report(nmap_command: string):
+    nmap_handler = NmapHandler()
+    nmap_handler.custom_network_scan(nmap_command)
+
+    # get from database
+    database_handler = DatabaseHandler(constants.MONGO_URI)
+    nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+
+    subnetwork_handler = SubnetworkHandler()
+    subnetwork_handler.scan_subnetwork()
+    subnetwork = subnetwork_handler.get_latest_subnetwork_information()
+
+    response_json = {
+        "response": {
+            'nmaprun': nmap_report_db['nmaprun'],
+            'subnetwork': subnetwork
+        }}
+    return Response(json.dumps(response_json), status=200, mimetype='application/json')
 
 
 @app.route('/last_network_scan', methods=['GET'])
 def get_last_network_report():
     try:
-        nmap_handler = NmapHandler()
-        return nmap_handler.load_report_as_json()
+        database_handler = DatabaseHandler(constants.MONGO_URI)
+        nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+
+        subnetwork_handler = SubnetworkHandler()
+        subnetwork = subnetwork_handler.get_latest_subnetwork_information()
+
+        response_json = {
+            "response": {
+                'nmaprun': nmap_report_db['nmaprun'],
+                'subnetwork': subnetwork
+            }}
+        return Response(json.dumps(response_json), status=200, mimetype='application/json')
     except FileNotFoundError as e:
         return Response(str(e), status=404, mimetype='application/json')
 
@@ -89,17 +118,23 @@ def start_service(process_name):
         # get process_name (without additional information)
         process_name = process_name.split(constants.PROCESS_NAME_SPLIT_CHAR)[0]
 
-        if process_name == constants.PROCESS_ENDLESS_NETWORK_SCAN_NAME:
+        if (process_name == constants.PROCESS_ENDLESS_NMAP_SCAN_NAME) or \
+                (process_name == constants.PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME):
             nmap_command = request.args.get('cmd')
             delay = int(request.args.get('delay'))
             if (not nmap_command) or (not delay):
                 raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
 
-            # use nmap_command in name
-            service_process = ProcessHandler.start_process(
-                process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,
-                ProcessHandler.endless_network_scan,
-                (constants.MONGO_URI, nmap_command, delay,))
+            if process_name == constants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
+                service_process = ProcessHandler.start_process(
+                    process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
+                    ProcessHandler.endless_nmap_scan,
+                    (constants.MONGO_URI, nmap_command, delay,))
+            else:  # full scan
+                service_process = ProcessHandler.start_process(
+                    process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
+                    ProcessHandler.endless_full_network_scan,
+                    (constants.MONGO_URI, nmap_command, delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
