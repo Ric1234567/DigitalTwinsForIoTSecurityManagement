@@ -8,12 +8,8 @@ from flask_pymongo import PyMongo
 import ProcessHandler
 from SubnetworkHandler import SubnetworkHandler
 import constants
-import JsonHandler
 from DatabaseHandler import DatabaseHandler
 from NmapHandler import NmapHandler
-
-import io
-import yaml
 
 # configuration
 DEBUG = True
@@ -57,8 +53,10 @@ def get_full_network_report(nmap_command: string):
     database_handler = DatabaseHandler(constants.MONGO_URI)
     nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
+    ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
+
     subnetwork_handler = SubnetworkHandler()
-    subnetwork_handler.scan_subnetwork()
+    subnetwork_handler.scan_subnetwork(ssh_hosts)
     subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
 
     response_json = {
@@ -92,20 +90,8 @@ def get_last_network_report():
         return Response(str(e), status=404, mimetype='application/json')
 
 
-@app.route('/processes', methods=['GET'])
-def get_processes():
-    json_data = ProcessHandler.download_osquery_output_file()
-    return JsonHandler.filter_json_array(json_data.split('\n'), 'name', 'processes')
-
-
-@app.route('/listening_ports', methods=['GET'])
-def get_listening_ports():
-    json_data = ProcessHandler.download_osquery_output_file()
-    return JsonHandler.filter_json_array(json_data.split('\n'), 'name', 'listening_ports')
-
-
 @app.route('/stop/<process_pid>', methods=['GET'])
-def stop_process(process_pid):
+def stop_service(process_pid):
     try:
         p = ProcessHandler.process_dict.pop(int(process_pid))
         p.terminate()
@@ -144,22 +130,28 @@ def start_service(process_name):
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == constants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
+            ip_address = request.args.get('ip')
             delay = int(request.args.get('delay'))
+            if (not ip_address) or (not delay):
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', delay=' + str(delay))
 
             service_process = ProcessHandler.start_process(
-                process_name + constants.PROCESS_NAME_SPLIT_CHAR + constants.SSH_HOSTNAME,
+                process_name + constants.PROCESS_NAME_SPLIT_CHAR + ip_address,
                 ProcessHandler.endless_osquery_scan,
-                (constants.SSH_HOSTNAME, delay,))
+                (ip_address, delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == constants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
+            ip_address = request.args.get('ip')
             delay = int(request.args.get('delay'))
+            if (not ip_address) or (not delay):
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', delay=' + str(delay))
 
             service_process = ProcessHandler.start_process(
-                process_name + constants.PROCESS_NAME_SPLIT_CHAR + constants.SSH_HOSTNAME,
+                process_name + constants.PROCESS_NAME_SPLIT_CHAR + ip_address,
                 ProcessHandler.endless_get_zigbee2mqtt_network_state,
-                (delay,))
+                (ip_address, delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')

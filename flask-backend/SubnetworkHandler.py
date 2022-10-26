@@ -15,51 +15,67 @@ class SubnetworkHandler:
         fp = io.StringIO(data)
         return yaml.safe_load(fp)
 
-    def scan_subnetwork(self):
-        ssh_handler = SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,
-                                 constants.SSH_PASSWORD)
-        ssh_handler.connect()
-        ssh_handler.download_file_via_sftp(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME,
-                                           constants.ZIGBEE2MQTT_REMOTE_FILE_PATH)
-        ssh_handler.download_file_via_sftp(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME_CONFIG,
-                                           constants.ZIGBEE2MQTT_REMOTE_FILE_PATH_CONFIG)
-        ssh_handler.disconnect()
+    def scan_subnetwork(self, ssh_hosts):
+        all_subnetworks = []
+        for ssh_host in ssh_hosts:
+            ipv4_address = None
+            for address in ssh_host['host_address']:
+                if address['@addrtype'] == 'ipv4':
+                    ipv4_address = address['@addr']
+            port = ssh_host['port']['@portid']
 
-        with open(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME, 'r') as file:
-            data_point_string = file.read()
-        data_point = eval(data_point_string)
+            if (ipv4_address is not None) and (port is not None):
+                ssh_handler = SshHandler(ipv4_address, port, constants.SSH_USER,
+                                         constants.SSH_PASSWORD)
+                ssh_handler.connect()
+                ssh_handler.download_file_via_sftp(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME,
+                                                   constants.ZIGBEE2MQTT_REMOTE_FILE_PATH)
+                ssh_handler.download_file_via_sftp(
+                    constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME_CONFIG,
+                    constants.ZIGBEE2MQTT_REMOTE_FILE_PATH_CONFIG)
+                ssh_handler.disconnect()
 
-        with open(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME_CONFIG, 'r') as file:
-            config_string = file.read()
+                with open(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME, 'r') as file:
+                    data_point_string = file.read()
+                data_point = eval(data_point_string)
 
-        # add timestamp to data_point
-        data_point = {
+                with open(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME_CONFIG, 'r') as file:
+                    config_string = file.read()
+
+                subnetwork = {
+                    'host': ipv4_address,
+                    'state': data_point,
+                    'config': config_string
+                }
+                all_subnetworks.append(subnetwork)
+
+        subnetwork_scan = {
             'unixTime': round(time.time()),
-            'host': constants.SSH_HOSTNAME,  # here ip of host in ip network to which the subnetwork is connected
-            'state': data_point,
-            'config': config_string
+            'scans': all_subnetworks
         }
 
         # write to database
         database_handler = DatabaseHandler(constants.MONGO_URI)
         print("Writing result of subnetwork scan to database (" + current_process().name + ")")
         database_handler.insert_one_into(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE,
-                                         data_point)
+                                         subnetwork_scan)
 
     def get_latest_subnetwork_information(self):
         database_handler = DatabaseHandler(constants.MONGO_URI)
         latest_entry = database_handler.get_latest_entry(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE)
         subnetwork = []
 
-        connected_subnetwork_hex = list(latest_entry['state'])
-        config_file = self.configuration_from_yaml(latest_entry['config'])
+        if 'scans' in latest_entry:
+            for scan in latest_entry['scans']:
+                connected_subnetwork_hex = list(scan['state'])
+                config_file = self.configuration_from_yaml(scan['config'])
 
-        for connected_device_hex in connected_subnetwork_hex:
-            tmp_dict = {
-                'hex': connected_device_hex,
-                'host': latest_entry['host'],
-                'name': config_file['devices'][connected_device_hex]['friendly_name']
-            }
-            subnetwork.append(tmp_dict)
+                for connected_device_hex in connected_subnetwork_hex:
+                    tmp_dict = {
+                        'hex': connected_device_hex,
+                        'host': scan['host'],
+                        'name': config_file['devices'][connected_device_hex]['friendly_name']
+                    }
+                    subnetwork.append(tmp_dict)
 
         return subnetwork, latest_entry['unixTime']

@@ -1,3 +1,4 @@
+import collections.abc
 import string
 import subprocess
 from multiprocessing import current_process
@@ -59,3 +60,21 @@ class NmapHandler:
         print("Writing result of nmap scan to database (" + current_process().name + ")")
         database_handler = DatabaseHandler(constants.MONGO_URI)
         database_handler.write_nmaprun_to_database(nmap_report_json)
+
+    def ssh_service_discovery(self, nmaprun):
+        ssh_hosts = []
+        if 'host' in nmaprun:
+            if not isinstance(nmaprun['host'], collections.abc.Sequence):  # convert to array if none
+                nmaprun['host'] = [nmaprun['host']]
+            for host in nmaprun['host']:
+                if 'ports' in host:
+                    if 'port' in host['ports']:
+                        if not isinstance(host['ports']['port'], collections.abc.Sequence):
+                            host['ports']['port'] = [host['ports']['port']]
+                        for port in host['ports']['port']:
+                            if 'service' in port:
+                                if '@name' in port['service']:
+                                    if port['service']['@name'] == 'ssh':
+                                        ssh_hosts.append({'host_address': host['address'],
+                                                          'port': port})
+        return ssh_hosts
