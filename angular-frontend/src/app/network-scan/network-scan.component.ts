@@ -21,6 +21,9 @@ export class NetworkScanComponent implements OnInit {
   nmapNetworkScan: any;
   subNetwork: any;
 
+  lastUpdatedNmap: string = 'never';
+  lastUpdatedSubnetwork: string = 'never';
+
   isRefreshing: boolean = false
   refreshIntervalId: any
 
@@ -90,6 +93,10 @@ export class NetworkScanComponent implements OnInit {
     this.nmapNetworkScan = nmapCustomNetworkScan.response.nmaprun
     this.subNetwork = null
 
+    let util = new Util()
+    this.lastUpdatedNmap = util.convertUnixTimeToDate(nmapCustomNetworkScan.response.nmap_unixTime)
+    this.lastUpdatedSubnetwork = 'never'
+
     this.setNetworkReport()
   }
 
@@ -148,6 +155,10 @@ export class NetworkScanComponent implements OnInit {
     this.nmapNetworkScan = lastReport.response.nmaprun
     this.subNetwork = lastReport.response.subnetwork
 
+    let util = new Util()
+    this.lastUpdatedNmap = util.convertUnixTimeToDate(lastReport.response.nmap_unixTime)
+    this.lastUpdatedSubnetwork = util.convertUnixTimeToDate(lastReport.response.subnetwork_unixTime)
+
     this.setNetworkReport()
   }
 
@@ -156,6 +167,10 @@ export class NetworkScanComponent implements OnInit {
 
     this.nmapNetworkScan = networkScan.response.nmaprun
     this.subNetwork = networkScan.response.subnetwork
+
+    let util = new Util()
+    this.lastUpdatedNmap = util.convertUnixTimeToDate(networkScan.response.nmap_unixTime)
+    this.lastUpdatedSubnetwork = util.convertUnixTimeToDate(networkScan.response.subnetwork_unixTime)
 
     this.setNetworkReport()
   }

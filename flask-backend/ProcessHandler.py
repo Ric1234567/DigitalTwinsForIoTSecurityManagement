@@ -67,6 +67,9 @@ def endless_full_network_scan(mongo_uri: string, nmap_command: string, delay: nu
         subnetwork_handler = SubnetworkHandler()
         subnetwork_handler.scan_subnetwork()
 
+        print(current_process().name + " sleeping for " + str(delay) + " seconds!")
+        time.sleep(delay)
+
 
 def endless_osquery_scan(ip_address: string, delay: numbers):
     while True:

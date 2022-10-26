@@ -24,6 +24,10 @@ export class Util {
             throw new Error(`${response.status}! ${response.statusText}. ${await response.text()}`);
         }
         return await response.json();
+    }
 
+    convertUnixTimeToDate(unixTimestamp: number) {
+        let date = new Date(unixTimestamp * 1000);
+        return date.toString()
     }
 }

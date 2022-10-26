@@ -1,9 +1,15 @@
-<h2>Nmap Network Scanning</h2>
+<h2>Network Scanning</h2>
 
 <!-- Network Visualizer -->
 <div class="card-container">
   <mat-card>
     <mat-card-title>Network</mat-card-title>
+    <div>
+      Last update nmap: {{lastUpdatedNmap}}
+    </div>
+    <div>
+      Last update subnetwork: {{lastUpdatedSubnetwork}}
+    </div>
     <div echarts id="networkgraph" class="demo-chart" style="height: 500px; width: 700px;"
       [class.spinner]="loadingScan"></div>
   </mat-card>
@@ -28,6 +34,10 @@
           <div class="circle"></div>
           <div style="padding: 4px 0px 0px 4px;">host with more than 6 open ports</div>
         </div>
+        <div style="justify-content: left; display: flex;">
+          <div class="circle" style="background: pink;"></div>
+          <div style="padding: 4px 0px 0px 4px;">subnetwork node</div>
+        </div>
       </div>
       <div>
         <p style="font-weight: bold; margin-top: 5px;">Traceroutes</p>
@@ -40,6 +50,10 @@
           <div class="line" style="border-bottom: 2px dashed black;"></div>
           <div style="margin-left: 5px;">no traceroute information</div>
         </div>
+        <div style="justify-content: left; display: flex;">
+          <div class="line" style="border-bottom: 2px solid black;"></div>
+          <div style="margin-left: 5px;">zigbee connection</div>
+        </div>
       </div>
     </mat-card-content>
   </mat-card>
@@ -49,6 +63,9 @@
   <mat-card>
     <mat-card-title>Network Scan</mat-card-title>
     <mat-card-content>
+      <p>
+        Full Network Scan includes getting subnetwork information.
+      </p>
       <div class="card-container">
         <mat-form-field appearance="fill" style="width: 300px;">
           <mat-label>Custom Nmap Command</mat-label>
@@ -64,14 +81,17 @@
           Full Network Scan
         </button>
       </div>
+      <p>
+        Network Scan services execute the defined action in an endless manner.
+      </p>
       <div class="card-container">
         <div style="margin-top: auto; margin-bottom: auto;">Start Services:</div>
         <button mat-stroked-button (click)="onClickStartNmapScanService()" color="primary" [disabled]="loadingScan"
           style="height: 50px; margin-left: 5px;">
           Nmap Scan
         </button>
-        <button mat-stroked-button (click)="onClickStartFullNetworkScanService()" color="primary" [disabled]="loadingScan"
-          style="height: 50px; margin-left: 5px;">
+        <button mat-stroked-button (click)="onClickStartFullNetworkScanService()" color="primary"
+          [disabled]="loadingScan" style="height: 50px; margin-left: 5px;">
           Full Network Scan
         </button>
       </div>
@@ -82,7 +102,9 @@
   <mat-card style="width: 600px;">
     <mat-card-title>Host Information</mat-card-title>
     <mat-card-content>
-
+      <p>
+        Click on a node in the topology view to display host information.
+      </p>
       <mat-accordion *ngIf="hostInformation?.hostInformationType?.ports">
 
         <mat-expansion-panel *ngIf="hostInformation?.hostInformationType?.address">

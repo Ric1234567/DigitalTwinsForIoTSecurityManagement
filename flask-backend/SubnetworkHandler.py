@@ -15,7 +15,6 @@ class SubnetworkHandler:
         fp = io.StringIO(data)
         return yaml.safe_load(fp)
 
-
     def scan_subnetwork(self):
         ssh_handler = SshHandler(constants.SSH_HOSTNAME, constants.SSH_PORT, constants.SSH_USER,
                                  constants.SSH_PASSWORD)
@@ -47,7 +46,6 @@ class SubnetworkHandler:
         database_handler.insert_one_into(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE,
                                          data_point)
 
-
     def get_latest_subnetwork_information(self):
         database_handler = DatabaseHandler(constants.MONGO_URI)
         latest_entry = database_handler.get_latest_entry(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE)
@@ -64,5 +62,4 @@ class SubnetworkHandler:
             }
             subnetwork.append(tmp_dict)
 
-        return subnetwork
-
+        return subnetwork, latest_entry['unixTime']

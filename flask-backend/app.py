@@ -40,6 +40,7 @@ def get_custom_nmap_report(nmap_command: string):
 
         response_json = {
             "response": {
+                'nmap_unixTime': nmap_report_db['unixTime'],
                 'nmaprun': nmap_report_db['nmaprun']
             }}
         return Response(json.dumps(response_json), status=200, mimetype='application/json')
@@ -58,11 +59,13 @@ def get_full_network_report(nmap_command: string):
 
     subnetwork_handler = SubnetworkHandler()
     subnetwork_handler.scan_subnetwork()
-    subnetwork = subnetwork_handler.get_latest_subnetwork_information()
+    subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
 
     response_json = {
         "response": {
+            'nmap_unixTime': nmap_report_db['unixTime'],
             'nmaprun': nmap_report_db['nmaprun'],
+            'subnetwork_unixTime': unix_time,
             'subnetwork': subnetwork
         }}
     return Response(json.dumps(response_json), status=200, mimetype='application/json')
@@ -75,11 +78,13 @@ def get_last_network_report():
         nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
         subnetwork_handler = SubnetworkHandler()
-        subnetwork = subnetwork_handler.get_latest_subnetwork_information()
+        subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
 
         response_json = {
             "response": {
+                'nmap_unixTime': nmap_report_db['unixTime'],
                 'nmaprun': nmap_report_db['nmaprun'],
+                'subnetwork_unixTime': unix_time,
                 'subnetwork': subnetwork
             }}
         return Response(json.dumps(response_json), status=200, mimetype='application/json')

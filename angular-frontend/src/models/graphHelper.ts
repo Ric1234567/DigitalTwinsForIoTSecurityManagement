@@ -55,7 +55,7 @@ export default class GraphHelper {
                 for (const subnetworkDevice of subnetwork) {
                     if (subnetworkDevice.host === hostIp) {
                         let subnetworkDeviceName = subnetworkDevice.name + '\n' + subnetworkDevice.hex
-                        let tmpNode: GraphNode = new GraphNode(subnetworkDeviceName, '#FFC0CB')
+                        let tmpNode: GraphNode = new GraphNode(subnetworkDeviceName, 'pink')
                         // add if it does not exist already
                         if (this.nodeList.filter(node => node.name === tmpNode.name)) {
                             this.nodeList.push(tmpNode)
