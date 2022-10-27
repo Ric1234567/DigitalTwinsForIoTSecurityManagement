@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Wed Oct 26 13:05:46 2022 as: nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.* -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.*" start="1666782346" startstr="Wed Oct 26 13:05:46 2022" version="7.93" xmloutputversion="1.05">
+<!-- Nmap 7.93 scan initiated Thu Oct 27 12:11:38 2022 as: nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.* -->
+<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.*" start="1666865498" startstr="Thu Oct 27 12:11:38 2022" version="7.93" xmloutputversion="1.05">
 <scaninfo type="syn" protocol="tcp" numservices="100" services="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 <verbose level="0"/>
 <debugging level="0"/>
@@ -13,18 +13,18 @@
 </hostnames>
 </hosthint>
 <hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.51" addrtype="ipv4"/>
-<address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
-<hostnames>
-</hostnames>
-</hosthint>
-<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.20" addrtype="ipv4"/>
 <address addr="72:62:AD:A4:42:9C" addrtype="mac"/>
 <hostnames>
 </hostnames>
 </hosthint>
-<host starttime="1666782348" endtime="1666782348"><status state="up" reason="arp-response" reason_ttl="0"/>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.178.51" addrtype="ipv4"/>
+<address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1666865500" endtime="1666865501"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.1" addrtype="ipv4"/>
 <address addr="1C:ED:6F:1D:20:3E" addrtype="mac" vendor="AVM Audiovisuelles Marketing und Computersysteme GmbH"/>
 <hostnames>
@@ -39,29 +39,26 @@
 <port protocol="tcp" portid="5060"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="sip" method="table" conf="3"/></port>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.1" rtt="2.92" host="fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.1" rtt="4.00" host="fritz.box"/>
 </trace>
-<times srtt="2919" rttvar="183" to="100000"/>
+<times srtt="3997" rttvar="207" to="100000"/>
 </host>
-<host starttime="1666782348" endtime="1666782350"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1666865500" endtime="1666865505"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.20" addrtype="ipv4"/>
 <address addr="72:62:AD:A4:42:9C" addrtype="mac"/>
 <hostnames>
 <hostname name="Henric-s-Galaxy-S21.fritz.box" type="PTR"/>
 </hostnames>
-<ports><extraports state="closed" count="53">
-<extrareasons reason="reset" count="53" proto="tcp" ports="13,21-23,25-26,53,79-80,88,110-111,113,135,139,143,199,389,443-445,513-514,548,554,587,990,993,995,1025,1027,1720,1723,1900,2000,2049,2121,2717,3000,3306,3389,3986,5051,5101,5190,5631,5800,5900,8009,8080-8081,8888,49153"/>
-</extraports>
-<extraports state="filtered" count="47">
-<extrareasons reason="no-response" count="47" proto="tcp" ports="7,9,37,81,106,119,144,179,427,465,515,543-544,631,646,873,1026,1028-1029,1110,1433,1755,2001,3128,4899,5000,5009,5060,5357,5432,5666,6000-6001,6646,7070,8000,8008,8443,9100,9999-10000,32768,49152,49154-49157"/>
+<ports><extraports state="closed" count="100">
+<extrareasons reason="reset" count="100" proto="tcp" ports="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 </extraports>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.20" rtt="10.86" host="Henric-s-Galaxy-S21.fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.20" rtt="14.09" host="Henric-s-Galaxy-S21.fritz.box"/>
 </trace>
-<times srtt="10858" rttvar="1829" to="100000"/>
+<times srtt="14092" rttvar="14043" to="100000"/>
 </host>
-<host starttime="1666782348" endtime="1666782348"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1666865500" endtime="1666865501"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.51" addrtype="ipv4"/>
 <address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
 <hostnames>
@@ -74,11 +71,11 @@
 <port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http-proxy" method="table" conf="3"/></port>
 </ports>
 <trace>
-<hop ttl="1" ipaddr="192.168.178.51" rtt="13.38" host="raspberrypi.fritz.box"/>
+<hop ttl="1" ipaddr="192.168.178.51" rtt="14.19" host="raspberrypi.fritz.box"/>
 </trace>
-<times srtt="13376" rttvar="6501" to="100000"/>
+<times srtt="14190" rttvar="1736" to="100000"/>
 </host>
-<host starttime="1666782350" endtime="1666782350"><status state="up" reason="localhost-response" reason_ttl="0"/>
+<host starttime="1666865505" endtime="1666865505"><status state="up" reason="localhost-response" reason_ttl="0"/>
 <address addr="192.168.178.22" addrtype="ipv4"/>
 <hostnames>
 <hostname name="Henrics-MBP.fritz.box" type="PTR"/>
@@ -87,8 +84,8 @@
 <extrareasons reason="reset" count="100" proto="tcp" ports="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 </extraports>
 </ports>
-<times srtt="20" rttvar="4" to="100000"/>
+<times srtt="21" rttvar="4" to="100000"/>
 </host>
-<runstats><finished time="1666782350" timestr="Wed Oct 26 13:05:50 2022" summary="Nmap done at Wed Oct 26 13:05:50 2022; 256 IP addresses (4 hosts up) scanned in 4.29 seconds" elapsed="4.29" exit="success"/><hosts up="4" down="252" total="256"/>
+<runstats><finished time="1666865505" timestr="Thu Oct 27 12:11:45 2022" summary="Nmap done at Thu Oct 27 12:11:45 2022; 256 IP addresses (4 hosts up) scanned in 7.42 seconds" elapsed="7.42" exit="success"/><hosts up="4" down="252" total="256"/>
 </runstats>
 </nmaprun>

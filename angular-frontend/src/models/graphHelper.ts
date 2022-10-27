@@ -174,9 +174,10 @@ export default class GraphHelper {
             return "yellow"
         } else if (host.ports?.port?.length > 6) {
             return "red"
-        } else if (host.ports?.port?.length < 3 || host.ports.extraports) {
+        } else if (host.ports?.port?.length < 3 || host.ports?.port || host.ports?.extraports) { // if no array
             return "greenyellow"
         } else {
+            // unkown (error)
             return "lightgray"
         }
     }

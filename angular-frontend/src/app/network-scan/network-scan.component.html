@@ -185,7 +185,7 @@
         <mat-expansion-panel *ngIf="hostInformation?.hostInformationType?.ports?.port">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <label class="label-title">Open Ports</label>
+              <label class="label-title">Ports</label>
             </mat-panel-title>
             <mat-panel-description>
               <label *ngIf="hostInformation!" [innerHtml]="hostInformation.getOpenPortsString()"></label>
