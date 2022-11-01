@@ -15,6 +15,9 @@ export class NetworkScanComponent implements OnInit {
 
   nmapCustomCommandSuffix = "-sS -T4 -F --traceroute 192.168.178.*";
 
+  topologyStyles = ['Port Count', 'Network/Subnetwork'];
+  selectedStyle: string = this.topologyStyles[0];
+
   networkgraphDOM!: HTMLElement;
   networkGraph!: echarts.ECharts;
   loadingScan: boolean = false;
@@ -107,9 +110,9 @@ export class NetworkScanComponent implements OnInit {
     try {
       let resp = await util.fetchFromBackend('GET', route) as any
       console.log(resp);
-      
+
       alert(resp.response)
-    } catch (error:any) {
+    } catch (error: any) {
       // ignore
     }
   }
@@ -121,9 +124,9 @@ export class NetworkScanComponent implements OnInit {
     try {
       let resp = await util.fetchFromBackend('GET', route) as any
       console.log(resp);
-      
+
       alert(resp.response)
-    } catch (error:any) {
+    } catch (error: any) {
       // ignore
     }
   }
@@ -203,7 +206,7 @@ export class NetworkScanComponent implements OnInit {
 
     // graph
     let graphHelper: GraphHelper = new GraphHelper()
-    let graphContent = graphHelper.getGraphContent(this.nmapNetworkScan, this.subNetwork)
+    let graphContent = graphHelper.getGraphContent(this.nmapNetworkScan, this.subNetwork, this.selectedStyle)
 
     this.networkGraph.setOption({
       series: {
@@ -214,4 +217,7 @@ export class NetworkScanComponent implements OnInit {
     // console.log(this.networkGraph.getOption()["series"])
   }
 
+  onChangeNodeColorStyle(event: any) {
+    this.setNetworkReport()
+  }
 }

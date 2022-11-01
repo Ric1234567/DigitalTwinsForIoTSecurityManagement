@@ -17,7 +17,7 @@ export default class GraphHelper {
     averageRtt: AverageRtt = { min: -1, max: -1 }
 
 
-    getGraphContent(nmaprun: any, subnetwork: any): GraphContent {
+    getGraphContent(nmaprun: any, subnetwork: any, nodeColorstyle: string): GraphContent {
         if (!Array.isArray(nmaprun.host)) {
             let tmpArray = []
             tmpArray.push(nmaprun.host)
@@ -38,10 +38,15 @@ export default class GraphHelper {
 
             let hostNameIp = hostIp + (host.hostnames?.hostname["@name"] ? '\n(' + host.hostnames?.hostname["@name"] + ')' : '')
 
+            let tmpNode: GraphNode
             // color / open ports
-            let nodeColor = GraphHelper.getNodeColorOnPorts(host)
+            if (nodeColorstyle === 'Port Count'){
+                let nodeColor = GraphHelper.getNodeColorOnPorts(host)
+                tmpNode = new GraphNode(hostNameIp, nodeColor)
+            } else {
+                tmpNode = new GraphNode(hostNameIp, 'FireBrick')
+            }
 
-            let tmpNode: GraphNode = new GraphNode(hostNameIp, nodeColor)
             // add if it does not exist already
             if (this.nodeList.filter(node => node.name === tmpNode.name)) {
                 this.nodeList.push(tmpNode)
@@ -55,7 +60,15 @@ export default class GraphHelper {
                 for (const subnetworkDevice of subnetwork) {
                     if (subnetworkDevice.host === hostIp) {
                         let subnetworkDeviceName = subnetworkDevice.name + '\n' + subnetworkDevice.hex
-                        let tmpNode: GraphNode = new GraphNode(subnetworkDeviceName, 'pink')
+
+                        let nodeColor: string
+                        if (nodeColorstyle === 'Port Count') {
+                            nodeColor = 'gray'
+                        } else {
+                            nodeColor = 'teal'
+                        }
+
+                        let tmpNode: GraphNode = new GraphNode(subnetworkDeviceName, nodeColor)
                         // add if it does not exist already
                         if (this.nodeList.filter(node => node.name === tmpNode.name)) {
                             this.nodeList.push(tmpNode)

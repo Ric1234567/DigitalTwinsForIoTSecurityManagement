@@ -16,27 +16,43 @@
   <mat-card>
     <mat-card-title>Legend</mat-card-title>
     <mat-card-content>
+      <mat-form-field appearance="fill" style="margin-right: 5px;">
+        <mat-label>Node Color Style</mat-label>
+        <mat-select [(value)]="selectedStyle" (selectionChange)="onChangeNodeColorStyle($event.value)">
+          <mat-option *ngFor="let style of topologyStyles" [value]="style">
+            {{style}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <div>
         <p style="font-weight: bold; margin-top: 5px;">Computer</p>
-        <div style="justify-content: left; display: flex;">
-          <div class="circle" style="background: gray;"></div>
-          <div style="padding: 4px 0px 0px 4px;">host was not port scanned</div>
+        <div *ngIf="selectedStyle==='Port Count'">
+          <div style="justify-content: left; display: flex;">
+            <div class="circle" style="background: gray;"></div>
+            <div style="padding: 4px 0px 0px 4px;">host was not port scanned</div>
+          </div>
+          <div style="justify-content: left; display: flex;">
+            <div class="circle" style="background: greenyellow;"></div>
+            <div style="padding: 4px 0px 0px 4px;">host with fewer than 3 open ports</div>
+          </div>
+          <div style="justify-content: left; display: flex;">
+            <div class="circle" style="background: yellow; "></div>
+            <div style="padding: 4px 0px 0px 4px;">host with 3 to 6 open ports</div>
+          </div>
+          <div style="justify-content: left; display: flex;">
+            <div class="circle"></div>
+            <div style="padding: 4px 0px 0px 4px;">host with more than 6 open ports</div>
+          </div>
         </div>
-        <div style="justify-content: left; display: flex;">
-          <div class="circle" style="background: greenyellow;"></div>
-          <div style="padding: 4px 0px 0px 4px;">host with fewer than 3 open ports</div>
-        </div>
-        <div style="justify-content: left; display: flex;">
-          <div class="circle" style="background: yellow; "></div>
-          <div style="padding: 4px 0px 0px 4px;">host with 3 to 6 open ports</div>
-        </div>
-        <div style="justify-content: left; display: flex;">
-          <div class="circle"></div>
-          <div style="padding: 4px 0px 0px 4px;">host with more than 6 open ports</div>
-        </div>
-        <div style="justify-content: left; display: flex;">
-          <div class="circle" style="background: pink;"></div>
-          <div style="padding: 4px 0px 0px 4px;">subnetwork node</div>
+        <div *ngIf="selectedStyle==='Network/Subnetwork'">
+          <div style="justify-content: left; display: flex;">
+            <div class="circle" style="background: FireBrick;"></div>
+            <div style="padding: 4px 0px 0px 4px;">ip node</div>
+          </div>
+          <div style="justify-content: left; display: flex;">
+            <div class="circle" style="background: teal;"></div>
+            <div style="padding: 4px 0px 0px 4px;">subnetwork node</div>
+          </div>
         </div>
       </div>
       <div>
