@@ -6,6 +6,7 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 
 import ProcessHandler
+from configurations.NetworkConfiguration import NetworkConfiguration
 from SubnetworkHandler import SubnetworkHandler
 import constants
 from DatabaseHandler import DatabaseHandler
@@ -185,6 +186,33 @@ def get_running_services():
 
     response = {"response": array}
     return Response(json.dumps(response), status=200, mimetype='application/json')
+
+
+@app.route('/network_configuration', methods=['GET', 'POST'])
+def get_configuration():
+    if request.method == 'GET':
+        with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'r') as file:
+            configuration_json = file.read()
+
+        return Response(configuration_json, status=200, mimetype='application/json')
+    elif request.method == 'POST':
+        with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'w') as file:
+            file.write(request.data.decode('utf-8'))
+
+        response = {"response": request.data.decode('utf-8')}
+        return Response(json.dumps(response), status=200, mimetype='application/json')
+    else:
+        response = {"response": request.data.decode('utf-8')}
+        return Response(json.dumps(response), status=405, mimetype='application/json')
+
+
+@app.route('/update_configuration', methods=['POST'])
+def post_configuration():
+    # soll modell
+    # todo save configuration to disk (use in analysis)
+    print(request.data)
+    return Response(json.dumps({}, default=lambda o: '<not serializable>'), status=200,
+                    mimetype='application/json')
 
 
 if __name__ == '__main__':

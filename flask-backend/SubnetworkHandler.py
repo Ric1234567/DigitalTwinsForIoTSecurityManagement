@@ -42,10 +42,12 @@ class SubnetworkHandler:
                 with open(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME_CONFIG, 'r') as file:
                     config_string = file.read()
 
+                config = self.configuration_from_yaml(config_string)
+
                 subnetwork = {
                     'host': ipv4_address,
                     'state': data_point,
-                    'config': config_string
+                    'config': config
                 }
                 all_subnetworks.append(subnetwork)
 
@@ -68,7 +70,7 @@ class SubnetworkHandler:
         if 'scans' in latest_entry:
             for scan in latest_entry['scans']:
                 connected_subnetwork_hex = list(scan['state'])
-                config_file = self.configuration_from_yaml(scan['config'])
+                config_file = scan['config']
 
                 for connected_device_hex in connected_subnetwork_hex:
                     tmp_dict = {

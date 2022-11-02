@@ -1,5 +1,7 @@
 FILE_OUTPUT_DIRECTORY = './output/'
 
+NETWORK_CONFIGURATION_FILE_NAME = 'configuration.json'
+
 ZIGBEE2MQTT_FILE_NAME = 'zigbee2mqtt_network_state.json'
 ZIGBEE2MQTT_FILE_NAME_CONFIG = 'zigbee2mqtt_config.json'
 ZIGBEE2MQTT_REMOTE_FILE_PATH = '/home/pi/IoT-Stack/data/zigbee2mqtt/state.json'
@@ -12,7 +14,7 @@ NMAP_XML_REPORT_FILE_NAME = 'nmap_xml_result.xml'
 NMAP_STANDARD_COMMAND_PREFIX = 'sudo nmap -oX - '  # space char at the end required
 NMAP_COMMAND_FULL_SCAN_SUFFIX = '-sS -T4 -F 192.168.178.* --traceroute'
 
-SSH_HOSTNAME = '192.168.178.51'  # todo dynamic ...?
+# SSH_HOSTNAME = '192.168.178.51'
 SSH_PORT = '22'
 SSH_USER = 'pi'
 SSH_PASSWORD = 'raspberry'

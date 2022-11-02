@@ -1,5 +1,5 @@
 export class Util {
-    async fetchFromBackend(method: string, route: string): Promise<string> {
+    async fetchFromBackend(method: string, route: string): Promise<any> {
         const response = await fetch('http://localhost:5000/' + route, {
             method: method,
             headers: {
