@@ -21,6 +21,25 @@ class SshHandler:
     def disconnect(self):
         self.ssh_client.close()
 
+    def read_file_content_via_sftp(self, file_path):
+        sftp = self.ssh_client.open_sftp()
+
+        with sftp.open(file_path, 'r') as remote_file:
+            content = remote_file.read()
+            remote_file.close()
+        sftp.close()
+
+        return content
+
+    def write_file_content_via_sftp(self, file_path, content):
+        sftp = self.ssh_client.open_sftp()
+
+        with sftp.open(file_path, 'w') as remote_file:
+            remote_file.write(content)
+            remote_file.close()
+        sftp.close()
+
+
     def download_file_via_sftp(self, local_path, remote_path):
         sftp = self.ssh_client.open_sftp()
         sftp.get(remote_path, local_path)
@@ -30,9 +49,7 @@ class SshHandler:
         sftp = self.ssh_client.open_sftp()
         sftp.get(remote_path, local_path)
 
-        remote_file = sftp.open(remote_path, 'w')
-        remote_file.write("")  # delete content (file needs user rights, they remain untouched)
-        remote_file.close()
-
+        with sftp.open(remote_path, 'w') as remote_file:
+            remote_file.write("")  # delete content (file needs user rights, they remain untouched)
+            remote_file.close()
         sftp.close()
-

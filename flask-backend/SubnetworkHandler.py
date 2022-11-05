@@ -1,20 +1,13 @@
-import io
 import time
 from multiprocessing import current_process
 
-import yaml
-
+import ConfigurationHelper
 import constants
 from DatabaseHandler import DatabaseHandler
-from SshHandler import SshHandler
+from ssh.SshHandler import SshHandler
 
 
 class SubnetworkHandler:
-
-    def configuration_from_yaml(self, data):
-        fp = io.StringIO(data)
-        return yaml.safe_load(fp)
-
     def scan_subnetwork(self, ssh_hosts):
         all_subnetworks = []
         for ssh_host in ssh_hosts:
@@ -42,7 +35,7 @@ class SubnetworkHandler:
                 with open(constants.FILE_OUTPUT_DIRECTORY + constants.ZIGBEE2MQTT_FILE_NAME_CONFIG, 'r') as file:
                     config_string = file.read()
 
-                config = self.configuration_from_yaml(config_string)
+                config = ConfigurationHelper.from_yaml_configuration(config_string)
 
                 subnetwork = {
                     'host': ipv4_address,

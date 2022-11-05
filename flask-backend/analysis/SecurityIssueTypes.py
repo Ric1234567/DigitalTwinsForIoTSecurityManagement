@@ -1,0 +1,1 @@
+ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME = 'zigbee2mqtt_permit_join'

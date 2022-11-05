@@ -4,11 +4,10 @@ import subprocess
 from multiprocessing import current_process
 
 from libnmap.parser import NmapParser
-import xmltodict
-
 import constants
 import JsonHandler
 from DatabaseHandler import DatabaseHandler
+from ssh.SshInformation import SshInformation
 
 
 class NmapHandler:
@@ -78,3 +77,11 @@ class NmapHandler:
                                         ssh_hosts.append({'host_address': host['address'],
                                                           'port': port})
         return ssh_hosts
+
+    def get_ssh_information(self, ssh_host):
+        for address in ssh_host['host_address']:
+            if address['@addrtype'] == 'ipv4':
+                ipv4_address = address['@addr']
+                port = ssh_host['port']['@portid']
+
+                return SshInformation(ipv4_address, port)

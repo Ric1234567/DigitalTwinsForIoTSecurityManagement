@@ -4,13 +4,11 @@ import string
 import time
 from multiprocessing import active_children, current_process, Process
 
-from flask_pymongo import MongoClient
-
 from SubnetworkHandler import SubnetworkHandler
 import constants
 from DatabaseHandler import DatabaseHandler
 from NmapHandler import NmapHandler
-from SshHandler import SshHandler
+from ssh.SshHandler import SshHandler
 
 process_dict = {}
 

@@ -1,6 +1,6 @@
 import constants
 from DatabaseHandler import DatabaseHandler
-from Recommendation import Recommendation
+from analysis.Zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
 
 
 class HostAnalyser:
@@ -9,8 +9,19 @@ class HostAnalyser:
         self.configuration = should_configuration
         self.ip = ip
 
+    def analyse(self):
+        security_issues = []
+        zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
+        if zigbee2mqtt_issues is not None:
+            security_issues.append(zigbee2mqtt_issues)
+        # todo here other analysis
+
+        return security_issues
+
     def analyse_zigbee2mqtt(self):
         print('Analysis Zigbee2Mqtt')
+
+        # get from database
         database_handler = DatabaseHandler(constants.MONGO_URI)
         entry = database_handler.get_latest_zigbee2mqtt_entry_of_host(self.ip)
         host_scan = None
@@ -18,16 +29,11 @@ class HostAnalyser:
             if scan['host'] == self.ip:
                 host_scan = scan
 
-        # todo problem definition with id and method to fix it.....
         # start analysis
-        if host_scan['config']['permit_join'] is not self.configuration['zigbee_2_mqtt']['permit_join']:
-            return Recommendation(constants.ZIGBEE2MQTT, 'The permit_join flag in host ' + self.ip +
-                                  ' is not equal to the definition in the should_configuration. ' +
-                                  '(host permit_join=' + str(host_scan['config']['permit_join']) +
-                                  ', should_configuration permit_join=' +
-                                  str(self.configuration['zigbee_2_mqtt']['permit_join']) + ')')
-        else:
-            return None
+        zigbee2mqtt_analyser = Zigbee2MqttAnalyser(self.configuration['zigbee_2_mqtt'])
+        security_issue_permit_join = zigbee2mqtt_analyser.compare_permit_join_flag(self.ip, host_scan)
+
+        return security_issue_permit_join
 
     def analyse_mosquitto(self):
         # todo topic access etc

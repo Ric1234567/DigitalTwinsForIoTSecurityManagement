@@ -15,7 +15,7 @@ NMAP_STANDARD_COMMAND_PREFIX = 'sudo nmap -oX - '  # space char at the end requi
 NMAP_COMMAND_FULL_SCAN_SUFFIX = '-sS -T4 -F 192.168.178.* --traceroute'
 
 # SSH_HOSTNAME = '192.168.178.51'
-SSH_PORT = '22'
+# SSH_PORT = '22'
 SSH_USER = 'pi'
 SSH_PASSWORD = 'raspberry'
 

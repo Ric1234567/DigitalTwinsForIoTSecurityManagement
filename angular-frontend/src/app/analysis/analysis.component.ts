@@ -10,7 +10,7 @@ export class AnalysisComponent implements OnInit {
 
   loading: boolean = false
 
-  isRefreshing: boolean = false
+  isRefreshing: boolean = true
   refreshIntervalId: any
 
   analysisResult: any = []
@@ -33,13 +33,16 @@ export class AnalysisComponent implements OnInit {
   }
 
   private startRefreshInterval() {
-    this.isRefreshing = true
-    console.log('auto-refresh started');
-
-    this.refreshIntervalId = setInterval(() => {
-      console.log("todo");//todo remove
-
-    }, 3000);
+    if(!this.isRefreshing) {
+      this.isRefreshing = true
+      console.log('auto-refresh started');
+  
+      this.refreshIntervalId = setInterval(() => {
+        console.log('refresh');
+        
+        this.getAnalysisResult()
+      }, 3000);
+    }
   }
 
   async getAnalysisResult() {
@@ -53,5 +56,12 @@ export class AnalysisComponent implements OnInit {
     this.loading = false
 
     this.analysisResult = response
+  }
+
+  async onClickFixHost(issue: any) {
+    console.log(issue);
+    
+    let util = new Util()
+    let response = await util.fetchFromBackend('GET', 'fix/' + issue.host_ip + "/" + issue.issue_type)
   }
 }

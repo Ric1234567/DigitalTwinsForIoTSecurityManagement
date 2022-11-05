@@ -1,5 +1,6 @@
 import json
 
+from ComplexJsonEncoder import ComplexJsonEncoder
 from configurations.Zigbee2MqttConfiguration import Zigbee2MqttConfiguration
 
 
@@ -11,14 +12,8 @@ class NetworkConfiguration:
         return dict(zigbee_2_mqtt=self.zigbee_2_mqtt)
 
     def to_json(self):
-        return json.dumps(self.repr_json(), cls=ComplexEncoder)
+        return json.dumps(self.repr_json(), cls=ComplexJsonEncoder)
 
 
-class ComplexEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, 'repr_json'):
-            return obj.repr_json()
-        else:
-            return json.JSONEncoder.default(self, obj)
 
 
