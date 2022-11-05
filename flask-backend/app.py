@@ -5,6 +5,7 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
+from HostAnalyser import HostAnalyser
 import ProcessHandler
 from configurations.NetworkConfiguration import NetworkConfiguration
 from SubnetworkHandler import SubnetworkHandler
@@ -206,13 +207,24 @@ def get_configuration():
         return Response(json.dumps(response), status=405, mimetype='application/json')
 
 
-@app.route('/update_configuration', methods=['POST'])
-def post_configuration():
-    # soll modell
-    # todo save configuration to disk (use in analysis)
-    print(request.data)
-    return Response(json.dumps({}, default=lambda o: '<not serializable>'), status=200,
-                    mimetype='application/json')
+@app.route('/analysis/<host_ip>', methods=['GET'])
+def execute_analysis(host_ip):
+    print('Starting analysis for host ' + host_ip)
+
+    with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'r') as file:
+        configuration_json = file.read()
+        should_configuration = json.loads(configuration_json)
+
+    host_analyser = HostAnalyser(should_configuration, host_ip)
+    result_zigbee2mqtt = host_analyser.analyse_zigbee2mqtt()
+
+    # todo other analysis
+
+    results = []
+    if result_zigbee2mqtt is not None:
+        results.append(result_zigbee2mqtt)
+
+    return Response(json.dumps([ob.__dict__ for ob in results]), status=200, mimetype='application/json')
 
 
 if __name__ == '__main__':

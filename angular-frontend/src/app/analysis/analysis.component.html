@@ -1,17 +1,12 @@
 <h2>Analysis</h2>
 
-<h3>Optimizations</h3>
+<mat-card>
+    <mat-checkbox [(ngModel)]="isRefreshing" (change)="onChangeAutoRefresh($event)">Auto-Refresh</mat-checkbox>
 
-<mat-list>
-    <mat-list-item role="listitem">Empfehlung 1</mat-list-item>
-    <mat-list-item role="listitem">
-        <div mat-line style="font-weight: bold; margin-right: 5px;">Zigbee2Mqtt</div>
-        <div mat-line>Empfehlung 2 klsjf sklfjsdk lfjlsdjf sdklfjsdk fsfdsjkfa ödsföldsfj dsjflök 
-        jalköjfdsölak fjklsjf sklfjsdk lfjlsdjf sdklfjsdk fsfdsjkfa ödsföldsfj dsjflök jalköjfdsölak fj</div>
-    </mat-list-item>
-    <mat-list-item role="listitem">
-        <div mat-line style="font-weight: bold; margin-right: 5px;">Mosquitto</div>
-        <div mat-line>Empfehlung 2 klsjf sklfjsdk lfjlsdjf sdklfjsdk fsfdsjkfa ödsföldsfj dsjflök 
-        jalköjfdsölak fjklsjf sklfjsdk lfjlsdjf sdklfjsdk fsfdsjkfa ödsföldsfj dsjflök jalköjfdsölak fj</div>
-    </mat-list-item>
-  </mat-list>
+    <mat-list [(ngModel)]="analysisResult" name="fieldName" ngDefaultControl>
+        <mat-list-item role="listitem" *ngFor="let item of analysisResult">
+            <div mat-line style="font-weight: bold; margin-right: 5px;">{{item.title}}</div>
+            <div mat-line>{{item.description}}</div>
+        </mat-list-item>
+    </mat-list>
+</mat-card>

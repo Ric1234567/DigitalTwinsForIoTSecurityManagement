@@ -73,6 +73,8 @@ def endless_full_network_scan(mongo_uri: string, nmap_command: string, delay: nu
         subnetwork_handler = SubnetworkHandler()
         subnetwork_handler.scan_subnetwork(ssh_hosts)
 
+        # todo do other scanning things (get zigbee2mqtt config etc.)
+
         print(current_process().name + " sleeping for " + str(delay) + " seconds!")
         time.sleep(delay)
 
