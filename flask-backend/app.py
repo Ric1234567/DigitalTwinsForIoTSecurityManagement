@@ -5,7 +5,7 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
-from services import NmapService, FullScanService, OsqueryService, Zigbee2MqttService
+from services import NmapService, FullScanService, OsqueryService, Zigbee2MqttService, MosquittoService
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
 from analysis import SecurityIssueTypes
@@ -151,15 +151,29 @@ def start_service(process_name):
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == constants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
+            delay = request.args.get('delay')
+            if not delay:
+                raise Exception('Missing parameter! Given: delay=' + str(delay))
+
+            service_process = ServiceHandler.start_service(
+                process_name,
+                Zigbee2MqttService.start_zigbee2mqtt_network_state_service,
+                (int(delay),))
+
+            response_json = {"response": 'Success! Started process ' + service_process.name}
+            return Response(json.dumps(response_json), status=200, mimetype='application/json')
+        elif process_name == constants.PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME:
             ip_address = request.args.get('ip')
-            delay = int(request.args.get('delay'))
-            if (not ip_address) or (not delay):
-                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', delay=' + str(delay))
+            ssh_port = request.args.get('ssh_port')
+            delay = request.args.get('delay')
+            if (not ip_address) or (not ssh_port) or (not delay):
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
+                                ', delay=' + str(delay))
 
             service_process = ServiceHandler.start_service(
                 process_name + constants.PROCESS_NAME_SPLIT_CHAR + ip_address,
-                Zigbee2MqttService.start_zigbee2mqtt_network_state_service,
-                (ip_address, delay,))
+                MosquittoService.start_mosquitto_service,
+                (ip_address, int(ssh_port), int(delay),))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
@@ -173,7 +187,7 @@ def start_service(process_name):
 
 @app.route('/available_services', methods=['GET'])
 def get_available_services():
-    response = {"response": constants.PROCESS_LIST}
+    response = {"response": constants.SERVICE_LIST}
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
@@ -183,11 +197,18 @@ def get_running_services():
 
     array = []
     for service in result:
-        process_name = service.name.split(constants.PROCESS_NAME_SPLIT_CHAR)
+        if constants.PROCESS_NAME_SPLIT_CHAR in service.name:
+            split_name = service.name.split(constants.PROCESS_NAME_SPLIT_CHAR)
+            name = split_name[0]
+            info = split_name[1]
+        else:
+            name = service.name
+            info = '-'
+
         array.append({
             'pid': service.pid,
-            'name': process_name[0],
-            'additional_information': process_name[1],
+            'name': name,
+            'additional_information': info,
             'isalive': service.is_alive()
         })
 

@@ -7,6 +7,9 @@ ZIGBEE2MQTT_FILE_NAME_CONFIG = 'zigbee2mqtt_config.json'
 ZIGBEE2MQTT_REMOTE_FILE_PATH = '/home/pi/IoT-Stack/data/zigbee2mqtt/state.json'
 ZIGBEE2MQTT_REMOTE_FILE_PATH_CONFIG = '/home/pi/IoT-Stack/data/zigbee2mqtt/configuration.yaml'
 
+MOSQUITTO_REMOTE_FILE_PATH = '/home/pi/IoT-Stack/data/mosquitto/config/mosquitto.conf'
+MOSQUITTO_FILE_NAME_CONFIG = 'mosquitto.conf'
+
 OSQUERY_DAEMON_LOCAL_OUTPUT_LOG_FILE_NAME = 'osquery_daemon_output.log'
 OSQUERY_REMOTE_LOG_FILE_PATH = '/home/pi/osquery/logs/osqueryd.results.log'  # check permission of file; needs to be user 'pi'
 
@@ -24,16 +27,19 @@ PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME = 'endless_full_network_scan'
 PROCESS_ENDLESS_NMAP_SCAN_NAME = 'endless_nmap_scan'
 PROCESS_ENDLESS_OSQUERY_SCAN_NAME = 'endless_osquery_scan'
 PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME = 'endless_zigbee2mqtt_state'
-PROCESS_LIST = [PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME,
+PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME = 'endless_mosquitto_scan'
+SERVICE_LIST = [PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME,
                 PROCESS_ENDLESS_NMAP_SCAN_NAME,
                 PROCESS_ENDLESS_OSQUERY_SCAN_NAME,
-                PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME]
+                PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME,
+                PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME]
 
 # collection names
 OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS = 'listening_ports'
 OSQUERY_AND_COLLECTION_NAME_PROCESSES = 'processes'
 COLLECTION_NAME_NMAPRUN = 'nmaprun'
 COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE = 'zigbee2mqtt_network_state'
+COLLECTION_NAME_MOSQUITTO_CONFIG = 'mosquitto'
 
 MONGO_URI = 'mongodb://root:root@localhost:27017/pidb?authSource=admin'
 PI_DATABASE_NAME = 'pidb'

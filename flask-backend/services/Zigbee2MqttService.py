@@ -8,10 +8,10 @@ from handler.NmapHandler import NmapHandler
 from handler.SubnetworkHandler import SubnetworkHandler
 
 
-def start_zigbee2mqtt_network_state_service(ip_address: string, delay: int):
+def start_zigbee2mqtt_network_state_service(delay: int):
     while True:
         print(
-            "Get zigbee2mqtt network state " + " (" + ip_address + "," + current_process().name + "," + str(
+            "Get zigbee2mqtt network state " + " (" + current_process().name + "," + str(
                 delay) + ")")
 
         # get from database (no new nmap scan)

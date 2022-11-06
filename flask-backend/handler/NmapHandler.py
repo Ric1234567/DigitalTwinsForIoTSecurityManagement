@@ -7,6 +7,7 @@ from libnmap.parser import NmapParser
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.ssh.SshInformation import SshInformation
+from util import JsonHelper
 
 
 class NmapHandler:
@@ -37,7 +38,7 @@ class NmapHandler:
 
     def get_report_as_json(self, command_suffix):
         nmap_xml_result = self.scan_network(command_suffix)
-        return JsonHandler.convert_xml_to_json(nmap_xml_result)
+        return JsonHelper.convert_xml_to_json(nmap_xml_result)
 
     def save_report(self, nmap_xml_result):
         with open(constants.FILE_OUTPUT_DIRECTORY + constants.NMAP_XML_REPORT_FILE_NAME, 'w') as file:
@@ -49,7 +50,7 @@ class NmapHandler:
 
     def load_report_as_json(self):
         report = self.load_report()
-        return JsonHandler.convert_xml_to_json(report)
+        return JsonHelper.convert_xml_to_json(report)
 
     def custom_network_scan(self, nmap_command: string):
         nmap_report_json = self.get_report_as_json(nmap_command)
