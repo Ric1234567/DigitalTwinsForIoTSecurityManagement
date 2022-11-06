@@ -5,16 +5,17 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
+from services import NmapService, FullScanService, OsqueryService, Zigbee2MqttService
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
 from analysis import SecurityIssueTypes
 from analysis.HostAnalyser import HostAnalyser
-from handler import ProcessHandler
+from handler import ServiceHandler
 from handler.SubnetworkHandler import SubnetworkHandler
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
-from analysis.Zigbee2Mqtt.Zigbee2MqttIssueSolver import Zigbee2MqttIssueSolver
+from analysis.zigbee2Mqtt.Zigbee2MqttIssueSolver import Zigbee2MqttIssueSolver
 
 # configuration
 DEBUG = True
@@ -27,8 +28,6 @@ mongo = PyMongo(app)
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
-
-#security_issues = []
 
 
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
@@ -100,7 +99,7 @@ def get_last_network_report():
 @app.route('/stop/<process_pid>', methods=['GET'])
 def stop_service(process_pid):
     try:
-        p = ProcessHandler.process_dict.pop(int(process_pid))
+        p = ServiceHandler.process_dict.pop(int(process_pid))
         p.terminate()
         print("terminated process " + p.name)
 
@@ -124,28 +123,30 @@ def start_service(process_name):
                 raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
 
             if process_name == constants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
-                service_process = ProcessHandler.start_process(
+                service_process = ServiceHandler.start_service(
                     process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
-                    ProcessHandler.endless_nmap_scan,
+                    NmapService.start_nmap_scan_service,
                     (constants.MONGO_URI, nmap_command, delay,))
             else:  # full scan
-                service_process = ProcessHandler.start_process(
+                service_process = ServiceHandler.start_service(
                     process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
-                    ProcessHandler.endless_full_network_scan,
+                    FullScanService.start_full_network_scan_service,
                     (constants.MONGO_URI, nmap_command, delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == constants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
             ip_address = request.args.get('ip')
-            delay = int(request.args.get('delay'))
-            if (not ip_address) or (not delay):
-                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', delay=' + str(delay))
+            ssh_port = request.args.get('ssh_port')
+            delay = request.args.get('delay')
+            if (not ip_address) or (not ssh_port) or (not delay):
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) +
+                                ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
-            service_process = ProcessHandler.start_process(
+            service_process = ServiceHandler.start_service(
                 process_name + constants.PROCESS_NAME_SPLIT_CHAR + ip_address,
-                ProcessHandler.endless_osquery_scan,
-                (ip_address, delay,))
+                OsqueryService.start_osquery_scan_service,
+                (ip_address, int(ssh_port), int(delay),))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
@@ -155,9 +156,9 @@ def start_service(process_name):
             if (not ip_address) or (not delay):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', delay=' + str(delay))
 
-            service_process = ProcessHandler.start_process(
+            service_process = ServiceHandler.start_service(
                 process_name + constants.PROCESS_NAME_SPLIT_CHAR + ip_address,
-                ProcessHandler.endless_get_zigbee2mqtt_network_state,
+                Zigbee2MqttService.start_zigbee2mqtt_network_state_service,
                 (ip_address, delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
@@ -178,7 +179,7 @@ def get_available_services():
 
 @app.route('/running_services', methods=['GET'])
 def get_running_services():
-    result = ProcessHandler.get_processes()
+    result = ServiceHandler.get_processes()
 
     array = []
     for service in result:
@@ -213,15 +214,13 @@ def get_configuration():
 
 
 @app.route('/analysis/<host_ip>', methods=['GET'])
-def execute_analysis(host_ip):
+def execute_analysis(host_ip):  # todo dynamic host finding
     print('Starting analysis for host ' + host_ip)
 
     should_configuration = ConfigurationHelper.read_should_configuration()
 
     host_analyser = HostAnalyser(should_configuration, host_ip)
     security_issues_host = host_analyser.analyse()
-
-    # todo other analysis
 
     security_issues_tmp = []
     # add if not already found
@@ -245,11 +244,6 @@ def execute_fix(host_ip, issue_type):
         solver = Zigbee2MqttIssueSolver(should_configuration['zigbee_2_mqtt'])
         result = solver.fix_permit_join(host_ip)
 
-        # remove issues from list
-        #for security_issue in security_issues:
-         #   if security_issue.host_ip == host_ip and security_issue.issue_type == issue_type:
-          #      security_issues.pop(security_issues.index(security_issue))
-
     response = {"response": result}
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
@@ -258,6 +252,6 @@ if __name__ == '__main__':
     app.run(use_reloader=False)
 
     # wait for processes to complete
-    processes = ProcessHandler.get_processes()
+    processes = ServiceHandler.get_processes()
     for process in processes:
         process.join()

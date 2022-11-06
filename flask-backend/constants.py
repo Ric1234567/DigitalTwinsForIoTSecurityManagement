@@ -38,4 +38,4 @@ COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE = 'zigbee2mqtt_network_state'
 MONGO_URI = 'mongodb://root:root@localhost:27017/pidb?authSource=admin'
 PI_DATABASE_NAME = 'pidb'
 
-ZIGBEE2MQTT = 'Zigbee2Mqtt'
+ZIGBEE2MQTT = 'zigbee2Mqtt'

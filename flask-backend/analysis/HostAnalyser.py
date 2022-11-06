@@ -1,6 +1,7 @@
 import constants
+from analysis.mosquitto.MosquittoAnalyser import MosquittoAnalyser
 from handler.DatabaseHandler import DatabaseHandler
-from analysis.Zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
+from analysis.zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
 
 
 class HostAnalyser:
@@ -11,15 +12,21 @@ class HostAnalyser:
 
     def analyse(self):
         security_issues = []
+
         zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
         if zigbee2mqtt_issues is not None:
             security_issues.append(zigbee2mqtt_issues)
+
+        mosquitto_issues = self.analyse_mosquitto()
+        if mosquitto_issues is not None:
+            security_issues.append(mosquitto_issues)
+
         # todo here other analysis
 
         return security_issues
 
     def analyse_zigbee2mqtt(self):
-        print('Analysis Zigbee2Mqtt')
+        print('Analysis zigbee2Mqtt')
 
         # get from database
         database_handler = DatabaseHandler(constants.MONGO_URI)
@@ -36,8 +43,13 @@ class HostAnalyser:
         return security_issue_permit_join
 
     def analyse_mosquitto(self):
+        print('Analysis Mosquitto')
+
+        mosquitto_analyser = MosquittoAnalyser(self.configuration['mosquitto'])
+
+
         # todo topic access etc
-        print()
+        return None
 
     def analyse_osquery_information(self):
         print()
