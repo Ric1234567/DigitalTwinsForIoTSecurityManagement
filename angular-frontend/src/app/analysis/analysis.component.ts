@@ -10,7 +10,7 @@ export class AnalysisComponent implements OnInit {
 
   loading: boolean = false
 
-  isRefreshing: boolean = true
+  isRefreshing: boolean = false
   refreshIntervalId: any
 
   analysisResult: any = []
@@ -63,5 +63,7 @@ export class AnalysisComponent implements OnInit {
     
     let util = new Util()
     let response = await util.fetchFromBackend('GET', 'fix/' + issue.host_ip + "/" + issue.issue_type)
+    
+    alert(response.response)
   }
 }

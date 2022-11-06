@@ -1,5 +1,5 @@
 import constants
-from DatabaseHandler import DatabaseHandler
+from handler.DatabaseHandler import DatabaseHandler
 from analysis.Zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
 
 

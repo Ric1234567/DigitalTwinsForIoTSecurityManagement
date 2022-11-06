@@ -5,15 +5,15 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
-import ConfigurationHelper
-from ComplexJsonEncoder import ComplexJsonEncoder
+from util import ConfigurationHelper
+from util.ComplexJsonEncoder import ComplexJsonEncoder
 from analysis import SecurityIssueTypes
 from analysis.HostAnalyser import HostAnalyser
-import ProcessHandler
-from SubnetworkHandler import SubnetworkHandler
+from handler import ProcessHandler
+from handler.SubnetworkHandler import SubnetworkHandler
 import constants
-from DatabaseHandler import DatabaseHandler
-from NmapHandler import NmapHandler
+from handler.DatabaseHandler import DatabaseHandler
+from handler.NmapHandler import NmapHandler
 from analysis.Zigbee2Mqtt.Zigbee2MqttIssueSolver import Zigbee2MqttIssueSolver
 
 # configuration
@@ -28,8 +28,7 @@ mongo = PyMongo(app)
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-
-security_issues = []  # todo ok here?
+#security_issues = []
 
 
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
@@ -224,13 +223,15 @@ def execute_analysis(host_ip):
 
     # todo other analysis
 
+    security_issues_tmp = []
     # add if not already found
     if security_issues_host is not None and security_issues_host:
-        if not any((si.host_ip == host_ip and si.issue_type == SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME)
-               for si in security_issues):
-            security_issues.extend(security_issues_host)
+        if not any((security_issue.host_ip == host_ip and
+                    security_issue.issue_type == SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME)
+                   for security_issue in security_issues_tmp):
+            security_issues_tmp.extend(security_issues_host)
 
-    return Response(json.dumps([ob.__dict__ for ob in security_issues], cls=ComplexJsonEncoder), status=200,
+    return Response(json.dumps([ob.__dict__ for ob in security_issues_tmp], cls=ComplexJsonEncoder), status=200,
                     mimetype='application/json')
 
 
@@ -245,9 +246,9 @@ def execute_fix(host_ip, issue_type):
         result = solver.fix_permit_join(host_ip)
 
         # remove issues from list
-        for security_issue in security_issues:
-            if security_issue.host_ip == host_ip and security_issue.issue_type == issue_type:
-                security_issues.pop(security_issues.index(security_issue))
+        #for security_issue in security_issues:
+         #   if security_issue.host_ip == host_ip and security_issue.issue_type == issue_type:
+          #      security_issues.pop(security_issues.index(security_issue))
 
     response = {"response": result}
     return Response(json.dumps(response), status=200, mimetype='application/json')

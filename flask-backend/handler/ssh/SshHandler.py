@@ -39,7 +39,6 @@ class SshHandler:
             remote_file.close()
         sftp.close()
 
-
     def download_file_via_sftp(self, local_path, remote_path):
         sftp = self.ssh_client.open_sftp()
         sftp.get(remote_path, local_path)

@@ -1,11 +1,11 @@
 import string
 
-import ConfigurationHelper
+from util import ConfigurationHelper
 import constants
-from DatabaseHandler import DatabaseHandler
-from NmapHandler import NmapHandler
+from handler.DatabaseHandler import DatabaseHandler
+from handler.NmapHandler import NmapHandler
 from analysis import SecurityIssueTypes
-from ssh.SshHandler import SshHandler
+from handler.ssh.SshHandler import SshHandler
 
 
 class Zigbee2MqttIssueSolver:
@@ -17,9 +17,9 @@ class Zigbee2MqttIssueSolver:
         database_handler = DatabaseHandler(constants.MONGO_URI)
         nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
+        # get ssh information of the host
         nmap_handler = NmapHandler()
         ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
-
         ssh_information = None
         for ssh_host in ssh_hosts:
             for address in ssh_host['host_address']:

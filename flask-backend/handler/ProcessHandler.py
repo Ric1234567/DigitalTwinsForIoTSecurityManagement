@@ -4,11 +4,11 @@ import string
 import time
 from multiprocessing import active_children, current_process, Process
 
-from SubnetworkHandler import SubnetworkHandler
+from handler.SubnetworkHandler import SubnetworkHandler
 import constants
-from DatabaseHandler import DatabaseHandler
-from NmapHandler import NmapHandler
-from ssh.SshHandler import SshHandler
+from handler.DatabaseHandler import DatabaseHandler
+from handler.NmapHandler import NmapHandler
+from handler.ssh.SshHandler import SshHandler
 
 process_dict = {}
 

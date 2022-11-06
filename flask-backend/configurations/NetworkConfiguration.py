@@ -1,6 +1,6 @@
 import json
 
-from ComplexJsonEncoder import ComplexJsonEncoder
+from util.ComplexJsonEncoder import ComplexJsonEncoder
 from configurations.Zigbee2MqttConfiguration import Zigbee2MqttConfiguration
 
 

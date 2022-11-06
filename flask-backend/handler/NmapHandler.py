@@ -5,9 +5,8 @@ from multiprocessing import current_process
 
 from libnmap.parser import NmapParser
 import constants
-import JsonHandler
-from DatabaseHandler import DatabaseHandler
-from ssh.SshInformation import SshInformation
+from handler.DatabaseHandler import DatabaseHandler
+from handler.ssh.SshInformation import SshInformation
 
 
 class NmapHandler:

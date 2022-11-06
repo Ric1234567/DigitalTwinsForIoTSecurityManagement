@@ -20,7 +20,7 @@ import { NetworkScanComponent } from './network-scan/network-scan.component';
 import { AnalysisComponent } from './analysis/analysis.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
-import { HomeComponent } from './home/home.component'
+import { ServicesComponent } from './services/services.component'
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { ConfigurationComponent } from './configuration/configuration.component';
@@ -32,7 +32,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     AppComponent,
     NetworkScanComponent,
     AnalysisComponent,
-    HomeComponent,
+    ServicesComponent,
     ConfigurationComponent
   ],
   imports: [

@@ -4,10 +4,10 @@ import { Util } from '../util';
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  templateUrl: './services.component.html',
+  styleUrls: ['./services.component.css']
 })
-export class HomeComponent implements OnInit {
+export class ServicesComponent implements OnInit {
 
   availableServices: any = []
   selectedStartService: string = ''

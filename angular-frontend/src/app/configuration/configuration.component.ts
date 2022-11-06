@@ -21,6 +21,8 @@ export class ConfigurationComponent implements OnInit {
     // send changes to server
     let util = new Util
     let response = await util.postToBackend('network_configuration', this.configuration)
+
+    alert('Success!')
   }
 
   async getConfiguration() {

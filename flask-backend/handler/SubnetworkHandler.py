@@ -1,10 +1,10 @@
 import time
 from multiprocessing import current_process
 
-import ConfigurationHelper
+from util import ConfigurationHelper
 import constants
-from DatabaseHandler import DatabaseHandler
-from ssh.SshHandler import SshHandler
+from handler.DatabaseHandler import DatabaseHandler
+from handler.ssh.SshHandler import SshHandler
 
 
 class SubnetworkHandler:
