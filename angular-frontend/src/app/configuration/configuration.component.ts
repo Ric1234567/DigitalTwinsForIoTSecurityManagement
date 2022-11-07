@@ -27,8 +27,9 @@ export class ConfigurationComponent implements OnInit {
 
   async getConfiguration() {
     let util = new Util
-    let configurationResponse = await util.fetchFromBackend('GET', 'network_configuration') as NetworkConfiguration
-    
-    this.configuration = configurationResponse
+    let configurationResponse = await util.fetchFromBackend('GET', 'network_configuration')
+
+    this.configuration = configurationResponse as NetworkConfiguration
+    console.log(configurationResponse);
   }
 }
