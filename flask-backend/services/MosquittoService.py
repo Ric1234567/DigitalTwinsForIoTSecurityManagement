@@ -10,15 +10,19 @@ from handler.ssh.SshHandler import SshHandler
 def start_mosquitto_service(ip_address: string, ssh_port: int, delay: int):
     while True:
         print("Get mosquitto configuration data (" + ip_address + "," + current_process().name + "," + str(delay) + ")")
-        download_mosquitto_config_file(ip_address, ssh_port)
+        download_mosquitto_config_files(ip_address, ssh_port)
 
         with open(constants.FILE_OUTPUT_DIRECTORY + constants.MOSQUITTO_FILE_NAME_CONFIG, 'r') as file:
             config_content = file.read()
 
+        with open(constants.FILE_OUTPUT_DIRECTORY + constants.MOSQUITTO_FILE_NAME_ACL, 'r') as file:
+            acl_content = file.read()
+
         data = {
             'unixTime': round(time.time()),
             'host': ip_address,
-            'config': config_content
+            'config': config_content,
+            'acl': acl_content
         }
 
         # write to database
@@ -30,9 +34,15 @@ def start_mosquitto_service(ip_address: string, ssh_port: int, delay: int):
         time.sleep(delay)
 
 
-def download_mosquitto_config_file(ip: string, ssh_port: int):
+def download_mosquitto_config_files(ip: string, ssh_port: int):
     ssh_handler = SshHandler(ip, ssh_port, constants.SSH_USER, constants.SSH_PASSWORD)
     ssh_handler.connect()
+    # download config file
     ssh_handler.download_file_via_sftp(constants.FILE_OUTPUT_DIRECTORY + constants.MOSQUITTO_FILE_NAME_CONFIG,
-                                       constants.MOSQUITTO_REMOTE_FILE_PATH)
+                                       constants.MOSQUITTO_REMOTE_CONFIG_DIR_PATH +
+                                       constants.MOSQUITTO_REMOTE_CONFIG_FILE_NAME)
+    # download acl file
+    ssh_handler.download_file_via_sftp(constants.FILE_OUTPUT_DIRECTORY + constants.MOSQUITTO_FILE_NAME_ACL,
+                                       constants.MOSQUITTO_REMOTE_CONFIG_DIR_PATH +
+                                       constants.MOSQUITTO_REMOTE_ACL_FILE_NAME)
     ssh_handler.disconnect()

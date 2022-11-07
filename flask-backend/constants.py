@@ -7,8 +7,11 @@ ZIGBEE2MQTT_FILE_NAME_CONFIG = 'zigbee2mqtt_config.json'
 ZIGBEE2MQTT_REMOTE_FILE_PATH = '/home/pi/IoT-Stack/data/zigbee2mqtt/state.json'
 ZIGBEE2MQTT_REMOTE_FILE_PATH_CONFIG = '/home/pi/IoT-Stack/data/zigbee2mqtt/configuration.yaml'
 
-MOSQUITTO_REMOTE_FILE_PATH = '/home/pi/IoT-Stack/data/mosquitto/config/mosquitto.conf'
+MOSQUITTO_REMOTE_CONFIG_FILE_NAME = 'mosquitto.conf'
+MOSQUITTO_REMOTE_ACL_FILE_NAME = 'acl.acl'
+MOSQUITTO_REMOTE_CONFIG_DIR_PATH = '/home/pi/IoT-Stack/data/mosquitto/config/'
 MOSQUITTO_FILE_NAME_CONFIG = 'mosquitto.conf'
+MOSQUITTO_FILE_NAME_ACL = 'mosquitto_acl.acl'
 
 OSQUERY_DAEMON_LOCAL_OUTPUT_LOG_FILE_NAME = 'osquery_daemon_output.log'
 OSQUERY_REMOTE_LOG_FILE_PATH = '/home/pi/osquery/logs/osqueryd.results.log'  # check permission of file; needs to be user 'pi'
