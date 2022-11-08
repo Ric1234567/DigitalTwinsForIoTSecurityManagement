@@ -1,14 +1,1 @@
-# This affects access control for clients with no username.
-topic readwrite #
-topic $SYS/#
-
-# This only affects clients with username 'roger'.
-#user roger
-#topic foo/bar
-
-#user admin
-#topic readwrite cameras/#
-
-# This affects all clients.
-#pattern write $SYS/broker/connection/%c/state
 

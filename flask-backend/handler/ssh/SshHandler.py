@@ -52,3 +52,8 @@ class SshHandler:
             remote_file.write("")  # delete content (file needs user rights, they remain untouched)
             remote_file.close()
         sftp.close()
+
+    def upload_file_via_sftp(self, local_path, remote_path):
+        sftp = self.ssh_client.open_sftp()
+        sftp.put(local_path, remote_path)
+        sftp.close()
