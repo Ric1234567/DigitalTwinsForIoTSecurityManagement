@@ -18,7 +18,7 @@ export class AnalysisComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.startRefreshInterval()
+    //this.startRefreshInterval()
     this.getAnalysisResult()
   }
 

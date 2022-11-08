@@ -1,1 +1,1 @@
-{"zigbee_2_mqtt":{"permit_join":false},"mosquitto":{"acl":"topic test1\ntopic test2/#"}}
+{"zigbee_2_mqtt":{"permit_join":false},"mosquitto":{"acl":"topic readwrite #\ntopic $SYS/#"}}

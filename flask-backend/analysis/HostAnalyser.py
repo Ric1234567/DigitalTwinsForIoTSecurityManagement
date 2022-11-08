@@ -9,6 +9,7 @@ class HostAnalyser:
     def __init__(self, should_configuration, ip):
         self.configuration = should_configuration
         self.ip = ip
+        self.database_handler = DatabaseHandler(constants.MONGO_URI)
 
     def analyse(self):
         security_issues = []
@@ -29,8 +30,9 @@ class HostAnalyser:
         print('Analysis zigbee2Mqtt')
 
         # get from database
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        entry = database_handler.get_latest_zigbee2mqtt_entry_of_host(self.ip)
+        entry = self.database_handler.get_latest_zigbee2mqtt_entry_of_host(self.ip)
+
+        # filter host
         host_scan = None
         for scan in entry['scans']:
             if scan['host'] == self.ip:
@@ -45,11 +47,15 @@ class HostAnalyser:
     def analyse_mosquitto(self):
         print('Analysis Mosquitto')
 
+        # get from database
+
+        entry = self.database_handler.get_latest_mosquitto_entry_of_host(self.ip)
+
+        # start analysis
         mosquitto_analyser = MosquittoAnalyser(self.configuration['mosquitto'])
+        security_issue_acl = mosquitto_analyser.compare_access_control_list(self.ip, entry)
 
-
-        # todo topic access etc
-        return None
+        return security_issue_acl
 
     def analyse_osquery_information(self):
         print()

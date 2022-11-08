@@ -72,5 +72,11 @@ class DatabaseHandler:
         for entry in cursor:
             return entry
 
+    def get_latest_mosquitto_entry_of_host(self, host_ip):
+        cursor = self.mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_MOSQUITTO_CONFIG]\
+            .find({'host': host_ip}).sort('unixTime', -1).limit(1)
+        for entry in cursor:
+            return entry
+
     def select_all(self, collection_name):
         return self.mongo[constants.PI_DATABASE_NAME][collection_name].find()

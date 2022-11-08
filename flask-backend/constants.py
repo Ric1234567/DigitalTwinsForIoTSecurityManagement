@@ -48,3 +48,4 @@ MONGO_URI = 'mongodb://root:root@localhost:27017/pidb?authSource=admin'
 PI_DATABASE_NAME = 'pidb'
 
 ZIGBEE2MQTT = 'zigbee2Mqtt'
+MOSQUITTO = 'mosquitto'
