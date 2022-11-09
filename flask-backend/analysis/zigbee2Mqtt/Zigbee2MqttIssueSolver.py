@@ -4,7 +4,7 @@ from util import ConfigurationHelper
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
-from analysis import SecurityIssueTypes
+from analysis import SecurityIssueTypes, DockerConstants
 from handler.ssh.SshHandler import SshHandler
 
 
@@ -42,6 +42,11 @@ class Zigbee2MqttIssueSolver:
         # upload to host
         ssh_handler.write_file_content_via_sftp(constants.ZIGBEE2MQTT_REMOTE_FILE_PATH_CONFIG, new_configuration)
 
+        # restart zigbee2mqtt
+        print('Restarting zigbee2mqtt docker container on host ' + ip)
+        ssh_handler.execute_command('sudo docker restart ' + DockerConstants.ZIGBEE2MQTT_CONTAINER_NAME)
+
         ssh_handler.disconnect()
 
         return 'Successfully fixed issue: ' + SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME
+

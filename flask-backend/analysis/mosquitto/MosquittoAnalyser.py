@@ -26,6 +26,7 @@ class MosquittoAnalyser:
         topics = remove_unnecessary_lines(topics)
 
         should_topics = self.configuration['acl'].split('\n')
+        should_topics = remove_unnecessary_lines(should_topics)
 
         # remove useless spaces
         topics = [topic.strip() for topic in topics]

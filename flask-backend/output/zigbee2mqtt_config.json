@@ -21,6 +21,6 @@ mqtt:
   keepalive: 60
   server: mqtt://mosquitto:1883
   version: 5
-permit_join: false
+permit_join: true
 serial:
   port: /dev/ttyACM0

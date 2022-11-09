@@ -1,3 +1,5 @@
+import string
+
 import paramiko
 
 
@@ -57,3 +59,6 @@ class SshHandler:
         sftp = self.ssh_client.open_sftp()
         sftp.put(local_path, remote_path)
         sftp.close()
+
+    def execute_command(self, command: string):
+        return self.ssh_client.exec_command(command)
