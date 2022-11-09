@@ -18,12 +18,12 @@ class MosquittoIssueSolver:
 
         # get ssh information of the host
         nmap_handler = NmapHandler()
-        ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
+        ssh_information_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
         ssh_information = None
-        for ssh_host in ssh_hosts:
-            for address in ssh_host['host_address']:
-                if address['@addr'] == ip:
-                    ssh_information = nmap_handler.get_ssh_information(ssh_host)
+        for ssh_information_host in ssh_information_hosts:
+            if ssh_information_host.ip == ip:
+                ssh_information = ssh_information_host
+                break
 
         # replace acl list on host with the config
         ssh_handler = SshHandler(ssh_information.ip, ssh_information.port,

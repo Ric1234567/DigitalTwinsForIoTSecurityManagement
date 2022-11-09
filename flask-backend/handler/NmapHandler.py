@@ -1,6 +1,7 @@
 import collections.abc
 import string
 import subprocess
+import typing
 from multiprocessing import current_process
 
 from libnmap.parser import NmapParser
@@ -61,11 +62,14 @@ class NmapHandler:
         database_handler.write_nmaprun_to_database(nmap_report_json)
 
     def ssh_service_discovery(self, nmaprun):
-        ssh_hosts = []
+        ssh_hosts: typing.List[SshInformation] = []
         if 'host' in nmaprun:
             if not isinstance(nmaprun['host'], collections.abc.Sequence):  # convert to array if none
                 nmaprun['host'] = [nmaprun['host']]
             for host in nmaprun['host']:
+                ssh_port = None
+                ssh_ip = None
+
                 if 'ports' in host:
                     if 'port' in host['ports']:
                         if not isinstance(host['ports']['port'], collections.abc.Sequence):
@@ -74,14 +78,22 @@ class NmapHandler:
                             if 'service' in port:
                                 if '@name' in port['service']:
                                     if port['service']['@name'] == 'ssh':
-                                        ssh_hosts.append({'host_address': host['address'],
-                                                          'port': port})
+                                        ssh_port = port['@portid']
+                                        break
+
+                if ssh_port is None:
+                    continue  # no ssh service on this host
+
+                if 'address' in host:
+                    if not isinstance(host['address'], collections.abc.Sequence):
+                        host['address'] = [host['address']]
+                    for address in host['address']:
+                        if address['@addrtype'] == 'ipv4':
+                            ssh_ip = address['@addr']
+                            break
+
+                if (ssh_ip is not None) and (ssh_port is not None):
+                    ssh_information_host = SshInformation(ssh_ip, ssh_port)
+                    ssh_hosts.append(ssh_information_host)
+
         return ssh_hosts
-
-    def get_ssh_information(self, ssh_host):
-        for address in ssh_host['host_address']:
-            if address['@addrtype'] == 'ipv4':
-                ipv4_address = address['@addr']
-                port = ssh_host['port']['@portid']
-
-                return SshInformation(ipv4_address, port)

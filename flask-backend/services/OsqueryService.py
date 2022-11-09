@@ -5,23 +5,29 @@ from multiprocessing import current_process
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.ssh.SshHandler import SshHandler
+from handler.ssh.SshInformation import SshInformation
 
 
 def start_osquery_scan_service(ip_address: string, ssh_port, delay: int):
     while True:
-        print(
-            "Get osquery information " + " (" + ip_address + "," + current_process().name + "," + str(delay) + ")")
-
-        download_osquery_output_file(ip_address, ssh_port)
-        data = read_osquery_output_file()
-
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        print("Writing result of scan to database (" + current_process().name + ")")
-        database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, data)
-        database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_PROCESSES, data)
+        ssh_information = SshInformation(ip_address, ssh_port)
+        get_osquery_data(ssh_information)
 
         print(current_process().name + " sleeping for " + str(delay) + " seconds!")
         time.sleep(delay)
+
+
+def get_osquery_data(ssh_information: SshInformation):
+    print(
+        "Get osquery information " + " (" + ssh_information.ip + "," + current_process().name + ")")
+
+    download_osquery_output_file(ssh_information.ip, ssh_information.port)
+    data = read_osquery_output_file()
+
+    database_handler = DatabaseHandler(constants.MONGO_URI)
+    print("Writing result of scan to database (" + current_process().name + ")")
+    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, data)
+    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_PROCESSES, data)
 
 
 def download_osquery_output_file(ip_address, ssh_port):

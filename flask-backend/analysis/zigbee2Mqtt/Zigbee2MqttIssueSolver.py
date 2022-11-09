@@ -22,9 +22,9 @@ class Zigbee2MqttIssueSolver:
         ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
         ssh_information = None
         for ssh_host in ssh_hosts:
-            for address in ssh_host['host_address']:
-                if address['@addr'] == ip:
-                    ssh_information = nmap_handler.get_ssh_information(ssh_host)
+            if ssh_host.ip == ip:
+                ssh_information = ssh_host
+                break
 
         # get configuration content from host
         ssh_handler = SshHandler(ssh_information.ip, ssh_information.port,

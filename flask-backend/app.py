@@ -120,7 +120,7 @@ def start_service(process_name):
         if (process_name == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME) or \
                 (process_name == ServiceConstants.PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME):
             nmap_command = request.args.get('cmd')
-            delay = int(request.args.get('delay'))
+            delay = request.args.get('delay')
             if (not nmap_command) or (not delay):
                 raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
 
@@ -128,12 +128,12 @@ def start_service(process_name):
                 service_process = ServiceHandler.start_service(
                     process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
                     NmapService.start_nmap_scan_service,
-                    (constants.MONGO_URI, nmap_command, delay,))
+                    (nmap_command, int(delay),))
             else:  # full scan
                 service_process = ServiceHandler.start_service(
                     process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
                     FullScanService.start_full_network_scan_service,
-                    (constants.MONGO_URI, nmap_command, delay,))
+                    (nmap_command, int(delay),))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')

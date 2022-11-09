@@ -4,7 +4,10 @@
     },
     "0x00158d0003a28b20": {
         "temperature": 21.28,
-        "humidity": 64.83,
-        "linkquality": 99
+        "humidity": 67.79,
+        "linkquality": 99,
+        "voltage": 2905,
+        "battery": 37,
+        "power_outage_count": 78
     }
 }
