@@ -1,12 +1,25 @@
 <h2>Analysis</h2>
 
 <mat-card>
-    <mat-checkbox [(ngModel)]="isRefreshing" (change)="onChangeAutoRefresh($event)">Auto-Refresh</mat-checkbox>
+    <div class="card-container">
+        <mat-form-field appearance="fill" style="margin-right: 5px;">
+            <mat-label>Select host</mat-label>
+            <mat-select [(value)]="selectedHost">
+                <mat-option *ngFor="let host of sshHosts" [value]="host">
+                    {{host.ip}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button mat-stroked-button (click)="onClickAnalyse($event)" color="primary"
+            style="height: 50px; margin-left: 5px;">
+            Analyse
+        </button>
+    </div>
 
     <mat-list [(ngModel)]="analysisResult" name="fieldName" ngDefaultControl>
         <mat-list-item role="listitem" *ngFor="let issue of analysisResult">
             <div mat-line style="font-weight: bold; margin-right: 5px;">Host: {{issue.host_ip}}</div>
-            
+
             <div mat-line style="margin: 0 6ex;">
                 <div mat-line>Issue Type: {{issue.issue_type}}</div>
 

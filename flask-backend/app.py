@@ -237,7 +237,7 @@ def get_configuration():
 
 
 @app.route('/analysis/<host_ip>', methods=['GET'])
-def execute_analysis(host_ip):  # todo dynamic host finding
+def execute_analysis(host_ip):
     print('Starting analysis for host ' + host_ip)
 
     should_configuration = ConfigurationHelper.read_should_configuration()
@@ -259,7 +259,7 @@ def execute_analysis(host_ip):  # todo dynamic host finding
 
 @app.route('/fix/<host_ip>/<issue_type>', methods=['GET'])
 def execute_fix(host_ip, issue_type):
-    print('fix ' + host_ip + ' ' + issue_type)
+    print('Fix ' + host_ip + ' ' + issue_type)
 
     should_configuration = ConfigurationHelper.read_should_configuration()
 
@@ -273,6 +273,21 @@ def execute_fix(host_ip, issue_type):
 
     response = {"response": result}
     return Response(json.dumps(response), status=200, mimetype='application/json')
+
+
+@app.route('/ssh_hosts', methods=['GET'])
+def get_ssh_hosts():
+    print('Get ssh_hosts of last nmaprun...')
+    # get from database
+    database_handler = DatabaseHandler(constants.MONGO_URI)
+    nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+
+    nmap_handler = NmapHandler()
+    ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
+
+    return Response(json.dumps([ssh_host.__dict__ for ssh_host in ssh_hosts], cls=ComplexJsonEncoder),
+                    status=200,
+                    mimetype='application/json')
 
 
 if __name__ == '__main__':

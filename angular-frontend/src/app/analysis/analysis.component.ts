@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SshInformation } from 'src/models/sshInformation';
 import { Util } from '../util';
 
 @Component({
@@ -14,45 +15,29 @@ export class AnalysisComponent implements OnInit {
   refreshIntervalId: any
 
   analysisResult: any = []
+  sshHosts: SshInformation[] = []
+  selectedHost: SshInformation = this.sshHosts[0]
 
   constructor() { }
 
   ngOnInit(): void {
-    //this.startRefreshInterval()
-    this.getAnalysisResult()
+    this.getSshHosts()
+    //this.getAnalysisResult()
   }
 
-  onChangeAutoRefresh(event: any) {
-    if (this.isRefreshing) {
-      this.startRefreshInterval()
-    } else {
-      console.log('auto-refresh stopped');
+  private async getSshHosts() {
+    this.loading = true
+    let util = new Util()
+    let response = await util.fetchFromBackend('GET', 'ssh_hosts')
+    this.loading = false
 
-      clearInterval(this.refreshIntervalId)
-    }
-  }
-
-  private startRefreshInterval() {
-    if(!this.isRefreshing) {
-      this.isRefreshing = true
-      console.log('auto-refresh started');
-  
-      this.refreshIntervalId = setInterval(() => {
-        console.log('refresh');
-        
-        this.getAnalysisResult()
-      }, 3000);
-    }
+    this.sshHosts = response
   }
 
   async getAnalysisResult() {
     this.loading = true
-
-    // todo make dynamic
-    const ip = '192.168.178.51'
-
     let util = new Util()
-    let response = await util.fetchFromBackend('GET', 'analysis/' + ip)
+    let response = await util.fetchFromBackend('GET', 'analysis/' + this.selectedHost.ip)
     this.loading = false
 
     this.analysisResult = response
@@ -60,10 +45,14 @@ export class AnalysisComponent implements OnInit {
 
   async onClickFixHost(issue: any) {
     console.log(issue);
-    
+
     let util = new Util()
     let response = await util.fetchFromBackend('GET', 'fix/' + issue.host_ip + "/" + issue.issue_type)
-    
+
     alert(response.response)
+  }
+
+  onClickAnalyse(event: Event) {
+    this.getAnalysisResult()
   }
 }
