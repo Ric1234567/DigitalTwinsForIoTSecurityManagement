@@ -1,14 +1,6 @@
 #!/usr/bin/python3
-import numbers
 import string
-import time
-from multiprocessing import active_children, current_process, Process
-
-from handler.SubnetworkHandler import SubnetworkHandler
-import constants
-from handler.DatabaseHandler import DatabaseHandler
-from handler.NmapHandler import NmapHandler
-from handler.ssh.SshHandler import SshHandler
+from multiprocessing import active_children, Process
 
 process_dict = {}
 

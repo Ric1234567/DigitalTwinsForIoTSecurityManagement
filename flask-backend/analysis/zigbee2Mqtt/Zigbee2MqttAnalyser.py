@@ -18,7 +18,8 @@ class Zigbee2MqttAnalyser:
                                             '(host permit_join=' + str(host_scan['config']['permit_join']) +
                                             ', should_configuration permit_join=' +
                                             str(self.configuration['permit_join']) + ')',
-                                            'Change the permit_flag to permit_flag=' + str(self.configuration['permit_join']))
+                                            'Change the permit_flag to permit_flag=' +
+                                            str(self.configuration['permit_join']))
 
             return SecurityIssue(SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME, ip, recommendation)
         else:

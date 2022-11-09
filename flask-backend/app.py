@@ -6,7 +6,8 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 
 from analysis.mosquitto.MosquittoIssueSolver import MosquittoIssueSolver
-from services import NmapService, FullScanService, OsqueryService, Zigbee2MqttService, MosquittoService
+from services import NmapService, FullScanService, OsqueryService, Zigbee2MqttService, MosquittoService, \
+    ServiceConstants
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
 from analysis import SecurityIssueTypes
@@ -114,29 +115,29 @@ def stop_service(process_pid):
 def start_service(process_name):
     try:
         # get process_name (without additional information)
-        process_name = process_name.split(constants.PROCESS_NAME_SPLIT_CHAR)[0]
+        process_name = process_name.split(ServiceConstants.PROCESS_NAME_SPLIT_CHAR)[0]
 
-        if (process_name == constants.PROCESS_ENDLESS_NMAP_SCAN_NAME) or \
-                (process_name == constants.PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME):
+        if (process_name == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME) or \
+                (process_name == ServiceConstants.PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME):
             nmap_command = request.args.get('cmd')
             delay = int(request.args.get('delay'))
             if (not nmap_command) or (not delay):
                 raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
 
-            if process_name == constants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
+            if process_name == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
                 service_process = ServiceHandler.start_service(
-                    process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
+                    process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
                     NmapService.start_nmap_scan_service,
                     (constants.MONGO_URI, nmap_command, delay,))
             else:  # full scan
                 service_process = ServiceHandler.start_service(
-                    process_name + constants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
+                    process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
                     FullScanService.start_full_network_scan_service,
                     (constants.MONGO_URI, nmap_command, delay,))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
-        elif process_name == constants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
+        elif process_name == ServiceConstants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
             ip_address = request.args.get('ip')
             ssh_port = request.args.get('ssh_port')
             delay = request.args.get('delay')
@@ -145,13 +146,13 @@ def start_service(process_name):
                                 ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
             service_process = ServiceHandler.start_service(
-                process_name + constants.PROCESS_NAME_SPLIT_CHAR + ip_address,
+                process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + ip_address,
                 OsqueryService.start_osquery_scan_service,
                 (ip_address, int(ssh_port), int(delay),))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
-        elif process_name == constants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
+        elif process_name == ServiceConstants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
             delay = request.args.get('delay')
             if not delay:
                 raise Exception('Missing parameter! Given: delay=' + str(delay))
@@ -163,7 +164,7 @@ def start_service(process_name):
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
-        elif process_name == constants.PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME:
+        elif process_name == ServiceConstants.PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME:
             ip_address = request.args.get('ip')
             ssh_port = request.args.get('ssh_port')
             delay = request.args.get('delay')
@@ -172,7 +173,7 @@ def start_service(process_name):
                                 ', delay=' + str(delay))
 
             service_process = ServiceHandler.start_service(
-                process_name + constants.PROCESS_NAME_SPLIT_CHAR + ip_address,
+                process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + ip_address,
                 MosquittoService.start_mosquitto_service,
                 (ip_address, int(ssh_port), int(delay),))
 
@@ -188,7 +189,7 @@ def start_service(process_name):
 
 @app.route('/available_services', methods=['GET'])
 def get_available_services():
-    response = {"response": constants.SERVICE_LIST}
+    response = {"response": ServiceConstants.SERVICE_LIST}
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
@@ -198,8 +199,8 @@ def get_running_services():
 
     array = []
     for service in result:
-        if constants.PROCESS_NAME_SPLIT_CHAR in service.name:
-            split_name = service.name.split(constants.PROCESS_NAME_SPLIT_CHAR)
+        if ServiceConstants.PROCESS_NAME_SPLIT_CHAR in service.name:
+            split_name = service.name.split(ServiceConstants.PROCESS_NAME_SPLIT_CHAR)
             name = split_name[0]
             info = split_name[1]
         else:

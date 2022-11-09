@@ -3,7 +3,8 @@
         "color_mode": "xy"
     },
     "0x00158d0003a28b20": {
-        "temperature": 23.84,
-        "humidity": 59.81
+        "temperature": 21.28,
+        "humidity": 64.83,
+        "linkquality": 99
     }
 }
