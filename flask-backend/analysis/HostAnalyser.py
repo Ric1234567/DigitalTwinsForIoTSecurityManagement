@@ -1,4 +1,5 @@
 import constants
+from analysis.IpAnalyser import IpAnalyser
 from analysis.mosquitto.MosquittoAnalyser import MosquittoAnalyser
 from handler.DatabaseHandler import DatabaseHandler
 from analysis.zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
@@ -65,8 +66,12 @@ class HostAnalyser:
 
     def analyse_osquery_information(self):
         print()
-        # todo usb and ports
+        # todo usb
 
     def ip_analysis(self):
-        # todo
-        return None
+        print('Analysis IP')
+        # start analysis
+        ip_analyser = IpAnalyser(self.configuration['ip_configuration'])
+        security_issue_ip = ip_analyser.check_open_ports(self.host_information)
+
+        return security_issue_ip

@@ -22,7 +22,6 @@
 
             <div mat-line style="margin: 0 6ex;">
                 <div mat-line>Issue Type: {{issue.issue_type}}</div>
-
                 <div mat-line style="margin-top: 1ex;">
                     <div style="font-weight: bold;">Recommendation: {{issue.recommendation.title}}</div>
                 </div>
@@ -39,4 +38,8 @@
             </button>
         </mat-list-item>
     </mat-list>
+
+    <div *ngIf="!analysisResult">
+        No issues found!
+    </div>
 </mat-card>

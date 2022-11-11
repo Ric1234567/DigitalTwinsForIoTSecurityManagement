@@ -23,7 +23,6 @@ export class AnalysisComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSshHosts()
-    //this.getAnalysisResult()
   }
 
   private async getSshHosts() {
@@ -36,10 +35,20 @@ export class AnalysisComponent implements OnInit {
   }
 
   async getAnalysisResult() {
+    if (!this.selectedHost) {
+      alert('Select host first!')
+      return
+    }
+
     this.loading = true
     let util = new Util()
     let response = await util.fetchFromBackend('GET', 'analysis/' + this.selectedHost.ip)
     this.loading = false
+
+    if (response.response){
+      this.analysisResult = null
+      return
+    }
 
     this.analysisResult = response
   }

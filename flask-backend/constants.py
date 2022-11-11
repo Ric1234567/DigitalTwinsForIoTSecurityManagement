@@ -38,3 +38,4 @@ PI_DATABASE_NAME = 'pidb'
 
 ZIGBEE2MQTT = 'zigbee2Mqtt'
 MOSQUITTO = 'mosquitto'
+IP = 'IP'

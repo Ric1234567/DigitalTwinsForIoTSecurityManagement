@@ -108,7 +108,16 @@ class NmapHandler:
             for host in nmaprun['host']:
                 ip = self.get_ipv4_address(host)
                 hostname = host['hostnames']['hostname']['@name']
-                host_information = HostInformation(ip, hostname)
+                ports = None
+
+                if 'ports' in host:
+                    if 'port' in host['ports']:
+                        if not isinstance(host['ports']['port'], collections.abc.Sequence):
+                            ports = [host['ports']['port']]
+                        else:
+                            ports = host['ports']['port']
+                        
+                host_information = HostInformation(ip, hostname, ports)
                 hosts.append(host_information)
 
         return hosts

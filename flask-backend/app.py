@@ -249,7 +249,7 @@ def execute_analysis(host_ip):
     nmap_handler = NmapHandler()
     hosts = nmap_handler.get_hosts_with_ssh(nmap_report_db['nmaprun'])
 
-    # identify correct host with ip
+    # identify correct host by ip
     host_to_analyse = None
     for host in hosts:
         if host.ip == host_ip:
@@ -259,15 +259,11 @@ def execute_analysis(host_ip):
     host_analyser = HostAnalyser(should_configuration, host_to_analyse)
     security_issues_host = host_analyser.analyse()
 
-    security_issues_tmp = []
-    # add if not already found
-    if security_issues_host is not None and security_issues_host:
-        if not any((security_issue.host_ip == host_ip and
-                    security_issue.issue_type == SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME)
-                   for security_issue in security_issues_tmp):
-            security_issues_tmp.extend(security_issues_host)
+    if not security_issues_host:
+        response = {"response": "No issues found!"}
+        return Response(json.dumps(response), status=200, mimetype='application/json')
 
-    return Response(json.dumps([ob.__dict__ for ob in security_issues_tmp], cls=ComplexJsonEncoder), status=200,
+    return Response(json.dumps([ob.__dict__ for ob in security_issues_host], cls=ComplexJsonEncoder), status=200,
                     mimetype='application/json')
 
 
