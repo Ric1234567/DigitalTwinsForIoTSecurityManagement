@@ -4,7 +4,11 @@
     <mat-card>
         <mat-card-title>IP Integration</mat-card-title>
         <mat-card-content>
-            todo ports, usb stick
+            <div style="width: auto;">Maximal allowed open ports:</div>
+            <mat-form-field appearance="fill" style="width: 300px;">
+                <mat-label>Max. Open Ports</mat-label>
+                <input matInput [(ngModel)]="configuration.ip_configuration.max_open_ports" type="number" />
+            </mat-form-field>
         </mat-card-content>
     </mat-card>
 
@@ -15,7 +19,8 @@
                 <div style="width: auto;">ACL accessable topics:</div>
                 <mat-form-field appearance="fill" style="width: 100%">
                     <mat-label>ACL File</mat-label>
-                    <textarea matInput matTextareaAutosize [(ngModel)]="configuration.mosquitto.acl" rows="10" cols="20">
+                    <textarea matInput matTextareaAutosize [(ngModel)]="configuration.mosquitto.acl" rows="10"
+                        cols="20">
                       </textarea>
                 </mat-form-field>
             </div>

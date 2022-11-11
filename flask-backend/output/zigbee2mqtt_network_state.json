@@ -3,9 +3,9 @@
         "color_mode": "xy"
     },
     "0x00158d0003a28b20": {
-        "temperature": 21.28,
-        "humidity": 66.94,
-        "linkquality": 86,
+        "temperature": 21.22,
+        "humidity": 67.88,
+        "linkquality": 94,
         "voltage": 2905,
         "battery": 37,
         "power_outage_count": 78

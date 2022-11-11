@@ -1,1 +1,1 @@
-{"zigbee_2_mqtt":{"permit_join":false},"mosquitto":{"acl":"#topic readwrite #\ntopic $SYS/# \ntopic SOAR4IoT/0x00158d0003a28b20\n#topic SOAR4IoT/bridge/#\n#topic SOAR4IoT/#"}}
+{"ip_configuration":{"max_open_ports":3},"zigbee_2_mqtt":{"permit_join":false},"mosquitto":{"acl":"#topic readwrite #\ntopic $SYS/# \ntopic SOAR4IoT/0x00158d0003a28b20\n#topic SOAR4IoT/bridge/#\n#topic SOAR4IoT/#"}}

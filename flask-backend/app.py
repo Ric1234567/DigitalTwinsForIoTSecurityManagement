@@ -229,7 +229,7 @@ def get_configuration():
         with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'w') as file:
             file.write(request.data.decode('utf-8'))
 
-        response = {"response": request.data.decode('utf-8')}
+        response = {"response": "Successfully submitted network configuration!"}
         return Response(json.dumps(response), status=200, mimetype='application/json')
     else:
         response = {"response": request.data.decode('utf-8')}

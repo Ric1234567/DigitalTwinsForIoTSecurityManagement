@@ -22,7 +22,7 @@ export class ConfigurationComponent implements OnInit {
     let util = new Util
     let response = await util.postToBackend('network_configuration', this.configuration)
 
-    alert('Success!')
+    alert(response.response)
   }
 
   async getConfiguration() {
