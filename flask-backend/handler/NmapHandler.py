@@ -7,6 +7,7 @@ from multiprocessing import current_process
 from libnmap.parser import NmapParser
 import constants
 from handler.DatabaseHandler import DatabaseHandler
+from handler.HostInformation import HostInformation
 from handler.ssh.SshInformation import SshInformation
 from util import JsonHelper
 
@@ -61,6 +62,16 @@ class NmapHandler:
         database_handler = DatabaseHandler(constants.MONGO_URI)
         database_handler.write_nmaprun_to_database(nmap_report_json)
 
+    def get_hosts_with_ssh(self, nmaprun):
+        ssh_informations = self.ssh_service_discovery(nmaprun)
+        ip_hosts = self.get_hosts(nmaprun)
+
+        for host in ip_hosts:
+            for ssh_information in ssh_informations:
+                if host.ip == ssh_information.ip:
+                    host.ssh_information = ssh_information
+        return ip_hosts
+
     def ssh_service_discovery(self, nmaprun):
         ssh_hosts: typing.List[SshInformation] = []
         if 'host' in nmaprun:
@@ -68,7 +79,6 @@ class NmapHandler:
                 nmaprun['host'] = [nmaprun['host']]
             for host in nmaprun['host']:
                 ssh_port = None
-                ssh_ip = None
 
                 if 'ports' in host:
                     if 'port' in host['ports']:
@@ -84,16 +94,30 @@ class NmapHandler:
                 if ssh_port is None:
                     continue  # no ssh service on this host
 
-                if 'address' in host:
-                    if not isinstance(host['address'], collections.abc.Sequence):
-                        host['address'] = [host['address']]
-                    for address in host['address']:
-                        if address['@addrtype'] == 'ipv4':
-                            ssh_ip = address['@addr']
-                            break
+                ssh_ip = self.get_ipv4_address(host)
 
                 if (ssh_ip is not None) and (ssh_port is not None):
                     ssh_information_host = SshInformation(ssh_ip, ssh_port)
                     ssh_hosts.append(ssh_information_host)
 
         return ssh_hosts
+
+    def get_hosts(self, nmaprun):
+        hosts = []
+        if 'host' in nmaprun:
+            for host in nmaprun['host']:
+                ip = self.get_ipv4_address(host)
+                hostname = host['hostnames']['hostname']['@name']
+                host_information = HostInformation(ip, hostname)
+                hosts.append(host_information)
+
+        return hosts
+
+    def get_ipv4_address(self, host):
+        if 'address' in host:
+            if not isinstance(host['address'], collections.abc.Sequence):
+                host['address'] = [host['address']]
+            for address in host['address']:
+                if address['@addrtype'] == 'ipv4':
+                    return address['@addr']
+        return None

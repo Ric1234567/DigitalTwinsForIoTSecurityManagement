@@ -242,7 +242,21 @@ def execute_analysis(host_ip):
 
     should_configuration = ConfigurationHelper.read_should_configuration()
 
-    host_analyser = HostAnalyser(should_configuration, host_ip)
+    # get from database
+    database_handler = DatabaseHandler(constants.MONGO_URI)
+    nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+
+    nmap_handler = NmapHandler()
+    hosts = nmap_handler.get_hosts_with_ssh(nmap_report_db['nmaprun'])
+
+    # identify correct host with ip
+    host_to_analyse = None
+    for host in hosts:
+        if host.ip == host_ip:
+            host_to_analyse = host
+            break
+
+    host_analyser = HostAnalyser(should_configuration, host_to_analyse)
     security_issues_host = host_analyser.analyse()
 
     security_issues_tmp = []
@@ -275,17 +289,17 @@ def execute_fix(host_ip, issue_type):
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
-@app.route('/ssh_hosts', methods=['GET'])
-def get_ssh_hosts():
-    print('Get ssh_hosts of last nmaprun...')
+@app.route('/ip_hosts', methods=['GET'])
+def get_ip_hosts():
+    print('Get hosts of last nmaprun...')
     # get from database
     database_handler = DatabaseHandler(constants.MONGO_URI)
     nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
     nmap_handler = NmapHandler()
-    ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
+    hosts = nmap_handler.get_hosts_with_ssh(nmap_report_db['nmaprun'])
 
-    return Response(json.dumps([ssh_host.__dict__ for ssh_host in ssh_hosts], cls=ComplexJsonEncoder),
+    return Response(json.dumps([ssh_host.__dict__ for ssh_host in hosts], cls=ComplexJsonEncoder),
                     status=200,
                     mimetype='application/json')
 

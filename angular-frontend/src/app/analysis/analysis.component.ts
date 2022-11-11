@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Host } from 'src/models/host';
 import { SshInformation } from 'src/models/sshInformation';
 import { Util } from '../util';
 
@@ -15,8 +16,8 @@ export class AnalysisComponent implements OnInit {
   refreshIntervalId: any
 
   analysisResult: any = []
-  sshHosts: SshInformation[] = []
-  selectedHost: SshInformation = this.sshHosts[0]
+  ipHosts: Host[] = []
+  selectedHost: Host = this.ipHosts[0]
 
   constructor() { }
 
@@ -28,10 +29,10 @@ export class AnalysisComponent implements OnInit {
   private async getSshHosts() {
     this.loading = true
     let util = new Util()
-    let response = await util.fetchFromBackend('GET', 'ssh_hosts')
+    let response = await util.fetchFromBackend('GET', 'ip_hosts')
     this.loading = false
 
-    this.sshHosts = response
+    this.ipHosts = response
   }
 
   async getAnalysisResult() {
