@@ -1,5 +1,5 @@
 import constants
-from analysis.IpAnalyser import IpAnalyser
+from analysis.ip.IpAnalyser import IpAnalyser
 from analysis.mosquitto.MosquittoAnalyser import MosquittoAnalyser
 from handler.DatabaseHandler import DatabaseHandler
 from analysis.zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser

@@ -61,4 +61,7 @@ class SshHandler:
         sftp.close()
 
     def execute_command(self, command: string):
-        return self.ssh_client.exec_command(command)
+        stdin, stdout, stderr = self.ssh_client.exec_command(command)
+        stdout.channel.set_combine_stderr(True)
+        output = stdout.readlines()
+        return output

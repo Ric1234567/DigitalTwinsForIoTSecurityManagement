@@ -5,13 +5,15 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
+from analysis.host.HostSolver import HostSolver
+from analysis.ip.IpIssueSolver import IpIssueSolver
 from analysis.mosquitto.MosquittoIssueSolver import MosquittoIssueSolver
 from services import NmapService, FullScanService, OsqueryService, Zigbee2MqttService, MosquittoService, \
     ServiceConstants
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
 from analysis import SecurityIssueTypes
-from analysis.HostAnalyser import HostAnalyser
+from analysis.host.HostAnalyser import HostAnalyser
 from handler import ServiceHandler
 from handler.SubnetworkHandler import SubnetworkHandler
 import constants
@@ -279,14 +281,9 @@ def execute_fix(host_ip, issue_type):
     print('Fix ' + host_ip + ' ' + issue_type)
 
     should_configuration = ConfigurationHelper.read_should_configuration()
-
-    result = None
-    if issue_type == SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME:
-        solver = Zigbee2MqttIssueSolver(should_configuration['zigbee_2_mqtt'])
-        result = solver.fix_permit_join(host_ip)
-    elif issue_type == SecurityIssueTypes.MOSQUITTO_ACCESS_CONTROL_LIST:
-        solver = MosquittoIssueSolver(should_configuration['mosquitto'])
-        result = solver.fix_access_control_list(host_ip)
+    
+    host_solver = HostSolver(should_configuration)
+    result = host_solver.solve(host_ip, issue_type)
 
     response = {"response": result}
     return Response(json.dumps(response), status=200, mimetype='application/json')

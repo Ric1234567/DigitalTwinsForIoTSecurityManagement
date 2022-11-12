@@ -13,18 +13,8 @@ class Zigbee2MqttIssueSolver:
         self.configuration = configuration
 
     def fix_permit_join(self, ip: string):
-        # get from database
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
-
-        # get ssh information of the host
         nmap_handler = NmapHandler()
-        ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
-        ssh_information = None
-        for ssh_host in ssh_hosts:
-            if ssh_host.ip == ip:
-                ssh_information = ssh_host
-                break
+        ssh_information = nmap_handler.get_ssh_information_by_ip(ip)
 
         # get configuration content from host
         ssh_handler = SshHandler(ssh_information.ip, ssh_information.port,

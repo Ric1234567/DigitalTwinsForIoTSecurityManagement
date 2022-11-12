@@ -51,15 +51,13 @@ export class AnalysisComponent implements OnInit {
     }
 
     this.analysisResult = response
-    console.log(response);
-    
   }
 
   async onClickFixHost(issue: any) {
     console.log(issue);
 
     let util = new Util()
-    let response = await util.fetchFromBackend('GET', 'fix/' + issue.host_ip + "/" + issue.issue_type)
+    let response = await util.fetchFromBackend('GET', 'fix/' + issue.host_information.ip + "/" + issue.issue_type)
 
     alert(response.response)
   }

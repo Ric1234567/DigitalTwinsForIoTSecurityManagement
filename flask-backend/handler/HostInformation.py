@@ -4,7 +4,7 @@ from handler.ssh.SshInformation import SshInformation
 
 
 class HostInformation:
-    def __init__(self, ip: string, hostname: string = None, ports = None, ssh_information: SshInformation = None):
+    def __init__(self, ip: string, hostname: string = None, ports=None, ssh_information: SshInformation = None):
         self.ip = ip
         self.hostname = hostname
         self.ports = ports

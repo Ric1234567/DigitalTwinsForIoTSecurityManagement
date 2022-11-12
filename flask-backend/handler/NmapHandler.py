@@ -122,6 +122,28 @@ class NmapHandler:
 
         return hosts
 
+    def get_host(self, nmaprun, search_ip: string):
+        if 'host' in nmaprun:
+            if not isinstance(nmaprun['host'], collections.abc.Sequence):
+                nmaprun['host'] = [nmaprun['host']]
+            for host in nmaprun['host']:
+                ipv4 = self.get_ipv4_address(host)
+                if ipv4 == search_ip:
+                    hostname = host['hostnames']['hostname']['@name']
+                    ports = None
+
+                    if 'ports' in host:
+                        if 'port' in host['ports']:
+                            if not isinstance(host['ports']['port'], collections.abc.Sequence):
+                                ports = [host['ports']['port']]
+                            else:
+                                ports = host['ports']['port']
+
+                    host_information = HostInformation(ipv4, hostname, ports)
+                    return host_information
+
+        return None
+
     def get_ipv4_address(self, host):
         if 'address' in host:
             if not isinstance(host['address'], collections.abc.Sequence):
@@ -130,3 +152,20 @@ class NmapHandler:
                 if address['@addrtype'] == 'ipv4':
                     return address['@addr']
         return None
+
+    def get_ssh_information_by_ip(self, ip: string):
+        # get from database
+        database_handler = DatabaseHandler(constants.MONGO_URI)
+        nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+
+        # get ssh information of the host
+        nmap_handler = NmapHandler()
+        ssh_information_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
+        ssh_information = None
+        for ssh_information_host in ssh_information_hosts:
+            if ssh_information_host.ip == ip:
+                ssh_information = ssh_information_host
+                break
+
+        return ssh_information
+
