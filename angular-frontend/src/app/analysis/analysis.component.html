@@ -4,14 +4,14 @@
     <div class="card-container" [class.spinner]="loading">
         <mat-form-field appearance="fill" style="margin-right: 5px;">
             <mat-label>Select host</mat-label>
-            <mat-select [(value)]="selectedHost">
+            <mat-select [(value)]="selectedHost" [disabled]="loading">
                 <mat-option *ngFor="let host of ipHosts" [value]="host">
                     {{host.ip}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <button mat-stroked-button (click)="onClickAnalyse($event)" color="primary"
-            style="height: 50px; margin-left: 5px;">
+            style="height: 50px; margin-left: 5px;" [disabled]="loading">
             Analyse
         </button>
     </div>
