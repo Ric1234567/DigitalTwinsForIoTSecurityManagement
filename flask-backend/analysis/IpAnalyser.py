@@ -26,7 +26,8 @@ class IpAnalyser:
                                                 description,
                                                 'Close unnecessary ports.')
                 return SecurityIssue(SecurityIssueTypes.IP_TOO_MANY_OPEN_PORTS,
-                                     host.ip,
-                                     recommendation)
+                                     host,
+                                     recommendation,
+                                     SecurityIssueTypes.is_fixable(SecurityIssueTypes.IP_TOO_MANY_OPEN_PORTS, host))
             else:
                 return None

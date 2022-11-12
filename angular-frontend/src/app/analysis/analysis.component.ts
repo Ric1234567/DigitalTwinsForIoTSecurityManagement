@@ -51,6 +51,8 @@ export class AnalysisComponent implements OnInit {
     }
 
     this.analysisResult = response
+    console.log(response);
+    
   }
 
   async onClickFixHost(issue: any) {

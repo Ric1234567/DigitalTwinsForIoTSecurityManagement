@@ -138,11 +138,11 @@ def start_service(process_name):
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == ServiceConstants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
-            ip_address = request.args.get('ip')
+            ip_address = request.args.get('host')
             ssh_port = request.args.get('ssh_port')
             delay = request.args.get('delay')
             if (not ip_address) or (not ssh_port) or (not delay):
-                raise Exception('Missing parameter! Given: ip=' + str(ip_address) +
+                raise Exception('Missing parameter! Given: host=' + str(ip_address) +
                                 ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
             service_process = ServiceHandler.start_service(
@@ -165,11 +165,11 @@ def start_service(process_name):
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == ServiceConstants.PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME:
-            ip_address = request.args.get('ip')
+            ip_address = request.args.get('host')
             ssh_port = request.args.get('ssh_port')
             delay = request.args.get('delay')
             if (not ip_address) or (not ssh_port) or (not delay):
-                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
+                raise Exception('Missing parameter! Given: host=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
                                 ', delay=' + str(delay))
 
             service_process = ServiceHandler.start_service(
@@ -242,14 +242,21 @@ def execute_analysis(host_ip):
 
     should_configuration = ConfigurationHelper.read_should_configuration()
 
+    nmap_handler = NmapHandler()
+    nmap_handler.custom_network_scan("-sS -T3 -p1-65535 " + host_ip)
+
     # get from database
     database_handler = DatabaseHandler(constants.MONGO_URI)
     nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
-    nmap_handler = NmapHandler()
+    ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
+
+    subnetwork_handler = SubnetworkHandler()
+    subnetwork_handler.scan_subnetwork(ssh_hosts)
+
     hosts = nmap_handler.get_hosts_with_ssh(nmap_report_db['nmaprun'])
 
-    # identify correct host by ip
+    # identify correct host by host
     host_to_analyse = None
     for host in hosts:
         if host.ip == host_ip:
@@ -288,11 +295,14 @@ def execute_fix(host_ip, issue_type):
 @app.route('/ip_hosts', methods=['GET'])
 def get_ip_hosts():
     print('Get hosts of last nmaprun...')
+
+    nmap_handler = NmapHandler()
+    nmap_handler.custom_network_scan("-sS -T4 192.168.178.*")
+
     # get from database
     database_handler = DatabaseHandler(constants.MONGO_URI)
     nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
-    nmap_handler = NmapHandler()
     hosts = nmap_handler.get_hosts_with_ssh(nmap_report_db['nmaprun'])
 
     return Response(json.dumps([ssh_host.__dict__ for ssh_host in hosts], cls=ComplexJsonEncoder),

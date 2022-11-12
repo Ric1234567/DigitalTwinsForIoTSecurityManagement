@@ -48,7 +48,7 @@ class HostAnalyser:
 
         # start analysis
         zigbee2mqtt_analyser = Zigbee2MqttAnalyser(self.configuration['zigbee_2_mqtt'])
-        security_issue_permit_join = zigbee2mqtt_analyser.compare_permit_join_flag(self.host_information.ip, host_scan)
+        security_issue_permit_join = zigbee2mqtt_analyser.compare_permit_join_flag(self.host_information, host_scan)
 
         return security_issue_permit_join
 
@@ -60,7 +60,7 @@ class HostAnalyser:
 
         # start analysis
         mosquitto_analyser = MosquittoAnalyser(self.configuration['mosquitto'])
-        security_issue_acl = mosquitto_analyser.compare_access_control_list(self.host_information.ip, entry)
+        security_issue_acl = mosquitto_analyser.compare_access_control_list(self.host_information, entry)
 
         return security_issue_acl
 

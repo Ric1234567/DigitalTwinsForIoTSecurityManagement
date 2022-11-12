@@ -5,6 +5,7 @@ import constants
 from analysis import SecurityIssueTypes
 from analysis.Recommendation import Recommendation
 from analysis.SecurityIssue import SecurityIssue
+from handler.HostInformation import HostInformation
 
 
 def remove_unnecessary_lines(lines):
@@ -21,7 +22,7 @@ class MosquittoAnalyser:
     def __init__(self, configuration):
         self.configuration = configuration
 
-    def compare_access_control_list(self, ip: string, host_configuration):
+    def compare_access_control_list(self, host: HostInformation, host_configuration):
         topics = host_configuration['acl'].split('\n')
         topics = remove_unnecessary_lines(topics)
 
@@ -41,7 +42,9 @@ class MosquittoAnalyser:
                                             'Consider using the default configuration.\n[\n' +
                                             str(self.configuration['acl'].strip() + '\n]'))
             return SecurityIssue(SecurityIssueTypes.MOSQUITTO_ACCESS_CONTROL_LIST,
-                                 ip,
-                                 recommendation)
+                                 host,
+                                 recommendation,
+                                 SecurityIssueTypes.is_fixable(SecurityIssueTypes.MOSQUITTO_ACCESS_CONTROL_LIST, host))
 
         return None
+

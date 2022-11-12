@@ -1,7 +1,7 @@
 <h2>Analysis</h2>
 
 <mat-card>
-    <div class="card-container">
+    <div class="card-container" [class.spinner]="loading">
         <mat-form-field appearance="fill" style="margin-right: 5px;">
             <mat-label>Select host</mat-label>
             <mat-select [(value)]="selectedHost">
@@ -18,7 +18,7 @@
 
     <mat-list [(ngModel)]="analysisResult" name="fieldName" ngDefaultControl>
         <mat-list-item role="listitem" *ngFor="let issue of analysisResult">
-            <div mat-line style="font-weight: bold; margin-right: 5px;">Host: {{issue.host_ip}}</div>
+            <div mat-line style="font-weight: bold; margin-right: 5px;">Host: {{issue.host_information.ip}}</div>
 
             <div mat-line style="margin: 0 6ex;">
                 <div mat-line>Issue Type: {{issue.issue_type}}</div>
@@ -33,9 +33,10 @@
                     </div>
                 </div>
             </div>
-            <button mat-stroked-button color="primary" (click)="onClickFixHost(issue)">
+            <button mat-stroked-button color="primary" (click)="onClickFixHost(issue)" [disabled]="!issue.fixable">
                 Fix
             </button>
+            <div *ngIf="!issue.fixable" style="margin-left: 2ex;">Ssh required on host!</div>
         </mat-list-item>
     </mat-list>
 

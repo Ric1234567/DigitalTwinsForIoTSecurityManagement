@@ -1,70 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Fri Nov 11 12:47:49 2022 as: nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.* -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -F -&#45;traceroute 192.168.178.*" start="1668167269" startstr="Fri Nov 11 12:47:49 2022" version="7.93" xmloutputversion="1.05">
-<scaninfo type="syn" protocol="tcp" numservices="100" services="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
+<!-- Nmap 7.93 scan initiated Sat Nov 12 11:39:37 2022 as: nmap -oX - -sS -T3 -p1-65535 192.168.178.51 -->
+<nmaprun scanner="nmap" args="nmap -oX - -sS -T3 -p1-65535 192.168.178.51" start="1668249577" startstr="Sat Nov 12 11:39:37 2022" version="7.93" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="65535" services="1-65535"/>
 <verbose level="0"/>
 <debugging level="0"/>
-<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.1" addrtype="ipv4"/>
-<address addr="1C:ED:6F:1D:20:3E" addrtype="mac" vendor="AVM Audiovisuelles Marketing und Computersysteme GmbH"/>
-<hostnames>
-</hostnames>
-</hosthint>
 <hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.51" addrtype="ipv4"/>
 <address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
 <hostnames>
 </hostnames>
 </hosthint>
-<host starttime="1668167271" endtime="1668167271"><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.1" addrtype="ipv4"/>
-<address addr="1C:ED:6F:1D:20:3E" addrtype="mac" vendor="AVM Audiovisuelles Marketing und Computersysteme GmbH"/>
-<hostnames>
-<hostname name="fritz.box" type="PTR"/>
-</hostnames>
-<ports><extraports state="closed" count="96">
-<extrareasons reason="reset" count="96" proto="tcp" ports="7,9,13,21-23,25-26,37,79,81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,444-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
-</extraports>
-<port protocol="tcp" portid="53"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="domain" method="table" conf="3"/></port>
-<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" method="table" conf="3"/></port>
-<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="https" method="table" conf="3"/></port>
-<port protocol="tcp" portid="5060"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="sip" method="table" conf="3"/></port>
-</ports>
-<trace>
-<hop ttl="1" ipaddr="192.168.178.1" rtt="3.06" host="fritz.box"/>
-</trace>
-<times srtt="3061" rttvar="234" to="100000"/>
-</host>
-<host starttime="1668167271" endtime="1668167271"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1668249577" endtime="1668249616"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.51" addrtype="ipv4"/>
 <address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
 <hostnames>
 <hostname name="raspberrypi.fritz.box" type="PTR"/>
 </hostnames>
-<ports><extraports state="closed" count="98">
-<extrareasons reason="reset" count="98" proto="tcp" ports="7,9,13,21,23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
+<ports><extraports state="closed" count="65526">
+<extrareasons reason="reset" count="65526" proto="tcp" ports="1-21,23-1882,1884-2019,2025-8079,8081-42278,42280-65535"/>
 </extraports>
 <port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="1883"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="mqtt" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2020"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="xinupageserver" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2021"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="servexec" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2022"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="down" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2023"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="xinuexpansion3" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2024"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="xinuexpansion4" method="table" conf="3"/></port>
 <port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http-proxy" method="table" conf="3"/></port>
+<port protocol="tcp" portid="42279"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
 </ports>
-<trace>
-<hop ttl="1" ipaddr="192.168.178.51" rtt="11.46" host="raspberrypi.fritz.box"/>
-</trace>
-<times srtt="11456" rttvar="1004" to="100000"/>
+<times srtt="10710" rttvar="1812" to="100000"/>
 </host>
-<host starttime="1668167271" endtime="1668167271"><status state="up" reason="localhost-response" reason_ttl="0"/>
-<address addr="192.168.178.22" addrtype="ipv4"/>
-<hostnames>
-<hostname name="Henrics-MBP.fritz.box" type="PTR"/>
-</hostnames>
-<ports><extraports state="closed" count="100">
-<extrareasons reason="reset" count="100" proto="tcp" ports="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
-</extraports>
-</ports>
-<times srtt="14" rttvar="3" to="100000"/>
-</host>
-<runstats><finished time="1668167271" timestr="Fri Nov 11 12:47:51 2022" summary="Nmap done at Fri Nov 11 12:47:51 2022; 256 IP addresses (3 hosts up) scanned in 2.14 seconds" elapsed="2.14" exit="success"/><hosts up="3" down="253" total="256"/>
+<runstats><finished time="1668249616" timestr="Sat Nov 12 11:40:16 2022" summary="Nmap done at Sat Nov 12 11:40:16 2022; 1 IP address (1 host up) scanned in 38.98 seconds" elapsed="38.98" exit="success"/><hosts up="1" down="0" total="1"/>
 </runstats>
 </nmaprun>
