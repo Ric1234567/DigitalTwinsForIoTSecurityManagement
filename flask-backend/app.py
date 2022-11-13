@@ -6,20 +6,16 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 
 from analysis.host.HostSolver import HostSolver
-from analysis.ip.IpIssueSolver import IpIssueSolver
-from analysis.mosquitto.MosquittoIssueSolver import MosquittoIssueSolver
 from services import NmapService, FullScanService, OsqueryService, Zigbee2MqttService, MosquittoService, \
     ServiceConstants
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
-from analysis import SecurityIssueTypes
 from analysis.host.HostAnalyser import HostAnalyser
 from handler import ServiceHandler
 from handler.SubnetworkHandler import SubnetworkHandler
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
-from analysis.zigbee2Mqtt.Zigbee2MqttIssueSolver import Zigbee2MqttIssueSolver
 
 # configuration
 DEBUG = True
@@ -298,7 +294,7 @@ def get_ip_hosts():
     print('Get hosts of last nmaprun...')
 
     nmap_handler = NmapHandler()
-    nmap_handler.custom_network_scan("-sS -T4 192.168.178.*")
+    nmap_handler.custom_network_scan("-sS -T4 " + constants.IP_NETWORK_PREFIX + "*")
 
     # get from database
     database_handler = DatabaseHandler(constants.MONGO_URI)

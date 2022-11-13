@@ -13,7 +13,7 @@ import Constants from '../constants';
 })
 export class NetworkScanComponent implements OnInit {
 
-  nmapCustomCommandSuffix = "-sS -T4 -F --traceroute 192.168.178.*";
+  nmapCustomCommandSuffix = "-sS -T4 -F --traceroute " + Constants.IP_NETWORK_PREFIX + "*";
 
   topologyStyles = ['Port Count', 'Network/Subnetwork'];
   selectedStyle: string = this.topologyStyles[0];
