@@ -22,10 +22,10 @@ export class AnalysisComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.getSshHosts()
+    this.getIpHosts()
   }
 
-  private async getSshHosts() {
+  private async getIpHosts() {
     this.loading = true
     let util = new Util()
     let response = await util.fetchFromBackend('GET', 'ip_hosts')

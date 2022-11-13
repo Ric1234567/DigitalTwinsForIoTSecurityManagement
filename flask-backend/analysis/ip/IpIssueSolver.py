@@ -26,7 +26,8 @@ class IpIssueSolver:
                                  constants.SSH_USER, constants.SSH_PASSWORD)
         ssh_handler.connect()
 
-        skip_ports = ['443', '80', '1883', '8080', '9001', str(ssh_information.port)]
+        skip_ports = self.configuration['whitelist_port']
+        skip_ports.append(str(ssh_information.port))
         killed_ports = []
         for port in host_information.ports:
             if (port['@protocol'] == 'tcp') and (not port['@portid'] in skip_ports):

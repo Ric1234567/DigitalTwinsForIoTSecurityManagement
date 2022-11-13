@@ -6,7 +6,7 @@
             <mat-label>Select host</mat-label>
             <mat-select [(value)]="selectedHost" [disabled]="loading">
                 <mat-option *ngFor="let host of ipHosts" [value]="host">
-                    {{host.ip}}
+                    {{host.ip}} ({{host.hostname}})
                 </mat-option>
             </mat-select>
         </mat-form-field>

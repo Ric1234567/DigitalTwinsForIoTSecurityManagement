@@ -245,7 +245,7 @@ def execute_analysis(host_ip):
     should_configuration = ConfigurationHelper.read_should_configuration()
 
     nmap_handler = NmapHandler()
-    nmap_handler.custom_network_scan("-sS -T3 -p1-65535 " + host_ip)
+    nmap_handler.custom_network_scan("-sS -T4 -p1-65535 " + host_ip)
 
     # get from database
     database_handler = DatabaseHandler(constants.MONGO_URI)
@@ -264,6 +264,10 @@ def execute_analysis(host_ip):
         if host.ip == host_ip:
             host_to_analyse = host
             break
+
+    if host_to_analyse is None:
+        response = {"response": "Could not find host!"}
+        return Response(json.dumps(response), status=500, mimetype='application/json')
 
     host_analyser = HostAnalyser(should_configuration, host_to_analyse)
     security_issues_host = host_analyser.analyse()
