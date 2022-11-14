@@ -6,20 +6,7 @@ import time
 from flask_pymongo import MongoClient
 
 import constants
-
-
-def preprocess_data_string(data: string):
-    data = data.replace(':false,', ':False,').replace(':true,', ':True,')
-    data = data.split('\n')
-
-    data_points = []
-    for data_point_string in data:
-        try:
-            data_point = eval(data_point_string)
-            data_points.append(data_point)
-        except Exception as e:
-            print(e)
-    return data_points
+from handler.ssh.SshInformation import SshInformation
 
 
 def filter_data_points_for_collection(collection_name: string, data_points: array):
@@ -35,6 +22,20 @@ class DatabaseHandler:
     def __init__(self, mongo_uri):
         self.mongo = MongoClient(mongo_uri)  # here mongo_client; but parameter is string to mongodb server
 
+    @staticmethod
+    def preprocess_data_string(data: string):
+        data = data.replace(':false,', ':False,').replace(':true,', ':True,')
+        data = data.split('\n')
+
+        data_points = []
+        for data_point_string in data:
+            try:
+                data_point = eval(data_point_string)
+                data_points.append(data_point)
+            except Exception as e:
+                print(e)
+        return data_points
+
     def write_nmaprun_to_database(self, nmap_report_json: string):
         try:
             test = '{"unixTime":' + str(round(time.time())) + ',' + nmap_report_json[1:-1] + '}'
@@ -44,9 +45,13 @@ class DatabaseHandler:
             print(e)
             return
 
-    def write_all_to_database(self, collection_name: string, data: string):
-        data_points = preprocess_data_string(data)
+    def write_all_to_database(self, collection_name: string, data: string, ssh_information: SshInformation):
+        data_points = self.preprocess_data_string(data)
         data_points = filter_data_points_for_collection(collection_name, data_points)
+
+        # add ip
+        for data_point in data_points:
+            data_point['host_ip'] = ssh_information.ip
 
         if len(data_points) > 0:
             result = self.insert_many_into(collection_name, data_points)

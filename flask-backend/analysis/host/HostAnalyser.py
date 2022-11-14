@@ -22,13 +22,13 @@ class HostAnalyser:
 
         # check if ssh available
         if self.host_information.ssh_information is not None:
-            #zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
-            #if zigbee2mqtt_issues is not None:
-            #    security_issues.append(zigbee2mqtt_issues)
+            zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
+            if zigbee2mqtt_issues is not None:
+                security_issues.append(zigbee2mqtt_issues)
 
-            #mosquitto_issues = self.analyse_mosquitto()
-            #if mosquitto_issues is not None:
-            #    security_issues.append(mosquitto_issues)
+            mosquitto_issues = self.analyse_mosquitto()
+            if mosquitto_issues is not None:
+                security_issues.append(mosquitto_issues)
 
             osquery_issues = self.analyse_osquery_information()
             if osquery_issues is not None:

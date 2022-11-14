@@ -1,3 +1,4 @@
+import json
 import string
 import time
 from multiprocessing import current_process
@@ -24,10 +25,14 @@ def get_osquery_data(ssh_information: SshInformation):
     download_osquery_output_file(ssh_information.ip, ssh_information.port)
     data = read_osquery_output_file()
 
-    database_handler = DatabaseHandler(constants.MONGO_URI)
+    if data == '':
+        print('Nothing to save.')
+        return
+
     print("Writing result of scan to database (" + current_process().name + ")")
-    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, data)
-    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES, data)
+    database_handler = DatabaseHandler(constants.MONGO_URI)
+    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, data, ssh_information)
+    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES, data, ssh_information)
 
 
 def download_osquery_output_file(ip_address, ssh_port):

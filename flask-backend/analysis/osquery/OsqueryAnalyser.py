@@ -13,18 +13,15 @@ class OsqueryAnalyser:
     def check_connected_usb_devices(self, host: HostInformation):
         print('Checking connected usb devices...')
 
-        # get hostname to identify
-        host_identifier = host.hostname.split(".")[0]
-
         # get from database
         database_handler = DatabaseHandler(constants.MONGO_URI)
         distinct_usb_serials = database_handler.mongo[constants.PI_DATABASE_NAME][constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES]\
-            .distinct('columns.serial', {'hostIdentifier': host_identifier})
+            .distinct('columns.serial', {'host_ip': host.ip})
 
         connected_usbs = []
         for serial in distinct_usb_serials:
             entries = database_handler.mongo[constants.PI_DATABASE_NAME][constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES]\
-                .find({'hostIdentifier': host_identifier, 'columns.serial': serial})\
+                .find({'host_ip': host.ip, 'columns.serial': serial})\
                 .sort('unixTime', -1).limit(1)
 
             for entry in entries:
@@ -65,9 +62,12 @@ class OsqueryAnalyser:
             return None
 
     def compare_with_configuration(self, connected_usbs):
+        whitelisted = self.configuration['whitelist_usbs'].split("\n")
+        whitelisted = [usb_name.strip() for usb_name in whitelisted]
+        
         not_whitelisted = []
         for usb in connected_usbs:
-            if not usb["columns"]["model"] in self.configuration['whitelist_usbs']:
+            if not usb["columns"]["model"] in whitelisted:
                 not_whitelisted.append(usb)
 
         return not_whitelisted
