@@ -27,7 +27,7 @@ def get_osquery_data(ssh_information: SshInformation):
     database_handler = DatabaseHandler(constants.MONGO_URI)
     print("Writing result of scan to database (" + current_process().name + ")")
     database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, data)
-    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_PROCESSES, data)
+    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES, data)
 
 
 def download_osquery_output_file(ip_address, ssh_port):

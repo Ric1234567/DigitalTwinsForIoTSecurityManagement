@@ -294,7 +294,7 @@ def get_ip_hosts():
     print('Get hosts of last nmaprun...')
 
     nmap_handler = NmapHandler()
-    nmap_handler.custom_network_scan("-sS -T4 " + constants.IP_NETWORK_PREFIX + "*")
+    nmap_handler.custom_network_scan("-sn -T4 " + constants.IP_NETWORK_PREFIX + "*")
 
     # get from database
     database_handler = DatabaseHandler(constants.MONGO_URI)

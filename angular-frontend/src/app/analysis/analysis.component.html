@@ -36,7 +36,7 @@
             <button mat-stroked-button color="primary" (click)="onClickFixHost(issue)" [disabled]="!issue.fixable">
                 Fix
             </button>
-            <div *ngIf="!issue.fixable" style="margin-left: 2ex;">Ssh required on host!</div>
+            <div *ngIf="!issue.fixable" style="margin-left: 2ex;">No fix available!</div>
         </mat-list-item>
     </mat-list>
 

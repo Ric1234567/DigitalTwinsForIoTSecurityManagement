@@ -13,7 +13,6 @@ class IpAnalyser:
         self.configuration = configuration
 
     def check_open_ports(self, host: HostInformation):
-
         if host is not None and host.ports is not None:
             if len(host.ports) > int(self.configuration['max_open_ports']):
                 description = str(len(host.ports)) +\
@@ -30,4 +29,5 @@ class IpAnalyser:
                                      recommendation,
                                      SecurityIssueTypes.is_fixable(SecurityIssueTypes.IP_TOO_MANY_OPEN_PORTS, host))
             else:
+                print('Open ports check: Found ' + str(len(host.ports)) + '! OK')
                 return None

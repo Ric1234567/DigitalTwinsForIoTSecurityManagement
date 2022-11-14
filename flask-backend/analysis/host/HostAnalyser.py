@@ -1,6 +1,10 @@
+import time
+from datetime import datetime
+
 import constants
 from analysis.ip.IpAnalyser import IpAnalyser
 from analysis.mosquitto.MosquittoAnalyser import MosquittoAnalyser
+from analysis.osquery.OsqueryAnalyser import OsqueryAnalyser
 from handler.DatabaseHandler import DatabaseHandler
 from analysis.zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
 from handler.HostInformation import HostInformation
@@ -16,21 +20,23 @@ class HostAnalyser:
     def analyse(self):
         security_issues = []
 
+        # check if ssh available
+        if self.host_information.ssh_information is not None:
+            #zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
+            #if zigbee2mqtt_issues is not None:
+            #    security_issues.append(zigbee2mqtt_issues)
+
+            #mosquitto_issues = self.analyse_mosquitto()
+            #if mosquitto_issues is not None:
+            #    security_issues.append(mosquitto_issues)
+
+            osquery_issues = self.analyse_osquery_information()
+            if osquery_issues is not None:
+                security_issues.append(osquery_issues)
+
         ip_issues = self.ip_analysis()
         if ip_issues is not None:
             security_issues.append(ip_issues)
-
-        # check if ssh available
-        if self.host_information.ssh_information is not None:
-            zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
-            if zigbee2mqtt_issues is not None:
-                security_issues.append(zigbee2mqtt_issues)
-
-            mosquitto_issues = self.analyse_mosquitto()
-            if mosquitto_issues is not None:
-                security_issues.append(mosquitto_issues)
-
-        # todo here other analysis
 
         return security_issues
 
@@ -65,8 +71,13 @@ class HostAnalyser:
         return security_issue_acl
 
     def analyse_osquery_information(self):
-        print()
-        # todo usb
+        print('Analysis Osquery')
+
+        # start analysis
+        osquery_analyser = OsqueryAnalyser(self.configuration['osquery'])
+        security_issue_usbs = osquery_analyser.check_connected_usb_devices(self.host_information)
+
+        return security_issue_usbs
 
     def ip_analysis(self):
         print('Analysis IP')
