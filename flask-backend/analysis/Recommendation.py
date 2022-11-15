@@ -1,6 +1,7 @@
 import string
 
 
+# Class which holds recommendation data.
 class Recommendation:
     def __init__(self, title: string, description: string, fix: string):
         self.title = title

@@ -18,11 +18,14 @@ def remove_unnecessary_lines(lines):
     return result
 
 
+# Analysis class for mosquitto security issues. (ssh required)
 class MosquittoAnalyser:
     def __init__(self, configuration):
         self.configuration = configuration
 
+    # check for the acl configuration
     def compare_access_control_list(self, host: HostInformation, host_configuration):
+        # preprocessing configurations
         topics = host_configuration['acl'].split('\n')
         topics = remove_unnecessary_lines(topics)
 
@@ -35,16 +38,17 @@ class MosquittoAnalyser:
 
         # check if they contain the same elements
         if collections.Counter(topics) != collections.Counter(should_topics):
+            # build recommendation
             recommendation = Recommendation(constants.MOSQUITTO,
                                             'The access control list for accessible topics is not equal to ' +
                                             'the defined default configuration and may be unsecure.\n[\n' +
                                             str(host_configuration['acl'].strip() + '\n]'),
                                             'Consider using the default configuration.\n[\n' +
                                             str(self.configuration['acl'].strip() + '\n]'))
+
             return SecurityIssue(SecurityIssueTypes.MOSQUITTO_ACCESS_CONTROL_LIST,
                                  host,
                                  recommendation,
                                  SecurityIssueTypes.is_fixable(SecurityIssueTypes.MOSQUITTO_ACCESS_CONTROL_LIST, host))
 
         return None
-

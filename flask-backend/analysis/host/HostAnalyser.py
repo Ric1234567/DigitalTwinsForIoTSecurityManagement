@@ -1,6 +1,3 @@
-import time
-from datetime import datetime
-
 import constants
 from analysis.ip.IpAnalyser import IpAnalyser
 from analysis.mosquitto.MosquittoAnalyser import MosquittoAnalyser
@@ -10,6 +7,8 @@ from analysis.zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
 from handler.HostInformation import HostInformation
 
 
+# Provides the security analysis of a single host and implements methods to use the Zigbee2MqttAnalyser,
+# MosquittoAnalyser, OsqueryAnalyser and IpAnalyser.
 class HostAnalyser:
 
     def __init__(self, should_configuration, host_information: HostInformation):
@@ -17,10 +16,12 @@ class HostAnalyser:
         self.host_information: HostInformation = host_information
         self.database_handler = DatabaseHandler(constants.MONGO_URI)
 
+    # Responsible for the security analysis.
+    # Implements Zigbee2MqttAnalyser, MosquittoAnalyser, OsqueryAnalyser and IpAnalyser.
     def analyse(self):
         security_issues = []
 
-        # check if ssh available
+        # check if ssh available. (needed to get configuration and log data)
         if self.host_information.ssh_information is not None:
             zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
             if zigbee2mqtt_issues is not None:
@@ -34,19 +35,21 @@ class HostAnalyser:
             if osquery_issues is not None:
                 security_issues.append(osquery_issues)
 
+        # ip issues can be analysed without ssh.
         ip_issues = self.ip_analysis()
         if ip_issues is not None:
             security_issues.append(ip_issues)
 
         return security_issues
 
+    # Host analysis of the Zigbee2Mqtt Integration
     def analyse_zigbee2mqtt(self):
         print('Analysis zigbee2Mqtt')
 
-        # get from database
+        # get configuration from database
         entry = self.database_handler.get_latest_zigbee2mqtt_entry_of_host(self.host_information.ip)
 
-        # filter host
+        # filter host to analyse
         host_scan = None
         for scan in entry['scans']:
             if scan['host'] == self.host_information.ip:
@@ -58,10 +61,11 @@ class HostAnalyser:
 
         return security_issue_permit_join
 
+    # Host analysis of the Mosquitto Integration
     def analyse_mosquitto(self):
         print('Analysis Mosquitto')
 
-        # get from database
+        # get acl from database
         entry = self.database_handler.get_latest_mosquitto_entry_of_host(self.host_information.ip)
 
         # start analysis
@@ -70,6 +74,7 @@ class HostAnalyser:
 
         return security_issue_acl
 
+    # Host analysis of the osquery Integration
     def analyse_osquery_information(self):
         print('Analysis Osquery')
 
@@ -79,8 +84,10 @@ class HostAnalyser:
 
         return security_issue_usbs
 
+    # Host analysis of the ip Integration
     def ip_analysis(self):
         print('Analysis IP')
+
         # start analysis
         ip_analyser = IpAnalyser(self.configuration['ip_configuration'])
         security_issue_ip = ip_analyser.check_open_ports(self.host_information)

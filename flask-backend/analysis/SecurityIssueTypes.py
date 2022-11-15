@@ -2,12 +2,14 @@ import string
 
 from handler.HostInformation import HostInformation
 
+# constant types
 IP_TOO_MANY_OPEN_PORTS = 'ip_too_many_open_ports'
 ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME = 'zigbee2mqtt_permit_join'
 MOSQUITTO_ACCESS_CONTROL_LIST = 'mosquitto_access_control_list'
 OSQUERY_CONNECTED_USBS = 'unkown_connected_usbs'
 
 
+# Return true if issue type is fixable if ssh is needed and present on host.
 def is_fixable(issue_type: string, host: HostInformation):
     if issue_type == IP_TOO_MANY_OPEN_PORTS or \
             issue_type == ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME or \

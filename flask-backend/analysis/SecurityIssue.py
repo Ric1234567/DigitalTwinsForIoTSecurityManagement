@@ -4,6 +4,7 @@ from analysis.Recommendation import Recommendation
 from handler.HostInformation import HostInformation
 
 
+# Class which holds data to security issues with its type and recommendation.
 class SecurityIssue:
 
     def __init__(self, issue_type: string, host_information: HostInformation,

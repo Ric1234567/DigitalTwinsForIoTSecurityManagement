@@ -6,18 +6,21 @@ from handler.DatabaseHandler import DatabaseHandler
 from handler.HostInformation import HostInformation
 
 
+# Analysis class for osquery security issues. Osquery needs to be installed on check host.
 class OsqueryAnalyser:
     def __init__(self, configuration):
         self.configuration = configuration
 
+    # check for unknown connected usb devices to a host.
     def check_connected_usb_devices(self, host: HostInformation):
         print('Checking connected usb devices...')
 
-        # get from database
+        # get distinct serial numbers of usb devices from the past from database to identify
         database_handler = DatabaseHandler(constants.MONGO_URI)
         distinct_usb_serials = database_handler.mongo[constants.PI_DATABASE_NAME][constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES]\
             .distinct('columns.serial', {'host_ip': host.ip})
 
+        # find last status of usb devices
         connected_usbs = []
         for serial in distinct_usb_serials:
             entries = database_handler.mongo[constants.PI_DATABASE_NAME][constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES]\
@@ -30,7 +33,8 @@ class OsqueryAnalyser:
                     connected_usbs.append(entry)
                 break
 
-        not_whitelisted_usbs = self.compare_with_configuration(connected_usbs)
+        # check for secrity issues
+        not_whitelisted_usbs = self.compare_connected_usbs_with_configuration(connected_usbs)
 
         # check if empty
         if not_whitelisted_usbs:
@@ -50,6 +54,7 @@ class OsqueryAnalyser:
 
             description += unknown_usbs_display
 
+            # build recommendation
             recommendation = Recommendation(constants.OSQUERY,
                                             description,
                                             'Disconnect unknown USB(s): ' + unknown_usbs_display)
@@ -58,13 +63,17 @@ class OsqueryAnalyser:
                                  recommendation,
                                  False)
         else:
+            # no security issues found
             print('USB Check: OK')
             return None
 
-    def compare_with_configuration(self, connected_usbs):
+    # Search for usb device differences with the configuration
+    def compare_connected_usbs_with_configuration(self, connected_usbs):
+        # get whitelisted usb devices
         whitelisted = self.configuration['whitelist_usbs'].split("\n")
         whitelisted = [usb_name.strip() for usb_name in whitelisted]
-        
+
+        # check if in whitelist
         not_whitelisted = []
         for usb in connected_usbs:
             if not usb["columns"]["model"] in whitelisted:
