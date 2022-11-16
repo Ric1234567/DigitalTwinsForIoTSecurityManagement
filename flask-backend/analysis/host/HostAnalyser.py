@@ -50,13 +50,7 @@ class HostAnalyser:
         print('Analysis zigbee2Mqtt')
 
         # get configuration from database
-        entry = self.database_handler.get_latest_zigbee2mqtt_entry_of_host(self.host_information.ip)
-
-        # filter host to analyse
-        host_scan = None
-        for scan in entry['scans']:
-            if scan['host'] == self.host_information.ip:
-                host_scan = scan
+        host_scan = self.database_handler.get_latest_zigbee2mqtt_entry_of_host(self.host_information.ip)
 
         # start analysis
         zigbee2mqtt_analyser = Zigbee2MqttAnalyser(self.configuration['zigbee_2_mqtt'])

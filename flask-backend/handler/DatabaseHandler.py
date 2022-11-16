@@ -82,7 +82,7 @@ class DatabaseHandler:
     # get the latest zigbee2mqtt entry of a specific host
     def get_latest_zigbee2mqtt_entry_of_host(self, host_ip):
         cursor = self.mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE]\
-            .find({'scans.host': host_ip}).sort('unixTime', -1).limit(1)
+            .find({'host': host_ip}).sort('unixTime', -1).limit(1)
         for entry in cursor:
             return entry
 
