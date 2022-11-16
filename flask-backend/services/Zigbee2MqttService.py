@@ -7,17 +7,17 @@ from handler.NmapHandler import NmapHandler
 from handler.SubnetworkHandler import SubnetworkHandler
 
 
+# static method which starts an endless zigbee2mqtt service with a given delay time
 def start_zigbee2mqtt_network_state_service(delay: int):
     while True:
-        get_zigbee2mqtt_data()
+        execute_zigbee2mqtt_scan()
 
         print(current_process().name + " sleeping for " + str(delay) + " seconds!")
         time.sleep(delay)
 
 
-def get_zigbee2mqtt_data():
-    print(
-        "Get zigbee2mqtt network state " + " (" + current_process().name + ")")
+def execute_zigbee2mqtt_scan():
+    print("Get zigbee2mqtt network state " + " (" + current_process().name + ")")
 
     # get from database (no new nmap scan)
     database_handler = DatabaseHandler(constants.MONGO_URI)

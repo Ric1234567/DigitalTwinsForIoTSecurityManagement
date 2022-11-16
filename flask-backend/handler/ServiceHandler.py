@@ -2,6 +2,8 @@
 import string
 from multiprocessing import active_children, Process
 
+# static methods for handling processes/services
+
 process_dict = {}
 
 

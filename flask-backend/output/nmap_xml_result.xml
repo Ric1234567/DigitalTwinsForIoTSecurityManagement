@@ -1,32 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Tue Nov 15 10:36:50 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.51 -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.51" start="1668505010" startstr="Tue Nov 15 10:36:50 2022" version="7.93" xmloutputversion="1.05">
-<scaninfo type="syn" protocol="tcp" numservices="65535" services="1-65535"/>
+<!-- Nmap 7.93 scan initiated Wed Nov 16 11:19:49 2022 as: nmap -oX - -F 192.168.178.65 -->
+<nmaprun scanner="nmap" args="nmap -oX - -F 192.168.178.65" start="1668593989" startstr="Wed Nov 16 11:19:49 2022" version="7.93" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="100" services="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 <verbose level="0"/>
 <debugging level="0"/>
-<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.51" addrtype="ipv4"/>
-<address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
+<host starttime="1668593989" endtime="1668593989"><status state="up" reason="localhost-response" reason_ttl="0"/>
+<address addr="192.168.178.65" addrtype="ipv4"/>
 <hostnames>
+<hostname name="Henrics-MBP.fritz.box" type="PTR"/>
 </hostnames>
-</hosthint>
-<host starttime="1668505010" endtime="1668505049"><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.51" addrtype="ipv4"/>
-<address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
-<hostnames>
-<hostname name="raspberrypi.fritz.box" type="PTR"/>
-</hostnames>
-<ports><extraports state="closed" count="65532">
-<extrareasons reason="reset" count="65532" proto="tcp" ports="1-21,23-1882,1884-8079,8081-65535"/>
+<ports><extraports state="closed" count="100">
+<extrareasons reason="reset" count="100" proto="tcp" ports="7,9,13,21-23,25-26,37,53,79-81,88,106,110-111,113,119,135,139,143-144,179,199,389,427,443-445,465,513-515,543-544,548,554,587,631,646,873,990,993,995,1025-1029,1110,1433,1720,1723,1755,1900,2000-2001,2049,2121,2717,3000,3128,3306,3389,3986,4899,5000,5009,5051,5060,5101,5190,5357,5432,5631,5666,5800,5900,6000-6001,6646,7070,8000,8008-8009,8080-8081,8443,8888,9100,9999-10000,32768,49152-49157"/>
 </extraports>
-<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" method="table" conf="3"/></port>
-<port protocol="tcp" portid="1883"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="mqtt" method="table" conf="3"/></port>
-<port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http-proxy" method="table" conf="3"/></port>
 </ports>
-<times srtt="10200" rttvar="5502" to="100000"/>
+<times srtt="20" rttvar="6" to="100000"/>
 </host>
-<runstats><finished time="1668505049" timestr="Tue Nov 15 10:37:29 2022" summary="Nmap done at Tue Nov 15 10:37:29 2022; 1 IP address (1 host up) scanned in 39.12 seconds" elapsed="39.12" exit="success"/><hosts up="1" down="0" total="1"/>
+<runstats><finished time="1668593989" timestr="Wed Nov 16 11:19:49 2022" summary="Nmap done at Wed Nov 16 11:19:49 2022; 1 IP address (1 host up) scanned in 0.09 seconds" elapsed="0.09" exit="success"/><hosts up="1" down="0" total="1"/>
 </runstats>
 </nmaprun>

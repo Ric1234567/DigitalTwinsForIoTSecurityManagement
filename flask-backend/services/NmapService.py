@@ -7,15 +7,17 @@ from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
 
 
+# static method which starts an endless nmap scan service with given command and delay
 def start_nmap_scan_service(nmap_command: string, delay: int):
     while True:
-        get_nmap_data(nmap_command)
+        execute_nmap_scan(nmap_command)
 
         print(current_process().name + " sleeping for " + str(delay) + " seconds!")
         time.sleep(delay)
 
 
-def get_nmap_data(nmap_command: string):
+# execute an nmap network scan and write results to database
+def execute_nmap_scan(nmap_command: string):
     print("Performing Nmap Scan (" + nmap_command + "," + current_process().name + ")")
     nmap_handler = NmapHandler()
     nmap_report_json = nmap_handler.get_report_as_json(nmap_command)

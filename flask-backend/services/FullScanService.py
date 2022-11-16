@@ -8,22 +8,26 @@ from handler.NmapHandler import NmapHandler
 from services import MosquittoService, OsqueryService, NmapService, Zigbee2MqttService
 
 
+# static method which starts an endless full network scan with a given nmap command and its execution delay
 def start_full_network_scan_service(nmap_command: string, delay: int):
     while True:
-        # nmap
-        NmapService.get_nmap_data(nmap_command)
+        # execute nmap scan which gets written to the database
+        NmapService.execute_nmap_scan(nmap_command)
 
-        # get from database
+        # get network scan from database
         database_handler = DatabaseHandler(constants.MONGO_URI)
         nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
+        # find ssh hosts
         nmap_handler = NmapHandler()
         ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
 
+        # execute other service operations
         for ssh_information in ssh_hosts:
-            MosquittoService.get_mosquitto_data(ssh_information)
-            OsqueryService.get_osquery_data(ssh_information)
-            Zigbee2MqttService.get_zigbee2mqtt_data()
+            MosquittoService.execute_mosquitto_scan(ssh_information)
+            OsqueryService.execute_osquery_scan(ssh_information)
+            Zigbee2MqttService.execute_zigbee2mqtt_scan()
 
+        # sleep for the delay time
         print(current_process().name + " sleeping for " + str(delay) + " seconds!")
         time.sleep(delay)

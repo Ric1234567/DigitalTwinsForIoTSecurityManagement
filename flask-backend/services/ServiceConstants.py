@@ -1,3 +1,5 @@
+# constants for services
+
 PROCESS_NAME_SPLIT_CHAR = '>'
 PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME = 'endless_full_network_scan'
 PROCESS_ENDLESS_NMAP_SCAN_NAME = 'endless_nmap_scan'

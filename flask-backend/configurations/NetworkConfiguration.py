@@ -4,6 +4,7 @@ from util.ComplexJsonEncoder import ComplexJsonEncoder
 from configurations.Zigbee2MqttConfiguration import Zigbee2MqttConfiguration
 
 
+# todo not needed anywhere
 class NetworkConfiguration:
     def __init__(self):
         self.zigbee_2_mqtt: Zigbee2MqttConfiguration = Zigbee2MqttConfiguration()

@@ -27,13 +27,13 @@ class Zigbee2MqttIssueSolver:
         content = ssh_handler.read_file_content_via_sftp(constants.ZIGBEE2MQTT_REMOTE_FILE_PATH_CONFIG)
 
         # parse to configuration to readable object
-        configuration = ConfigurationHelper.from_yaml_configuration(content.decode("utf-8"))
+        configuration = ConfigurationHelper.parse_yaml_configuration_string(content.decode("utf-8"))
 
         # set to value of config
         configuration['permit_join'] = self.configuration['permit_join']
 
         # convert to yaml string configuration
-        new_configuration = ConfigurationHelper.to_yaml_configuration(configuration)
+        new_configuration = ConfigurationHelper.convert_to_yaml_configuration_string(configuration)
 
         # upload to host
         ssh_handler.write_file_content_via_sftp(constants.ZIGBEE2MQTT_REMOTE_FILE_PATH_CONFIG, new_configuration)

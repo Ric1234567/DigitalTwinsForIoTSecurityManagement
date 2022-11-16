@@ -1,3 +1,4 @@
+# todo not needed anywhere
 class Zigbee2MqttConfiguration:
     def __init__(self):
         self.permit_join = True
