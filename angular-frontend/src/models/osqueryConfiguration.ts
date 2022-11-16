@@ -1,3 +1,3 @@
 export class OsqueryConfiguration {
-    whitelist_usbs:string[] = []
+    allow_list_usbs:string[] = []
 }

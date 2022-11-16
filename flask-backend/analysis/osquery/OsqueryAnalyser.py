@@ -34,10 +34,10 @@ class OsqueryAnalyser:
                 break
 
         # check for secrity issues
-        not_whitelisted_usbs = self.compare_connected_usbs_with_configuration(connected_usbs)
+        unknown_usbs = self.compare_connected_usbs_with_configuration(connected_usbs)
 
         # check if empty
-        if not_whitelisted_usbs:
+        if unknown_usbs:
             # description building
             usbs_display = ''
             for usb in connected_usbs:
@@ -47,7 +47,7 @@ class OsqueryAnalyser:
 
             description = 'Connected USB(s): ' + usbs_display + '. Found unknown USB(s): '
             unknown_usbs_display = ''
-            for usb in not_whitelisted_usbs:
+            for usb in unknown_usbs:
                 model = usb["columns"]["model"]
                 if model is not None:
                     unknown_usbs_display += model + ', '
@@ -69,14 +69,14 @@ class OsqueryAnalyser:
 
     # Search for usb device differences with the configuration
     def compare_connected_usbs_with_configuration(self, connected_usbs):
-        # get whitelisted usb devices
-        whitelisted = self.configuration['whitelist_usbs'].split("\n")
-        whitelisted = [usb_name.strip() for usb_name in whitelisted]
+        # get allowlisted usb devices
+        allowlisted = self.configuration['allow_list_usbs'].split("\n")
+        allowlisted = [usb_name.strip() for usb_name in allowlisted]
 
-        # check if in whitelist
-        not_whitelisted = []
+        # check if in allowlist
+        not_allowlisted = []
         for usb in connected_usbs:
-            if not usb["columns"]["model"] in whitelisted:
-                not_whitelisted.append(usb)
+            if not usb["columns"]["model"] in allowlisted:
+                not_allowlisted.append(usb)
 
-        return not_whitelisted
+        return not_allowlisted

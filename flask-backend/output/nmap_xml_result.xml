@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Wed Nov 16 16:51:15 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.51 -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.51" start="1668613875" startstr="Wed Nov 16 16:51:15 2022" version="7.93" xmloutputversion="1.05">
+<!-- Nmap 7.93 scan initiated Wed Nov 16 17:06:28 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.51 -->
+<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.51" start="1668614788" startstr="Wed Nov 16 17:06:28 2022" version="7.93" xmloutputversion="1.05">
 <scaninfo type="syn" protocol="tcp" numservices="65535" services="1-65535"/>
 <verbose level="0"/>
 <debugging level="0"/>
@@ -12,7 +12,7 @@
 <hostnames>
 </hostnames>
 </hosthint>
-<host starttime="1668613876" endtime="1668613914"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1668614789" endtime="1668614827"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.51" addrtype="ipv4"/>
 <address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
 <hostnames>
@@ -25,8 +25,8 @@
 <port protocol="tcp" portid="1883"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="mqtt" method="table" conf="3"/></port>
 <port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http-proxy" method="table" conf="3"/></port>
 </ports>
-<times srtt="10068" rttvar="1402" to="100000"/>
+<times srtt="8431" rttvar="1728" to="100000"/>
 </host>
-<runstats><finished time="1668613914" timestr="Wed Nov 16 16:51:54 2022" summary="Nmap done at Wed Nov 16 16:51:54 2022; 1 IP address (1 host up) scanned in 38.25 seconds" elapsed="38.25" exit="success"/><hosts up="1" down="0" total="1"/>
+<runstats><finished time="1668614827" timestr="Wed Nov 16 17:07:07 2022" summary="Nmap done at Wed Nov 16 17:07:07 2022; 1 IP address (1 host up) scanned in 39.11 seconds" elapsed="39.11" exit="success"/><hosts up="1" down="0" total="1"/>
 </runstats>
 </nmaprun>
