@@ -10,24 +10,6 @@ from handler.ssh.SshHandler import SshHandler
 
 # class which handles (zigbee/mqtt) subnetwork data
 class SubnetworkHandler:
-    # scan all ssh hosts for subnetworks
-    def scan_subnetwork(self, ssh_hosts):
-        all_subnetworks = []
-        for ssh_host in ssh_hosts:
-            subnetwork = self.scan_subnetwork_host(ssh_host)
-            all_subnetworks.append(subnetwork)
-
-        subnetwork_scan = {
-            'unixTime': round(time.time()),
-            'scans': all_subnetworks
-        }
-
-        # write subnetwork information to database
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        print("Writing result of subnetwork scan to database (" + current_process().name + ")")
-        database_handler.insert_one_into(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE,
-                                         subnetwork_scan)
-
     # scan a given ssh host for subnetworks.
     # It reads the information from the zigbee2mqtt configuration and its state.json
     def scan_subnetwork_host(self, ssh_information: SshInformation):
@@ -59,31 +41,46 @@ class SubnetworkHandler:
 
         # build subnetwork object
         subnetwork = {
+            'unixTime': round(time.time()),
             'host': ssh_information.ip,
             'state': data_point,
             'config': config
         }
-        return subnetwork
+
+        # write subnetwork information to database
+        database_handler = DatabaseHandler(constants.MONGO_URI)
+        print("Writing result of subnetwork scan to database (" + current_process().name + ")")
+        database_handler.insert_one_into(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE,
+                                         subnetwork)
 
     # gets the latest subnetwork information from database
     def get_latest_subnetwork_information(self):
         # get latest entry
         database_handler = DatabaseHandler(constants.MONGO_URI)
-        latest_entry = database_handler.get_latest_entry(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE)
-        subnetwork = []
 
+        distinct_hosts_with_subnetworks = database_handler.mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE]\
+            .distinct('host')
+
+        subnetwork = []
+        unix_time = -1
         # build subnetwork object with timestamp
-        if 'scans' in latest_entry:
-            for scan in latest_entry['scans']:
-                connected_subnetwork_hex = list(scan['state'])
-                config_file = scan['config']
+        for host_ip in distinct_hosts_with_subnetworks:
+            entries = database_handler.mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE]\
+                .find({'host': host_ip}).sort('unixTime', -1).limit(1)
+            for entry in entries:  # just a single entry
+                if unix_time < entry['unixTime']:
+                    unix_time = entry['unixTime']
+
+                connected_subnetwork_hex = list(entry['state'])
+                config_file = entry['config']
 
                 for connected_device_hex in connected_subnetwork_hex:
                     tmp_dict = {
                         'hex': connected_device_hex,
-                        'host': scan['host'],
+                        'host': entry['host'],
                         'name': config_file['devices'][connected_device_hex]['friendly_name']
                     }
                     subnetwork.append(tmp_dict)
+                break
 
-        return subnetwork, latest_entry['unixTime']
+        return subnetwork, unix_time

@@ -62,7 +62,9 @@ def get_full_network_report(nmap_command: string):
     ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
 
     subnetwork_handler = SubnetworkHandler()
-    subnetwork_handler.scan_subnetwork(ssh_hosts)
+
+    for host in ssh_hosts:
+        subnetwork_handler.scan_subnetwork_host(host)
     subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
 
     response_json = {
@@ -247,19 +249,17 @@ def execute_analysis(host_ip):
     database_handler = DatabaseHandler(constants.MONGO_URI)
     nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
-    ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
-
-    subnetwork_handler = SubnetworkHandler()
-    subnetwork_handler.scan_subnetwork(ssh_hosts)
-
     hosts = nmap_handler.get_hosts_including_ssh_information(nmap_report_db['nmaprun'])
 
-    # identify correct host by host
+    # identify correct host by host todo refactor
     host_to_analyse = None
     for host in hosts:
         if host.ip == host_ip:
             host_to_analyse = host
             break
+
+    subnetwork_handler = SubnetworkHandler()
+    subnetwork_handler.scan_subnetwork_host(host_to_analyse.ssh_information)
 
     if host_to_analyse is None:
         response = {"response": "Could not find host!"}

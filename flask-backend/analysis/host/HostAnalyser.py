@@ -5,6 +5,7 @@ from analysis.osquery.OsqueryAnalyser import OsqueryAnalyser
 from handler.DatabaseHandler import DatabaseHandler
 from analysis.zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
 from handler.HostInformation import HostInformation
+from services import Zigbee2MqttService, FullScanService
 
 
 # Provides the security analysis of a single host and implements methods to use the Zigbee2MqttAnalyser,
@@ -19,6 +20,8 @@ class HostAnalyser:
     # Responsible for the security analysis.
     # Implements Zigbee2MqttAnalyser, MosquittoAnalyser, OsqueryAnalyser and IpAnalyser.
     def analyse(self):
+        FullScanService.execute_all_services(self.host_information.ssh_information)
+
         security_issues = []
 
         # check if ssh available. (needed to get configuration and log data)
