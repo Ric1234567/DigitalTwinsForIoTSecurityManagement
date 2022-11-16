@@ -30,16 +30,19 @@ class IpIssueSolver:
                                  constants.SSH_USER, constants.SSH_PASSWORD)
         ssh_handler.connect()
 
-        # read white listed ports
-        skip_ports = self.configuration['whitelist_port']
+        # read allow/listed ports
+        allow_list_ports = self.configuration['allow_list_port']
+        allow_list_ports = allow_list_ports.split('\n')
+        # remove useless spaces
+        allow_list_ports = [port.strip() for port in allow_list_ports]
 
         # add current ssh port otherwise connection will be cut off
-        skip_ports.append(str(ssh_information.port))
+        allow_list_ports.append(str(ssh_information.port))
 
-        # kill all ports/application which are not in the whitelist
+        # kill all ports/application which are not in the allow-list
         killed_ports = []
         for port in host_information.ports:
-            if (port['@protocol'] == 'tcp') and (not port['@portid'] in skip_ports):
+            if (port['@protocol'] == 'tcp') and (not port['@portid'] in allow_list_ports):
                 output = ssh_handler.execute_command('sudo fuser -k ' + str(port['@portid']) + '/tcp')
                 if output:
                     killed_ports.append(output[0].split('/')[0])
