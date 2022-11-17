@@ -33,6 +33,7 @@ OSQUERY_AND_COLLECTION_NAME_USB_DEVICES = 'usb_devices'
 COLLECTION_NAME_NMAPRUN = 'nmaprun'
 COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE = 'zigbee2mqtt_network_state'
 COLLECTION_NAME_MOSQUITTO_CONFIG = 'mosquitto'
+COLLECTION_NAME_HOST_ANALYSIS = 'host_analysis'
 
 MONGO_URI = 'mongodb://root:root@localhost:27017/pidb?authSource=admin'
 PI_DATABASE_NAME = 'pidb'

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Host } from 'src/models/host';
-import { SshInformation } from 'src/models/sshInformation';
 import { Util } from '../util';
 
 @Component({
@@ -60,7 +59,7 @@ export class AnalysisComponent implements OnInit {
     console.log(issue);
 
     let util = new Util()
-    let response = await util.fetchFromBackend('GET', 'fix/' + issue.host_information.ip + "/" + issue.issue_type)
+    let response = await util.fetchFromBackend('GET', 'fix/' + this.analysisResult.host_information.ip + "/" + issue.issue_type)
 
     alert(response.response)
   }

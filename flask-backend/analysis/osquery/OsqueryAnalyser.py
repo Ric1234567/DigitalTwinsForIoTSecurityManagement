@@ -55,7 +55,6 @@ class OsqueryAnalyser:
                                             description,
                                             'Disconnect unknown USB(s): ' + unknown_usbs_display)
             return SecurityIssue(SecurityIssueTypes.OSQUERY_CONNECTED_USBS,
-                                 host,
                                  recommendation,
                                  False)
         else:

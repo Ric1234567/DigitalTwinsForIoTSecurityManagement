@@ -266,12 +266,17 @@ def execute_analysis(host_ip):
     host_analyser = HostAnalyser(should_configuration, host_to_analyse)
     host_analysis_result = host_analyser.analyse()
 
+    # convert to json
+    host_analysis_result_json = json.dumps(host_analysis_result, cls=ComplexJsonEncoder)
+
+    print("Write host analysis of " + host_to_analyse.ip + " to database")
+    database_handler.insert_one_into(constants.COLLECTION_NAME_HOST_ANALYSIS, json.loads(host_analysis_result_json))
+
     if len(host_analysis_result.security_issues) == 0:
         response = {"response": "No issues found!"}
         return Response(json.dumps(response), status=200, mimetype='application/json')
 
-    return Response(json.dumps(host_analysis_result, cls=ComplexJsonEncoder), status=200,
-                    mimetype='application/json')
+    return Response(host_analysis_result_json, status=200, mimetype='application/json')
 
 
 @app.route('/fix/<host_ip>/<issue_type>', methods=['GET'])

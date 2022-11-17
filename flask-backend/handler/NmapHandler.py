@@ -191,8 +191,8 @@ class NmapHandler:
     def insert_nmaprun_to_database(self, nmap_report_json: string):
         print("Writing result of nmap scan to database (" + current_process().name + ")")
         try:
-            test = '{"unixTime":' + str(round(time.time())) + ',' + nmap_report_json[1:-1] + '}'
-            nmap_report = json.loads(test)
+            json_string = '{"unixTime":' + str(round(time.time())) + ',' + nmap_report_json[1:-1] + '}'
+            nmap_report = json.loads(json_string)
             self.database_handler.insert_one_into(constants.COLLECTION_NAME_NMAPRUN, nmap_report)
         except Exception as e:
             print(e)

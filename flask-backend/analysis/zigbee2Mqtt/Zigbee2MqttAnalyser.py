@@ -26,7 +26,6 @@ class Zigbee2MqttAnalyser:
                                             str(self.configuration['permit_join']))
 
             return SecurityIssue(SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME,
-                                 host,
                                  recommendation,
                                  SecurityIssueTypes.is_fixable(SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME, host))
         else:

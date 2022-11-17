@@ -47,7 +47,6 @@ class MosquittoAnalyser:
                                             str(self.configuration['acl'].strip() + '\n]'))
 
             return SecurityIssue(SecurityIssueTypes.MOSQUITTO_ACCESS_CONTROL_LIST,
-                                 host,
                                  recommendation,
                                  SecurityIssueTypes.is_fixable(SecurityIssueTypes.MOSQUITTO_ACCESS_CONTROL_LIST, host))
 

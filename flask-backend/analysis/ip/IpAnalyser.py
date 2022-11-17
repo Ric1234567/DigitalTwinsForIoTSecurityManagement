@@ -28,7 +28,6 @@ class IpAnalyser:
 
                 # create security issue
                 return SecurityIssue(SecurityIssueTypes.IP_TOO_MANY_OPEN_PORTS,
-                                     host,
                                      recommendation,
                                      SecurityIssueTypes.is_fixable(SecurityIssueTypes.IP_TOO_MANY_OPEN_PORTS, host))
             else:
