@@ -103,34 +103,6 @@ export class NetworkScanComponent implements OnInit {
     this.setNetworkReport()
   }
 
-  async onClickStartNmapScanService() {
-    let delay = 60
-    let util = new Util
-    let route = 'start/endless_nmap_scan' + Constants.PROCESS_SPLIT_CHAR + this.nmapCustomCommandSuffix + '?cmd=' + this.nmapCustomCommandSuffix + '&delay=' + delay
-    try {
-      let resp = await util.fetchFromBackend('GET', route) as any
-      console.log(resp);
-
-      alert(resp.response)
-    } catch (error: any) {
-      // ignore
-    }
-  }
-
-  async onClickStartFullNetworkScanService() {
-    let delay = 60
-    let util = new Util
-    let route = 'start/endless_full_network_scan' + Constants.PROCESS_SPLIT_CHAR + this.nmapCustomCommandSuffix + '?cmd=' + this.nmapCustomCommandSuffix + '&delay=' + delay
-    try {
-      let resp = await util.fetchFromBackend('GET', route) as any
-      console.log(resp);
-
-      alert(resp.response)
-    } catch (error: any) {
-      // ignore
-    }
-  }
-
   private onClickGraph(params: any) {
     if (params.dataType == 'node') {
       console.log((params.name));

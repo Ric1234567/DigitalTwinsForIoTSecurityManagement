@@ -1,10 +1,13 @@
 import collections.abc
+import json
 import string
 import subprocess
+import time
 import typing
 from multiprocessing import current_process
 
 from libnmap.parser import NmapParser
+
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.HostInformation import HostInformation
@@ -14,6 +17,8 @@ from util import ConfigurationHelper
 
 # Class responsible for nmap related operations
 class NmapHandler:
+    def __init__(self):
+        self.database_handler = DatabaseHandler(constants.MONGO_URI)
 
     # Runs nmap commands and return xml string
     def run_command(self, cmd):
@@ -63,9 +68,7 @@ class NmapHandler:
         nmap_report_json = self.get_report_as_json(nmap_command)
 
         # save to database
-        print("Writing result of nmap scan to database (" + current_process().name + ")")
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        database_handler.write_nmaprun_to_database(nmap_report_json)
+        self.insert_nmaprun_to_database(nmap_report_json)
 
     # get hosts of network with its ssh information if any
     def get_hosts_including_ssh_information(self, nmaprun):
@@ -171,8 +174,7 @@ class NmapHandler:
     # get ssh information of a host by a given ip from database
     def get_ssh_information_by_ip(self, ip: string):
         # get from database
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+        nmap_report_db = self.database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
         # get ssh information of the host
         nmap_handler = NmapHandler()
@@ -185,3 +187,13 @@ class NmapHandler:
 
         return ssh_information
 
+    # write an nmaprun json to the database. add an unix timestamp to the data
+    def insert_nmaprun_to_database(self, nmap_report_json: string):
+        print("Writing result of nmap scan to database (" + current_process().name + ")")
+        try:
+            test = '{"unixTime":' + str(round(time.time())) + ',' + nmap_report_json[1:-1] + '}'
+            nmap_report = json.loads(test)
+            self.database_handler.insert_one_into(constants.COLLECTION_NAME_NMAPRUN, nmap_report)
+        except Exception as e:
+            print(e)
+            return

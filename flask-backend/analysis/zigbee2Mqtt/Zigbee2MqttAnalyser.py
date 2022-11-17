@@ -30,4 +30,6 @@ class Zigbee2MqttAnalyser:
                                  recommendation,
                                  SecurityIssueTypes.is_fixable(SecurityIssueTypes.ZIGBEE2MQTT_PERMIT_JOIN_ISSUE_NAME, host))
         else:
+            print('Configuration permit_join check on ' + host.ip + ': Found permit_join=' +
+                  str(host_scan['config']['permit_join']) + '! STATUS OK')
             return None

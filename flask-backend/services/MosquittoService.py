@@ -2,6 +2,7 @@ import string
 import time
 from multiprocessing import current_process
 
+import app
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.ssh.SshHandler import SshHandler
@@ -40,9 +41,8 @@ def execute_mosquitto_scan(ssh_information: SshInformation):
     }
 
     # write to database
-    database_handler = DatabaseHandler(constants.MONGO_URI)
     print("Writing mosquitto configurations to database (" + current_process().name + ")")
-    database_handler.insert_one_into(constants.COLLECTION_NAME_MOSQUITTO_CONFIG, data)
+    app.database_handler.insert_one_into(constants.COLLECTION_NAME_MOSQUITTO_CONFIG, data)
 
 
 # downloads the mosquitto configuration files

@@ -1,32 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Wed Nov 16 19:09:18 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.51 -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.51" start="1668622158" startstr="Wed Nov 16 19:09:18 2022" version="7.93" xmloutputversion="1.05">
+<!-- Nmap 7.93 scan initiated Thu Nov 17 10:40:43 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.47 -->
+<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.47" start="1668678043" startstr="Thu Nov 17 10:40:43 2022" version="7.93" xmloutputversion="1.05">
 <scaninfo type="syn" protocol="tcp" numservices="65535" services="1-65535"/>
 <verbose level="0"/>
 <debugging level="0"/>
 <hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.51" addrtype="ipv4"/>
-<address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
+<address addr="192.168.178.47" addrtype="ipv4"/>
+<address addr="6C:3B:E5:01:95:35" addrtype="mac" vendor="Hewlett Packard"/>
 <hostnames>
 </hostnames>
 </hosthint>
-<host starttime="1668622158" endtime="1668622197"><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.51" addrtype="ipv4"/>
-<address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
+<host starttime="1668678044" endtime="1668678109"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.178.47" addrtype="ipv4"/>
+<address addr="6C:3B:E5:01:95:35" addrtype="mac" vendor="Hewlett Packard"/>
 <hostnames>
-<hostname name="raspberrypi.fritz.box" type="PTR"/>
+<hostname name="HP1AC068.fritz.box" type="PTR"/>
 </hostnames>
-<ports><extraports state="closed" count="65532">
-<extrareasons reason="reset" count="65532" proto="tcp" ports="1-21,23-1882,1884-8079,8081-65535"/>
+<ports><extraports state="closed" count="65517">
+<extrareasons reason="reset" count="65517" proto="tcp" ports="1-79,81-138,140-442,444,446-630,632-3909,3912-6838,6840-7434,7436-8079,8081-9099,9103-9109,9113-9219,9221-9289,9291-65535"/>
 </extraports>
-<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" method="table" conf="3"/></port>
-<port protocol="tcp" portid="1883"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="mqtt" method="table" conf="3"/></port>
-<port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http-proxy" method="table" conf="3"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" method="table" conf="3"/></port>
+<port protocol="tcp" portid="139"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="netbios-ssn" method="table" conf="3"/></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="https" method="table" conf="3"/></port>
+<port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="microsoft-ds" method="table" conf="3"/></port>
+<port protocol="tcp" portid="631"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ipp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="3910"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="prnrequest" method="table" conf="3"/></port>
+<port protocol="tcp" portid="3911"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="prnstatus" method="table" conf="3"/></port>
+<port protocol="tcp" portid="6839"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
+<port protocol="tcp" portid="7435"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http-proxy" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9100"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="jetdirect" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9101"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="jetdirect" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9102"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="jetdirect" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9110"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9111"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="DragonIDSConsole" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9112"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
+<port protocol="tcp" portid="9220"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9290"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
 </ports>
-<times srtt="12255" rttvar="1351" to="100000"/>
+<times srtt="418017" rttvar="362879" to="1250000"/>
 </host>
-<runstats><finished time="1668622197" timestr="Wed Nov 16 19:09:57 2022" summary="Nmap done at Wed Nov 16 19:09:57 2022; 1 IP address (1 host up) scanned in 39.18 seconds" elapsed="39.18" exit="success"/><hosts up="1" down="0" total="1"/>
+<runstats><finished time="1668678109" timestr="Thu Nov 17 10:41:49 2022" summary="Nmap done at Thu Nov 17 10:41:49 2022; 1 IP address (1 host up) scanned in 65.99 seconds" elapsed="65.99" exit="success"/><hosts up="1" down="0" total="1"/>
 </runstats>
 </nmaprun>

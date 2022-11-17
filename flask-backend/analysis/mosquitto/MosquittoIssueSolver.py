@@ -2,7 +2,6 @@ import string
 
 import constants
 from analysis import SecurityIssueTypes, DockerConstants
-from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
 from handler.ssh.SshHandler import SshHandler
 

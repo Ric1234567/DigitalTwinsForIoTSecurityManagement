@@ -10,6 +10,7 @@ from handler.ssh.SshHandler import SshHandler
 class IpIssueSolver:
     def __init__(self, configuration):
         self.configuration = configuration
+        self.database_handler = DatabaseHandler(constants.MONGO_URI)
 
     # Fix implementation if too many ports are open a given host.
     def fix_too_many_open_ports(self, ip: string):
@@ -18,8 +19,7 @@ class IpIssueSolver:
         ssh_information = nmap_handler.get_ssh_information_by_ip(ip)
 
         # get latest nmap scan from database
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+        nmap_report_db = self.database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
         host_information = nmap_handler.get_host(nmap_report_db['nmaprun'], ip)
 
         if host_information is None:

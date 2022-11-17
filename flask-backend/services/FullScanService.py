@@ -2,8 +2,8 @@ import string
 import time
 from multiprocessing import current_process
 
+import app
 import constants
-from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
 from handler.ssh.SshInformation import SshInformation
 from services import MosquittoService, OsqueryService, NmapService, Zigbee2MqttService
@@ -24,8 +24,7 @@ def execute_full_network_scan(nmap_command: string):
     NmapService.execute_nmap_scan(nmap_command)
 
     # get network scan from database
-    database_handler = DatabaseHandler(constants.MONGO_URI)
-    nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+    nmap_report_db = app.database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
     # find ssh hosts
     nmap_handler = NmapHandler()
@@ -33,10 +32,10 @@ def execute_full_network_scan(nmap_command: string):
 
     # execute other service operations
     for ssh_information in ssh_hosts:
-        execute_all_services(ssh_information)
+        execute_all_service_scans(ssh_information)
 
 
-def execute_all_services(ssh_information: SshInformation):
+def execute_all_service_scans(ssh_information: SshInformation):
     MosquittoService.execute_mosquitto_scan(ssh_information)
     OsqueryService.execute_osquery_scan(ssh_information)
     Zigbee2MqttService.execute_zigbee2mqtt_scan(ssh_information)

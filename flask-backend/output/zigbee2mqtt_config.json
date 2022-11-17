@@ -1,6 +1,8 @@
 advanced:
   channel: 25
 devices:
+  '0x00158d000363d9a3':
+    friendly_name: '0x00158d000363d9a3'
   '0x00158d0003a28b20':
     friendly_name: '0x00158d0003a28b20'
   '0x804b50fffe607e68':
@@ -13,8 +15,6 @@ devices:
     qos: 2
     retain: true
     retention: 900
-  '0x00158d000363d9a3':
-    friendly_name: '0x00158d000363d9a3'
 frontend:
   port: 8080
 mqtt:
@@ -23,6 +23,6 @@ mqtt:
   keepalive: 60
   server: mqtt://mosquitto:1883
   version: 5
-permit_join: true
+permit_join: false
 serial:
   port: /dev/ttyACM0

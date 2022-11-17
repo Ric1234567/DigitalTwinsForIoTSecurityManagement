@@ -29,6 +29,8 @@ mongo = PyMongo(app)
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
+database_handler = DatabaseHandler(constants.MONGO_URI)
+
 
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
 def get_custom_nmap_report(nmap_command: string):
@@ -37,8 +39,7 @@ def get_custom_nmap_report(nmap_command: string):
         nmap_handler.custom_network_scan(nmap_command)
 
         # get from database
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+        nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
         response_json = {
             "response": {
@@ -56,8 +57,7 @@ def get_full_network_report(nmap_command: string):
     nmap_handler.custom_network_scan(nmap_command)
 
     # get from database
-    database_handler = DatabaseHandler(constants.MONGO_URI)
-    nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+    nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
     ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
 
@@ -80,8 +80,7 @@ def get_full_network_report(nmap_command: string):
 @app.route('/last_network_scan', methods=['GET'])
 def get_last_network_report():
     try:
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+        nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
         subnetwork_handler = SubnetworkHandler()
         subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
@@ -138,11 +137,11 @@ def start_service(process_name):
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == ServiceConstants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
-            ip_address = request.args.get('host')
+            ip_address = request.args.get('ip')
             ssh_port = request.args.get('ssh_port')
             delay = request.args.get('delay')
             if (not ip_address) or (not ssh_port) or (not delay):
-                raise Exception('Missing parameter! Given: host=' + str(ip_address) +
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) +
                                 ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
             service_process = ServiceHandler.start_service(
@@ -153,23 +152,26 @@ def start_service(process_name):
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == ServiceConstants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
+            ip_address = request.args.get('ip')
+            ssh_port = request.args.get('ssh_port')
             delay = request.args.get('delay')
-            if not delay:
-                raise Exception('Missing parameter! Given: delay=' + str(delay))
+            if (not delay) or (not ip_address) or (not ssh_port):
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) +
+                                ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
             service_process = ServiceHandler.start_service(
-                process_name,
+                process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + ip_address,
                 Zigbee2MqttService.start_zigbee2mqtt_network_state_service,
-                (int(delay),))
+                (ip_address, ssh_port, int(delay),))
 
             response_json = {"response": 'Success! Started process ' + service_process.name}
             return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == ServiceConstants.PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME:
-            ip_address = request.args.get('host')
+            ip_address = request.args.get('ip')
             ssh_port = request.args.get('ssh_port')
             delay = request.args.get('delay')
             if (not ip_address) or (not ssh_port) or (not delay):
-                raise Exception('Missing parameter! Given: host=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
                                 ', delay=' + str(delay))
 
             service_process = ServiceHandler.start_service(
@@ -246,8 +248,7 @@ def execute_analysis(host_ip):
     nmap_handler.custom_network_scan("-sS -T4 -p1-65535 " + host_ip)
 
     # get from database
-    database_handler = DatabaseHandler(constants.MONGO_URI)
-    nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+    nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
     hosts = nmap_handler.get_hosts_including_ssh_information(nmap_report_db['nmaprun'])
 
@@ -257,9 +258,6 @@ def execute_analysis(host_ip):
         if host.ip == host_ip:
             host_to_analyse = host
             break
-
-    subnetwork_handler = SubnetworkHandler()
-    subnetwork_handler.scan_subnetwork_host(host_to_analyse.ssh_information)
 
     if host_to_analyse is None:
         response = {"response": "Could not find host!"}
@@ -297,8 +295,7 @@ def get_ip_hosts():
     nmap_handler.custom_network_scan("-sn -T4 " + constants.IP_NETWORK_PREFIX + "*")
 
     # get from database
-    database_handler = DatabaseHandler(constants.MONGO_URI)
-    nmap_report_db = database_handler.get_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+    nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
     hosts = nmap_handler.get_hosts_including_ssh_information(nmap_report_db['nmaprun'])
 

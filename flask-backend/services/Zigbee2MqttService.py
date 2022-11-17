@@ -1,3 +1,4 @@
+import string
 import time
 from multiprocessing import current_process
 
@@ -9,9 +10,10 @@ from handler.ssh.SshInformation import SshInformation
 
 
 # static method which starts an endless zigbee2mqtt service with a given delay time
-def start_zigbee2mqtt_network_state_service(delay: int):
+def start_zigbee2mqtt_network_state_service(ip_address: string, ssh_port: int, delay: int):
+    ssh_information = SshInformation(ip_address, ssh_port)
     while True:
-        execute_zigbee2mqtt_scan()
+        execute_zigbee2mqtt_scan(ssh_information)
 
         print(current_process().name + " sleeping for " + str(delay) + " seconds!")
         time.sleep(delay)

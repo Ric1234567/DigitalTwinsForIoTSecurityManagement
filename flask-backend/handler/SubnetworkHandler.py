@@ -10,6 +10,10 @@ from handler.ssh.SshHandler import SshHandler
 
 # class which handles (zigbee/mqtt) subnetwork data
 class SubnetworkHandler:
+    def __init__(self):
+        self.database = DatabaseHandler(constants.MONGO_URI) \
+            .mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE]
+
     # scan a given ssh host for subnetworks.
     # It reads the information from the zigbee2mqtt configuration and its state.json
     def scan_subnetwork_host(self, ssh_information: SshInformation):
@@ -48,25 +52,19 @@ class SubnetworkHandler:
         }
 
         # write subnetwork information to database
-        database_handler = DatabaseHandler(constants.MONGO_URI)
         print("Writing result of subnetwork scan to database (" + current_process().name + ")")
-        database_handler.insert_one_into(constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE,
-                                         subnetwork)
+        self.database.insert_one(subnetwork)
 
     # gets the latest subnetwork information from database
     def get_latest_subnetwork_information(self):
         # get latest entry
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-
-        distinct_hosts_with_subnetworks = database_handler.mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE]\
-            .distinct('host')
+        distinct_hosts_with_subnetworks = self.database.distinct('host')
 
         subnetwork = []
         unix_time = -1
         # build subnetwork object with timestamp
         for host_ip in distinct_hosts_with_subnetworks:
-            entries = database_handler.mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE]\
-                .find({'host': host_ip}).sort('unixTime', -1).limit(1)
+            entries = self.database.find({'host': host_ip}).sort('unixTime', -1).limit(1)
             for entry in entries:  # just a single entry
                 if unix_time < entry['unixTime']:
                     unix_time = entry['unixTime']

@@ -2,6 +2,7 @@ import string
 import time
 from multiprocessing import current_process
 
+import app
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.ssh.SshHandler import SshHandler
@@ -30,13 +31,11 @@ def execute_osquery_scan(ssh_information: SshInformation):
         return
 
     print("Writing result of scan to database (" + current_process().name + ")")
-    database_handler = DatabaseHandler(constants.MONGO_URI)
-
     # write listening_ports data to database collection
-    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, log_data, ssh_information)
+    app.database_handler.insert_many_to_database_with_host_ip(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, log_data, ssh_information)
 
     # write usb_device data to database collection
-    database_handler.write_all_to_database(constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES, log_data, ssh_information)
+    app.database_handler.insert_many_to_database_with_host_ip(constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES, log_data, ssh_information)
 
 
 # downloads the osquery log of host running ssh and osquery daemon

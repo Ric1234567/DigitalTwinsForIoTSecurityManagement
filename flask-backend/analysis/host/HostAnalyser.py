@@ -5,7 +5,7 @@ from analysis.osquery.OsqueryAnalyser import OsqueryAnalyser
 from handler.DatabaseHandler import DatabaseHandler
 from analysis.zigbee2Mqtt.Zigbee2MqttAnalyser import Zigbee2MqttAnalyser
 from handler.HostInformation import HostInformation
-from services import Zigbee2MqttService, FullScanService
+from services import FullScanService
 
 
 # Provides the security analysis of a single host and implements methods to use the Zigbee2MqttAnalyser,
@@ -20,12 +20,12 @@ class HostAnalyser:
     # Responsible for the security analysis.
     # Implements Zigbee2MqttAnalyser, MosquittoAnalyser, OsqueryAnalyser and IpAnalyser.
     def analyse(self):
-        FullScanService.execute_all_services(self.host_information.ssh_information)
-
         security_issues = []
 
         # check if ssh available. (needed to get configuration and log data)
         if self.host_information.ssh_information is not None:
+            FullScanService.execute_all_service_scans(self.host_information.ssh_information)
+
             zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
             if zigbee2mqtt_issues is not None:
                 security_issues.append(zigbee2mqtt_issues)
@@ -50,7 +50,7 @@ class HostAnalyser:
         print('Analysis zigbee2Mqtt')
 
         # get configuration from database
-        host_scan = self.database_handler.get_latest_zigbee2mqtt_entry_of_host(self.host_information.ip)
+        host_scan = self.database_handler.select_latest_zigbee2mqtt_entry_of_host(self.host_information.ip)
 
         # start analysis
         zigbee2mqtt_analyser = Zigbee2MqttAnalyser(self.configuration['zigbee_2_mqtt'])
@@ -63,7 +63,7 @@ class HostAnalyser:
         print('Analysis Mosquitto')
 
         # get acl from database
-        entry = self.database_handler.get_latest_mosquitto_entry_of_host(self.host_information.ip)
+        entry = self.database_handler.select_latest_mosquitto_entry_of_host(self.host_information.ip)
 
         # start analysis
         mosquitto_analyser = MosquittoAnalyser(self.configuration['mosquitto'])

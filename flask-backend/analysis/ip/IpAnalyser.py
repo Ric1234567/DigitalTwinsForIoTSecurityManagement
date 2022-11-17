@@ -32,5 +32,5 @@ class IpAnalyser:
                                      recommendation,
                                      SecurityIssueTypes.is_fixable(SecurityIssueTypes.IP_TOO_MANY_OPEN_PORTS, host))
             else:
-                print('Open ports check: Found ' + str(len(host.ports)) + '! OK')
+                print('Open ports check on ' + host.ip + ': Found ' + str(len(host.ports)) + '! STATUS OK')
                 return None

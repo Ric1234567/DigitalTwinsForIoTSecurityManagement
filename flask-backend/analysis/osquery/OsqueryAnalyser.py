@@ -10,21 +10,17 @@ from handler.HostInformation import HostInformation
 class OsqueryAnalyser:
     def __init__(self, configuration):
         self.configuration = configuration
+        self.database_handler = DatabaseHandler(constants.MONGO_URI).mongo[constants.PI_DATABASE_NAME][constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES]
 
     # check for unknown connected usb devices to a host.
     def check_connected_usb_devices(self, host: HostInformation):
-        print('Checking connected usb devices...')
-
         # get distinct serial numbers of usb devices from the past from database to identify
-        database_handler = DatabaseHandler(constants.MONGO_URI)
-        distinct_usb_serials = database_handler.mongo[constants.PI_DATABASE_NAME][constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES]\
-            .distinct('columns.serial', {'host_ip': host.ip})
+        distinct_usb_serials = self.database_handler.distinct('columns.serial', {'host_ip': host.ip})
 
         # find last status of usb devices
         connected_usbs = []
         for serial in distinct_usb_serials:
-            entries = database_handler.mongo[constants.PI_DATABASE_NAME][constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES]\
-                .find({'host_ip': host.ip, 'columns.serial': serial})\
+            entries = self.database_handler.find({'host_ip': host.ip, 'columns.serial': serial})\
                 .sort('unixTime', -1).limit(1)
 
             for entry in entries:
@@ -64,7 +60,7 @@ class OsqueryAnalyser:
                                  False)
         else:
             # no security issues found
-            print('USB Check: OK')
+            print('Unknown USB check on ' + host.ip + ': Found ' + str(connected_usbs) + '! STATUS OK')
             return None
 
     # Search for usb device differences with the configuration

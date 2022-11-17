@@ -38,18 +38,8 @@ class DatabaseHandler:
                 print(e)
         return data_points
 
-    # write an nmaprun json to the database. add an unix timestamp to the data
-    def write_nmaprun_to_database(self, nmap_report_json: string):
-        try:
-            test = '{"unixTime":' + str(round(time.time())) + ',' + nmap_report_json[1:-1] + '}'
-            nmap_report = json.loads(test)
-            self.insert_one_into(constants.COLLECTION_NAME_NMAPRUN, nmap_report)
-        except Exception as e:
-            print(e)
-            return
-
     # write multiple data string to the database and add a host_ip to every data point
-    def write_all_to_database(self, collection_name: string, data: string, ssh_information: SshInformation):
+    def insert_many_to_database_with_host_ip(self, collection_name: string, data: string, ssh_information: SshInformation):
         data_points = self.preprocess_data_string(data)
         data_points = filter_data_points_for_collection(collection_name, data_points)
 
@@ -70,24 +60,24 @@ class DatabaseHandler:
         self.mongo[constants.PI_DATABASE_NAME][collection_name].insert_one(data_point)
 
     # select a data point of a specific collection which has the highest unix timestamp (= the newest data point)
-    def get_max_timestamp(self, collection_name):
+    def select_max_timestamp(self, collection_name):
         return self.mongo[constants.PI_DATABASE_NAME][collection_name].find().sort('unixTime', -1).limit(1)
 
     # convert cursor to single entry
-    def get_latest_entry(self, collection_name):
-        cursor = self.get_max_timestamp(collection_name)
+    def select_latest_entry(self, collection_name):
+        cursor = self.select_max_timestamp(collection_name)
         for entry in cursor:
             return entry
 
     # get the latest zigbee2mqtt entry of a specific host
-    def get_latest_zigbee2mqtt_entry_of_host(self, host_ip):
+    def select_latest_zigbee2mqtt_entry_of_host(self, host_ip):
         cursor = self.mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_ZIGBEE2MQTT_NETWORK_STATE]\
             .find({'host': host_ip}).sort('unixTime', -1).limit(1)
         for entry in cursor:
             return entry
 
     # get the latest mosquitto entry of a specific host
-    def get_latest_mosquitto_entry_of_host(self, host_ip):
+    def select_latest_mosquitto_entry_of_host(self, host_ip):
         cursor = self.mongo[constants.PI_DATABASE_NAME][constants.COLLECTION_NAME_MOSQUITTO_CONFIG]\
             .find({'host': host_ip}).sort('unixTime', -1).limit(1)
         for entry in cursor:

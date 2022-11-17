@@ -51,4 +51,5 @@ class MosquittoAnalyser:
                                  recommendation,
                                  SecurityIssueTypes.is_fixable(SecurityIssueTypes.MOSQUITTO_ACCESS_CONTROL_LIST, host))
 
+        print('ACL check on ' + host.ip + ': STATUS OK')
         return None
