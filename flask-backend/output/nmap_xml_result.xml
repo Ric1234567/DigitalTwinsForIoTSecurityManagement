@@ -1,47 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Thu Nov 17 10:40:43 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.47 -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.47" start="1668678043" startstr="Thu Nov 17 10:40:43 2022" version="7.93" xmloutputversion="1.05">
+<!-- Nmap 7.93 scan initiated Thu Nov 17 12:48:34 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.1 -->
+<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.1" start="1668685714" startstr="Thu Nov 17 12:48:34 2022" version="7.93" xmloutputversion="1.05">
 <scaninfo type="syn" protocol="tcp" numservices="65535" services="1-65535"/>
 <verbose level="0"/>
 <debugging level="0"/>
 <hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.47" addrtype="ipv4"/>
-<address addr="6C:3B:E5:01:95:35" addrtype="mac" vendor="Hewlett Packard"/>
+<address addr="192.168.178.1" addrtype="ipv4"/>
+<address addr="3C:37:12:8F:0E:88" addrtype="mac" vendor="AVM Audiovisuelles Marketing und Computersysteme GmbH"/>
 <hostnames>
 </hostnames>
 </hosthint>
-<host starttime="1668678044" endtime="1668678109"><status state="up" reason="arp-response" reason_ttl="0"/>
-<address addr="192.168.178.47" addrtype="ipv4"/>
-<address addr="6C:3B:E5:01:95:35" addrtype="mac" vendor="Hewlett Packard"/>
+<host starttime="1668685714" endtime="1668685731"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.178.1" addrtype="ipv4"/>
+<address addr="3C:37:12:8F:0E:88" addrtype="mac" vendor="AVM Audiovisuelles Marketing und Computersysteme GmbH"/>
 <hostnames>
-<hostname name="HP1AC068.fritz.box" type="PTR"/>
+<hostname name="fritz.box" type="PTR"/>
 </hostnames>
-<ports><extraports state="closed" count="65517">
-<extrareasons reason="reset" count="65517" proto="tcp" ports="1-79,81-138,140-442,444,446-630,632-3909,3912-6838,6840-7434,7436-8079,8081-9099,9103-9109,9113-9219,9221-9289,9291-65535"/>
+<ports><extraports state="closed" count="65518">
+<extrareasons reason="reset" count="65518" proto="tcp" ports="1-52,54-79,81-442,444-5059,5061-8180,8187-46054,46056-46759,46761-48999,49001-49199,49201-49442,49444-51515,51517-52410,52412-65535"/>
 </extraports>
+<port protocol="tcp" portid="53"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="domain" method="table" conf="3"/></port>
 <port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" method="table" conf="3"/></port>
-<port protocol="tcp" portid="139"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="netbios-ssn" method="table" conf="3"/></port>
 <port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="https" method="table" conf="3"/></port>
-<port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="microsoft-ds" method="table" conf="3"/></port>
-<port protocol="tcp" portid="631"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ipp" method="table" conf="3"/></port>
-<port protocol="tcp" portid="3910"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="prnrequest" method="table" conf="3"/></port>
-<port protocol="tcp" portid="3911"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="prnstatus" method="table" conf="3"/></port>
-<port protocol="tcp" portid="6839"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
-<port protocol="tcp" portid="7435"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
-<port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http-proxy" method="table" conf="3"/></port>
-<port protocol="tcp" portid="9100"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="jetdirect" method="table" conf="3"/></port>
-<port protocol="tcp" portid="9101"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="jetdirect" method="table" conf="3"/></port>
-<port protocol="tcp" portid="9102"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="jetdirect" method="table" conf="3"/></port>
-<port protocol="tcp" portid="9110"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
-<port protocol="tcp" portid="9111"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="DragonIDSConsole" method="table" conf="3"/></port>
-<port protocol="tcp" portid="9112"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
-<port protocol="tcp" portid="9220"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
-<port protocol="tcp" portid="9290"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="unknown" method="table" conf="3"/></port>
+<port protocol="tcp" portid="5060"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="sip" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8181"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="intermapper" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8182"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="vmware-fdm" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8183"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="proremote" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8184"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="itach" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8185"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
+<port protocol="tcp" portid="8186"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
+<port protocol="tcp" portid="46055"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
+<port protocol="tcp" portid="46760"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
+<port protocol="tcp" portid="49000"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="matahari" method="table" conf="3"/></port>
+<port protocol="tcp" portid="49200"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
+<port protocol="tcp" portid="49443"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
+<port protocol="tcp" portid="51516"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
+<port protocol="tcp" portid="52411"><state state="open" reason="syn-ack" reason_ttl="64"/></port>
 </ports>
-<times srtt="418017" rttvar="362879" to="1250000"/>
+<times srtt="3192" rttvar="2306" to="100000"/>
 </host>
-<runstats><finished time="1668678109" timestr="Thu Nov 17 10:41:49 2022" summary="Nmap done at Thu Nov 17 10:41:49 2022; 1 IP address (1 host up) scanned in 65.99 seconds" elapsed="65.99" exit="success"/><hosts up="1" down="0" total="1"/>
+<runstats><finished time="1668685731" timestr="Thu Nov 17 12:48:51 2022" summary="Nmap done at Thu Nov 17 12:48:51 2022; 1 IP address (1 host up) scanned in 17.19 seconds" elapsed="17.19" exit="success"/><hosts up="1" down="0" total="1"/>
 </runstats>
 </nmaprun>

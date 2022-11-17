@@ -264,13 +264,13 @@ def execute_analysis(host_ip):
         return Response(json.dumps(response), status=500, mimetype='application/json')
 
     host_analyser = HostAnalyser(should_configuration, host_to_analyse)
-    security_issues_host = host_analyser.analyse()
+    host_analysis_result = host_analyser.analyse()
 
-    if not security_issues_host:
+    if len(host_analysis_result.security_issues) == 0:
         response = {"response": "No issues found!"}
         return Response(json.dumps(response), status=200, mimetype='application/json')
 
-    return Response(json.dumps([ob.__dict__ for ob in security_issues_host], cls=ComplexJsonEncoder), status=200,
+    return Response(json.dumps(host_analysis_result, cls=ComplexJsonEncoder), status=200,
                     mimetype='application/json')
 
 

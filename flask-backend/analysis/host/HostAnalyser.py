@@ -1,4 +1,5 @@
 import constants
+from analysis.host.HostAnalysisResult import HostAnalysisResult
 from analysis.ip.IpAnalyser import IpAnalyser
 from analysis.mosquitto.MosquittoAnalyser import MosquittoAnalyser
 from analysis.osquery.OsqueryAnalyser import OsqueryAnalyser
@@ -20,7 +21,7 @@ class HostAnalyser:
     # Responsible for the security analysis.
     # Implements Zigbee2MqttAnalyser, MosquittoAnalyser, OsqueryAnalyser and IpAnalyser.
     def analyse(self):
-        security_issues = []
+        host_analysis_result = HostAnalysisResult(self.host_information)
 
         # check if ssh available. (needed to get configuration and log data)
         if self.host_information.ssh_information is not None:
@@ -28,22 +29,22 @@ class HostAnalyser:
 
             zigbee2mqtt_issues = self.analyse_zigbee2mqtt()
             if zigbee2mqtt_issues is not None:
-                security_issues.append(zigbee2mqtt_issues)
+                host_analysis_result.security_issues.append(zigbee2mqtt_issues)
 
             mosquitto_issues = self.analyse_mosquitto()
             if mosquitto_issues is not None:
-                security_issues.append(mosquitto_issues)
+                host_analysis_result.security_issues.append(mosquitto_issues)
 
             osquery_issues = self.analyse_osquery_information()
             if osquery_issues is not None:
-                security_issues.append(osquery_issues)
+                host_analysis_result.security_issues.append(osquery_issues)
 
         # ip issues can be analysed without ssh.
         ip_issues = self.ip_analysis()
         if ip_issues is not None:
-            security_issues.append(ip_issues)
+            host_analysis_result.security_issues.append(ip_issues)
 
-        return security_issues
+        return host_analysis_result
 
     # Host analysis of the Zigbee2Mqtt Integration
     def analyse_zigbee2mqtt(self):

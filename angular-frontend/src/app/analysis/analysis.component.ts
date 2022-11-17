@@ -15,9 +15,10 @@ export class AnalysisComponent implements OnInit {
   isRefreshing: boolean = false
   refreshIntervalId: any
 
-  analysisResult: any = []
+  analysisResult: any = null
   ipHosts: Host[] = []
   selectedHost: Host = this.ipHosts[0]
+  emptyIssues: boolean = false
 
   constructor() { }
 
@@ -45,11 +46,13 @@ export class AnalysisComponent implements OnInit {
     let response = await util.fetchFromBackend('GET', 'analysis/' + this.selectedHost.ip)
     this.loading = false
 
-    if (response.response){
+    if (response.response) {
       this.analysisResult = null
+      this.emptyIssues = true
       return
     }
 
+    this.emptyIssues = false
     this.analysisResult = response
   }
 
@@ -64,5 +67,22 @@ export class AnalysisComponent implements OnInit {
 
   onClickAnalyse(event: Event) {
     this.getAnalysisResult()
+  }
+
+  getTimestamp() {
+    let util = new Util()
+    return util.convertUnixTimeToDate(this.analysisResult.unix_time)
+  }
+
+  getHostInformation() {
+    let result = ''
+    if (this.analysisResult?.host_information?.ip) {
+      result += this.analysisResult.host_information.ip
+    }
+    if(this.analysisResult?.host_information?.hostname) {
+      result += ' (' + this.analysisResult.host_information.hostname + ')'
+    }
+
+    return result
   }
 }

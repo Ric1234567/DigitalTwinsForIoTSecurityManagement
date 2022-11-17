@@ -16,8 +16,11 @@
         </button>
     </div>
 
-    <mat-list [(ngModel)]="analysisResult" name="fieldName" ngDefaultControl>
-        <mat-list-item role="listitem" *ngFor="let issue of analysisResult">
+    <div *ngIf="analysisResult">Analysis time: {{getTimestamp()}}</div>
+    <div *ngIf="analysisResult?.host_information">Host information: {{getHostInformation()}}</div>
+
+    <mat-list [(ngModel)]="analysisResult.security_issues" name="fieldName" ngDefaultControl *ngIf="analysisResult">
+        <mat-list-item role="listitem" *ngFor="let issue of analysisResult.security_issues">
             <div mat-line style="font-weight: bold; margin-right: 5px;">Host: {{issue.host_information.ip}}</div>
 
             <div mat-line style="margin: 0 6ex;">
@@ -40,7 +43,7 @@
         </mat-list-item>
     </mat-list>
 
-    <div *ngIf="!analysisResult">
-        No issues found!
+    <div *ngIf="emptyIssues">
+            No issues found!
     </div>
 </mat-card>
