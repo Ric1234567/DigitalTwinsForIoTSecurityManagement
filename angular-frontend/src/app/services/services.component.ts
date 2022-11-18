@@ -34,7 +34,6 @@ export class ServicesComponent implements OnInit {
 
     this.refreshIntervalId = setInterval(() => {
       this.getRunningServices()
-      this.getAvailableServices()
     }, 3000);
   }
 

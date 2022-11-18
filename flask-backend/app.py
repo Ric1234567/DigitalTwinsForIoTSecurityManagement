@@ -1,17 +1,21 @@
 import json
 import string
+from multiprocessing import active_children
 
 from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
 from analysis.host.HostSolver import HostSolver
-from services import NmapService, FullScanService, OsqueryService, Zigbee2MqttService, MosquittoService, \
-    ServiceConstants
+from services import ServiceConstants
+from services.FullScanService import FullScanService
+from services.MosquittoService import MosquittoScanService
+from services.NmapService import NmapScanService
+from services.OsqueryService import OsqueryScanService
+from services.Zigbee2MqttService import Zigbee2MqttScanService
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
 from analysis.host.HostAnalyser import HostAnalyser
-from handler import ServiceHandler
 from handler.SubnetworkHandler import SubnetworkHandler
 import constants
 from handler.DatabaseHandler import DatabaseHandler
@@ -30,6 +34,7 @@ mongo = PyMongo(app)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 database_handler = DatabaseHandler(constants.MONGO_URI)
+running_services = []
 
 
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
@@ -100,12 +105,15 @@ def get_last_network_report():
 @app.route('/stop/<process_pid>', methods=['GET'])
 def stop_service(process_pid):
     try:
-        p = ServiceHandler.process_dict.pop(int(process_pid))
-        p.terminate()
-        print("terminated process " + p.name)
+        for service in running_services:
+            if service.process.pid == int(process_pid):
+                service.stop()
+                running_services.remove(service)
+                print("terminated process " + service.name + ", pid=" + str(service.process.pid))
 
-        response_json = {"response": 'Success! Stopped process ' + p.name}
-        return Response(json.dumps(response_json), status=200, mimetype='application/json')
+                response_json = {"response": 'Success! Stopped process ' + service.name}
+                return Response(json.dumps(response_json), status=200, mimetype='application/json')
+
     except Exception as e:
         return Response(str(e), status=500, mimetype='application/json')
 
@@ -113,77 +121,72 @@ def stop_service(process_pid):
 @app.route('/start/<process_name>', methods=['GET'])
 def start_service(process_name):
     try:
-        # get process_name (without additional information)
-        process_name = process_name.split(ServiceConstants.PROCESS_NAME_SPLIT_CHAR)[0]
+        nmap_command = request.args.get('cmd')
+        ip_address = request.args.get('ip')
+        ssh_port = request.args.get('ssh_port')
+        delay = request.args.get('delay')
 
         if (process_name == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME) or \
                 (process_name == ServiceConstants.PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME):
-            nmap_command = request.args.get('cmd')
-            delay = request.args.get('delay')
+
             if (not nmap_command) or (not delay):
                 raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
 
             if process_name == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
-                service_process = ServiceHandler.start_service(
-                    process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
-                    NmapService.start_nmap_scan_service,
-                    (nmap_command, int(delay),))
+                service = NmapScanService(process_name,
+                                          'Nmap-Scan with args: cmd=' +
+                                          str(nmap_command) + ', delay=' + str(delay),
+                                          (nmap_command, int(delay),))
             else:  # full scan
-                service_process = ServiceHandler.start_service(
-                    process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + nmap_command,  # use nmap_command in name
-                    FullScanService.start_full_network_scan_service,
-                    (nmap_command, int(delay),))
-
-            response_json = {"response": 'Success! Started process ' + service_process.name}
-            return Response(json.dumps(response_json), status=200, mimetype='application/json')
+                service = FullScanService(process_name,
+                                          'Full-Scan with args: cmd=' +
+                                          str(nmap_command) + ', delay=' + str(delay),
+                                          (nmap_command, int(delay),))
         elif process_name == ServiceConstants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
-            ip_address = request.args.get('ip')
-            ssh_port = request.args.get('ssh_port')
-            delay = request.args.get('delay')
             if (not ip_address) or (not ssh_port) or (not delay):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) +
                                 ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
-            service_process = ServiceHandler.start_service(
-                process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + ip_address,
-                OsqueryService.start_osquery_scan_service,
-                (ip_address, int(ssh_port), int(delay),))
+            service = OsqueryScanService(process_name,
+                                         'Osquery-Scan with args: ip=' +
+                                         str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(delay),
+                                         (ip_address, int(ssh_port), int(delay),))
 
-            response_json = {"response": 'Success! Started process ' + service_process.name}
-            return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == ServiceConstants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
-            ip_address = request.args.get('ip')
-            ssh_port = request.args.get('ssh_port')
-            delay = request.args.get('delay')
             if (not delay) or (not ip_address) or (not ssh_port):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) +
                                 ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
-            service_process = ServiceHandler.start_service(
-                process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + ip_address,
-                Zigbee2MqttService.start_zigbee2mqtt_network_state_service,
-                (ip_address, ssh_port, int(delay),))
+            service = Zigbee2MqttScanService(process_name,
+                                             'Zigbee2Mqtt-Scan with args: ip=' +
+                                             str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(
+                                                 delay),
+                                             (ip_address, int(ssh_port), int(delay),))
 
-            response_json = {"response": 'Success! Started process ' + service_process.name}
-            return Response(json.dumps(response_json), status=200, mimetype='application/json')
         elif process_name == ServiceConstants.PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME:
-            ip_address = request.args.get('ip')
-            ssh_port = request.args.get('ssh_port')
-            delay = request.args.get('delay')
             if (not ip_address) or (not ssh_port) or (not delay):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
                                 ', delay=' + str(delay))
 
-            service_process = ServiceHandler.start_service(
-                process_name + ServiceConstants.PROCESS_NAME_SPLIT_CHAR + ip_address,
-                MosquittoService.start_mosquitto_service,
-                (ip_address, int(ssh_port), int(delay),))
+            service = MosquittoScanService(process_name,
+                                           'Mosquitto-Scan with args: ip=' +
+                                           str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(
+                                               delay),
+                                           (ip_address, int(ssh_port), int(delay),))
 
-            response_json = {"response": 'Success! Started process ' + service_process.name}
-            return Response(json.dumps(response_json), status=200, mimetype='application/json')
         else:
             response_json = {"response": 'Process not found!'}
             return Response(json.dumps(response_json), status=500, mimetype='application/json')
+
+        # start service
+        service.start()
+        running_services.append(service)
+
+        # convert to json
+        service_json = json.dumps(service, cls=ComplexJsonEncoder)
+
+        response_json = {"response": 'Success! Started process ' + service_json}
+        return Response(json.dumps(response_json), status=200, mimetype='application/json')
     except Exception as e:
         print(e)
         return Response(str(e), status=500, mimetype='application/json')
@@ -197,27 +200,8 @@ def get_available_services():
 
 @app.route('/running_services', methods=['GET'])
 def get_running_services():
-    result = ServiceHandler.get_processes()
-
-    array = []
-    for service in result:
-        if ServiceConstants.PROCESS_NAME_SPLIT_CHAR in service.name:
-            split_name = service.name.split(ServiceConstants.PROCESS_NAME_SPLIT_CHAR)
-            name = split_name[0]
-            info = split_name[1]
-        else:
-            name = service.name
-            info = '-'
-
-        array.append({
-            'pid': service.pid,
-            'name': name,
-            'additional_information': info,
-            'isalive': service.is_alive()
-        })
-
-    response = {"response": array}
-    return Response(json.dumps(response), status=200, mimetype='application/json')
+    response = {"response": running_services}
+    return Response(json.dumps(response, cls=ComplexJsonEncoder), status=200, mimetype='application/json')
 
 
 @app.route('/network_configuration', methods=['GET', 'POST'])
@@ -284,7 +268,7 @@ def execute_fix(host_ip, issue_type):
     print('Fix ' + host_ip + ' ' + issue_type)
 
     should_configuration = ConfigurationHelper.read_network_configuration()
-    
+
     host_solver = HostSolver(should_configuration)
     result = host_solver.solve(host_ip, issue_type)
 
@@ -312,7 +296,6 @@ def get_ip_hosts():
 if __name__ == '__main__':
     app.run(use_reloader=False)
 
-    # wait for processes to complete
-    processes = ServiceHandler.get_processes()
-    for process in processes:
+    # wait for running_services to complete
+    for process in active_children():
         process.join()

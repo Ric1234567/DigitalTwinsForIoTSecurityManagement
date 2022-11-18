@@ -1,22 +1,29 @@
 import string
 import time
-from multiprocessing import current_process
+from multiprocessing import current_process, Process
 
-import app
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.ssh.SshHandler import SshHandler
 from handler.ssh.SshInformation import SshInformation
+from services.Service import Service
 
 
-# static method which starts an endless osquery service with given ip, ssh port and delay time
-def start_osquery_scan_service(ip_address: string, ssh_port, delay: int):
-    while True:
-        ssh_information = SshInformation(ip_address, ssh_port)
-        execute_osquery_scan(ssh_information)
+class OsqueryScanService(Service):
+    def __init__(self, name: string, description: string, args: tuple):
+        process = Process(name=name,
+                          target=self.start_osquery_scan_service,
+                          args=args)
+        super().__init__(name, description, args, process)
 
-        print(current_process().name + " sleeping for " + str(delay) + " seconds!")
-        time.sleep(delay)
+    # static method which starts an endless osquery service with given ip, ssh port and delay time
+    def start_osquery_scan_service(self, ip_address: string, ssh_port, delay: int):
+        while True:
+            ssh_information = SshInformation(ip_address, ssh_port)
+            execute_osquery_scan(ssh_information)
+
+            print(current_process().name + " sleeping for " + str(delay) + " seconds!")
+            time.sleep(delay)
 
 
 # main method to execute an osquery can for a given ssh host
@@ -32,10 +39,13 @@ def execute_osquery_scan(ssh_information: SshInformation):
 
     print("Writing result of scan to database (" + current_process().name + ")")
     # write listening_ports data to database collection
-    app.database_handler.insert_many_to_database_with_host_ip(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS, log_data, ssh_information)
+    database_handler = DatabaseHandler(constants.MONGO_URI)
+    database_handler.insert_many_to_database_with_host_ip(constants.OSQUERY_AND_COLLECTION_NAME_LISTENING_PORTS,
+                                                          log_data, ssh_information)
 
     # write usb_device data to database collection
-    app.database_handler.insert_many_to_database_with_host_ip(constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES, log_data, ssh_information)
+    database_handler.insert_many_to_database_with_host_ip(constants.OSQUERY_AND_COLLECTION_NAME_USB_DEVICES,
+                                                          log_data, ssh_information)
 
 
 # downloads the osquery log of host running ssh and osquery daemon

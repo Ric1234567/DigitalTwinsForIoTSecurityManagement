@@ -1,22 +1,29 @@
 import string
 import time
-from multiprocessing import current_process
+from multiprocessing import current_process, Process
 
-import app
 import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.ssh.SshHandler import SshHandler
 from handler.ssh.SshInformation import SshInformation
+from services.Service import Service
 
 
-# static method which starts an endless mosquitto service with given ip, ssh port and delay time
-def start_mosquitto_service(ip_address: string, ssh_port: int, delay: int):
-    while True:
-        ssh_information = SshInformation(ip_address, ssh_port)
-        execute_mosquitto_scan(ssh_information)
+class MosquittoScanService(Service):
+    def __init__(self, name: string, description: string, args: tuple):
+        process = Process(name=name,
+                          target=self.start_mosquitto_service,
+                          args=args)
+        super().__init__(name, description, args, process)
 
-        print(current_process().name + " sleeping for " + str(delay) + " seconds!")
-        time.sleep(delay)
+    # static method which starts an endless mosquitto service with given ip, ssh port and delay time
+    def start_mosquitto_service(self, ip_address: string, ssh_port: int, delay: int):
+        while True:
+            ssh_information = SshInformation(ip_address, ssh_port)
+            execute_mosquitto_scan(ssh_information)
+
+            print(current_process().name + " sleeping for " + str(delay) + " seconds!")
+            time.sleep(delay)
 
 
 # main method for executing the mosquitto scan
@@ -42,7 +49,8 @@ def execute_mosquitto_scan(ssh_information: SshInformation):
 
     # write to database
     print("Writing mosquitto configurations to database (" + current_process().name + ")")
-    app.database_handler.insert_one_into(constants.COLLECTION_NAME_MOSQUITTO_CONFIG, data)
+    database_handler = DatabaseHandler(constants.MONGO_URI)
+    database_handler.insert_one_into(constants.COLLECTION_NAME_MOSQUITTO_CONFIG, data)
 
 
 # downloads the mosquitto configuration files

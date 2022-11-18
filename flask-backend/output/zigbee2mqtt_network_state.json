@@ -6,16 +6,16 @@
         "voltage": 2945,
         "battery": 63,
         "power_outage_count": 119,
-        "temperature": 19.34,
-        "humidity": 69.46,
-        "linkquality": 84
+        "temperature": 19.35,
+        "humidity": 70.06,
+        "linkquality": 115
     },
     "0x00158d0003a28b20": {
-        "temperature": 19.66,
-        "humidity": 66.32,
-        "voltage": 2905,
-        "battery": 37,
+        "temperature": 19.31,
+        "humidity": 68.63,
+        "voltage": 2895,
+        "battery": 30,
         "power_outage_count": 122,
-        "linkquality": 102
+        "linkquality": 99
     }
 }

@@ -1,19 +1,25 @@
 import string
 import time
-from multiprocessing import current_process
+from multiprocessing import current_process, Process
 
-import constants
-from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
+from services.Service import Service
 
 
-# static method which starts an endless nmap scan service with given command and delay
-def start_nmap_scan_service(nmap_command: string, delay: int):
-    while True:
-        execute_nmap_scan(nmap_command)
+class NmapScanService(Service):
+    def __init__(self, name: string, description: string, args: tuple):
+        process = Process(name=name,
+                          target=self.start_nmap_scan_service,
+                          args=args)
+        super().__init__(name, description, args, process)
 
-        print(current_process().name + " sleeping for " + str(delay) + " seconds!")
-        time.sleep(delay)
+    # static method which starts an endless nmap scan service with given command and delay
+    def start_nmap_scan_service(self, nmap_command: string, delay: int):
+        while True:
+            execute_nmap_scan(nmap_command)
+
+            print(current_process().name + " sleeping for " + str(delay) + " seconds!")
+            time.sleep(delay)
 
 
 # execute an nmap network scan and write results to database
