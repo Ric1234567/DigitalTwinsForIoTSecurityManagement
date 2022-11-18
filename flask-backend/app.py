@@ -9,10 +9,10 @@ from flask_pymongo import PyMongo
 from analysis.host.HostSolver import HostSolver
 from services import ServiceConstants
 from services.FullScanService import FullScanService
-from services.MosquittoService import MosquittoScanService
-from services.NmapService import NmapScanService
-from services.OsqueryService import OsqueryScanService
-from services.Zigbee2MqttService import Zigbee2MqttScanService
+from services.MosquittoScanService import MosquittoScanService
+from services.NmapScanService import NmapScanService
+from services.OsqueryScanService import OsqueryScanService
+from services.Zigbee2MqttScanService import Zigbee2MqttScanService
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
 from analysis.host.HostAnalyser import HostAnalyser

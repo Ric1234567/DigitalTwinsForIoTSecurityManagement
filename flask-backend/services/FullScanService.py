@@ -6,7 +6,7 @@ import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
 from handler.ssh.SshInformation import SshInformation
-from services import MosquittoService, OsqueryService, NmapService, Zigbee2MqttService
+from services import MosquittoScanService, OsqueryScanService, NmapScanService, Zigbee2MqttScanService
 from services.Service import Service
 
 
@@ -26,9 +26,10 @@ class FullScanService(Service):
             print(current_process().name + " sleeping for " + str(delay) + " seconds!")
             time.sleep(delay)
 
+
 def execute_full_network_scan(nmap_command: string):
     # execute nmap scan which gets written to the database
-    NmapService.execute_nmap_scan(nmap_command)
+    NmapScanService.execute_nmap_scan(nmap_command)
 
     # get network scan from database
     database_handler = DatabaseHandler(constants.MONGO_URI)
@@ -44,6 +45,6 @@ def execute_full_network_scan(nmap_command: string):
 
 
 def execute_all_service_scans(ssh_information: SshInformation):
-    MosquittoService.execute_mosquitto_scan(ssh_information)
-    OsqueryService.execute_osquery_scan(ssh_information)
-    Zigbee2MqttService.execute_zigbee2mqtt_scan(ssh_information)
+    MosquittoScanService.execute_mosquitto_scan(ssh_information)
+    OsqueryScanService.execute_osquery_scan(ssh_information)
+    Zigbee2MqttScanService.execute_zigbee2mqtt_scan(ssh_information)
