@@ -70,7 +70,7 @@ class NmapHandler:
         # save to database
         self.insert_nmaprun_to_database(nmap_report_json)
 
-    # get hosts of network with its ssh information if any
+    # get hosts of network by its ssh information if any
     def get_hosts_including_ssh_information(self, nmaprun):
         # perform ssh discovery
         ssh_informations = self.ssh_service_discovery(nmaprun)
@@ -82,6 +82,22 @@ class NmapHandler:
                 if host.ip == ssh_information.ip:
                     host.ssh_information = ssh_information
         return ip_hosts
+
+    # get single host of network by its ssh information if any
+    def get_single_host_including_ssh_information(self, nmaprun, ip: string):
+        # perform ssh discovery
+        ssh_informations = self.ssh_service_discovery(nmaprun)
+        ip_hosts = self.get_hosts(nmaprun)
+
+        # relate ssh host data to ip host data
+        for host in ip_hosts:
+            if host.ip == ip:
+                for ssh_information in ssh_informations:
+                    if host.ip == ssh_information.ip:
+                        host.ssh_information = ssh_information
+                        return host
+                # no ssh found on given host
+                return host
 
     # find ssh services running in an given nmap scan
     def ssh_service_discovery(self, nmaprun):
@@ -132,7 +148,7 @@ class NmapHandler:
                             ports = [host['ports']['port']]
                         else:
                             ports = host['ports']['port']
-                        
+
                 host_information = HostInformation(ip, hostname, ports)
                 hosts.append(host_information)
 

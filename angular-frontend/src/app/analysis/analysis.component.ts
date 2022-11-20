@@ -21,8 +21,25 @@ export class AnalysisComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
-    this.getIpHosts()
+  async ngOnInit() {
+    await this.getIpHosts()
+    await this.getLatestAnalysis()
+  }
+
+  async getLatestAnalysis() {
+    this.loading = true
+    let util = new Util()
+    let response = await util.fetchFromBackend('GET', 'latestanalysisresult')
+    this.loading = false
+
+    if (response.response) {
+      this.analysisResult = null
+      this.emptyIssues = true
+      return
+    }
+
+    this.emptyIssues = false
+    this.analysisResult = response
   }
 
   private async getIpHosts() {
@@ -70,7 +87,7 @@ export class AnalysisComponent implements OnInit {
 
   getTimestamp() {
     let util = new Util()
-    return util.convertUnixTimeToDate(this.analysisResult.unix_time)
+    return util.convertUnixTimeToDate(this.analysisResult.unixTime)
   }
 
   getHostInformation() {

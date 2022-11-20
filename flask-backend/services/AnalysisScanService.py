@@ -7,6 +7,7 @@ import constants
 from analysis.host.HostAnalyser import HostAnalyser
 from handler.DatabaseHandler import DatabaseHandler
 from handler.HostInformation import HostInformation
+from handler.NmapHandler import NmapHandler
 from handler.ssh.SshInformation import SshInformation
 from services.Service import Service
 from util import ConfigurationHelper
@@ -21,23 +22,29 @@ class AnalysisScanService(Service):
                           args=args)
         super().__init__(name, description, args, process)
 
-    def start_analysis_service(self, ip: string, ssh_port: int, delay: int):
-        ssh_information = SshInformation(ip, ssh_port)
-        host_information = HostInformation(ip=ip, ssh_information=ssh_information)
-        should_configuration = ConfigurationHelper.read_network_configuration()
+    def start_analysis_service(self, ip: string, delay: int):
+        nmap_handler = NmapHandler()
 
-        host_analyser = HostAnalyser(should_configuration, host_information)
+        should_configuration = ConfigurationHelper.read_network_configuration()
 
         database_handler = DatabaseHandler(constants.MONGO_URI)
         while True:
-            print('Start analysis of host ' + str(host_information.ip))
+            print('Start analysis of host ' + ip)
 
+            nmap_handler.custom_network_scan("-sS -T4 -p1-65535 " + ip)
+
+            # get from database
+            nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+
+            host_to_analyse = nmap_handler.get_single_host_including_ssh_information(nmap_report_db['nmaprun'], ip)
+
+            host_analyser = HostAnalyser(should_configuration, host_to_analyse)
             host_analysis_result = host_analyser.analyse()
 
             # convert to json
             host_analysis_result_json = json.dumps(host_analysis_result, cls=ComplexJsonEncoder)
 
-            print("Write host analysis of " + str(host_information.ip) + " to database")
+            print("Write host analysis of " + ip + " to database")
             database_handler.insert_one_into(constants.COLLECTION_NAME_HOST_ANALYSIS,
                                              json.loads(host_analysis_result_json))
 

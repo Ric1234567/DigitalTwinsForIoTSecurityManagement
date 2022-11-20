@@ -6,6 +6,7 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
+from analysis.host.HostAnalysisResult import HostAnalysisResult
 from analysis.host.HostSolver import HostSolver
 from services import ServiceConstants
 from services.AnalysisScanService import AnalysisScanService
@@ -175,14 +176,14 @@ def start_service(process_name):
                                                delay),
                                            (ip_address, int(ssh_port), int(delay),))
         elif process_name == ServiceConstants.PROCESS_ENDLESS_ANALYSIS_SCAN_NAME:
-            if (not ip_address) or (not ssh_port) or (not delay):
+            if (not ip_address) or (not delay):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
                                 ', delay=' + str(delay))
 
             service = AnalysisScanService(process_name,
-                                          'Analysis-Scan with args:' +
-                                          str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(delay),
-                                          (ip_address, int(ssh_port), int(delay),))
+                                          'Analysis-Scan with args: ip=' +
+                                          str(ip_address) + ', delay=' + str(delay),
+                                          (ip_address, int(delay),))
         else:
             response_json = {"response": 'Process not found!'}
             return Response(json.dumps(response_json), status=500, mimetype='application/json')
@@ -232,7 +233,7 @@ def get_configuration():
 
 
 @app.route('/analysis/<host_ip>', methods=['GET'])
-def execute_analysis(host_ip):
+def get_analysis(host_ip):
     print('Starting analysis for host ' + host_ip)
 
     should_configuration = ConfigurationHelper.read_network_configuration()
@@ -243,14 +244,7 @@ def execute_analysis(host_ip):
     # get from database
     nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
-    hosts = nmap_handler.get_hosts_including_ssh_information(nmap_report_db['nmaprun'])
-
-    # identify correct host by host todo refactor
-    host_to_analyse = None
-    for host in hosts:
-        if host.ip == host_ip:
-            host_to_analyse = host
-            break
+    host_to_analyse = nmap_handler.get_single_host_including_ssh_information(nmap_report_db['nmaprun'], host_ip)
 
     if host_to_analyse is None:
         response = {"response": "Could not find host!"}
@@ -273,7 +267,7 @@ def execute_analysis(host_ip):
 
 
 @app.route('/fix/<host_ip>/<issue_type>', methods=['GET'])
-def execute_fix(host_ip, issue_type):
+def get_fix(host_ip, issue_type):
     print('Fix ' + host_ip + ' ' + issue_type)
 
     should_configuration = ConfigurationHelper.read_network_configuration()
@@ -283,6 +277,17 @@ def execute_fix(host_ip, issue_type):
 
     response = {"response": result}
     return Response(json.dumps(response), status=200, mimetype='application/json')
+
+
+@app.route('/latestanalysisresult', methods=['GET'])
+def get_latest_analysis_result():
+    latest_analysis_result_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_HOST_ANALYSIS)
+
+    latest_analysis_result = HostAnalysisResult(latest_analysis_result_db['host_information'])
+    latest_analysis_result.security_issues = latest_analysis_result_db['security_issues']
+    latest_analysis_result.unix_time = latest_analysis_result_db['unixTime']
+
+    return Response(json.dumps(latest_analysis_result, cls=ComplexJsonEncoder), status=200, mimetype='application/json')
 
 
 @app.route('/ip_hosts', methods=['GET'])
