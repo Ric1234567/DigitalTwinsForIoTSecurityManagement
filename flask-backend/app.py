@@ -8,6 +8,7 @@ from flask_pymongo import PyMongo
 
 from analysis.host.HostSolver import HostSolver
 from services import ServiceConstants
+from services.AnalysisScanService import AnalysisScanService
 from services.FullScanService import FullScanService
 from services.MosquittoScanService import MosquittoScanService
 from services.NmapScanService import NmapScanService
@@ -173,7 +174,15 @@ def start_service(process_name):
                                            str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(
                                                delay),
                                            (ip_address, int(ssh_port), int(delay),))
+        elif process_name == ServiceConstants.PROCESS_ENDLESS_ANALYSIS_SCAN_NAME:
+            if (not ip_address) or (not ssh_port) or (not delay):
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
+                                ', delay=' + str(delay))
 
+            service = AnalysisScanService(process_name,
+                                          'Analysis-Scan with args:' +
+                                          str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(delay),
+                                          (ip_address, int(ssh_port), int(delay),))
         else:
             response_json = {"response": 'Process not found!'}
             return Response(json.dumps(response_json), status=500, mimetype='application/json')

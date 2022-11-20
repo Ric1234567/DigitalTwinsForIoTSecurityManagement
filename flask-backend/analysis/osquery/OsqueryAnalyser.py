@@ -35,18 +35,9 @@ class OsqueryAnalyser:
         # check if empty
         if unknown_usbs:
             # description building
-            usbs_display = ''
-            for usb in connected_usbs:
-                model = usb["columns"]["model"]
-                if model is not None:
-                    usbs_display += model + ', '
-
+            usbs_display = ', '.join([usb["columns"]["model"] for usb in connected_usbs if usb["columns"]["model"] is not None])
             description = 'Connected USB(s): ' + usbs_display + '. Found unknown USB(s): '
-            unknown_usbs_display = ''
-            for usb in unknown_usbs:
-                model = usb["columns"]["model"]
-                if model is not None:
-                    unknown_usbs_display += model + ', '
+            unknown_usbs_display = ', '.join([usb["columns"]["model"] for usb in unknown_usbs if usb["columns"]["model"] is not None])
 
             description += unknown_usbs_display
 

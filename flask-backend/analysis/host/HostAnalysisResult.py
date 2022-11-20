@@ -12,4 +12,4 @@ class HostAnalysisResult:
         self.host_information = host_information
 
     def repr_json(self):
-        return dict(security_issues=self.security_issues, unix_time=self.unix_time, host_information=self.host_information)
+        return dict(security_issues=self.security_issues, unixTime=self.unix_time, host_information=self.host_information)
