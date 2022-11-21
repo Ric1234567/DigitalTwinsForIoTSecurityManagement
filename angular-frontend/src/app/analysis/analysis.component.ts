@@ -38,7 +38,13 @@ export class AnalysisComponent implements OnInit {
       return
     }
 
-    this.emptyIssues = false
+    if (response?.security_issues.length == 0) {
+      this.emptyIssues = true
+    } 
+    else {
+      this.emptyIssues = false
+    }
+
     this.analysisResult = response
   }
 

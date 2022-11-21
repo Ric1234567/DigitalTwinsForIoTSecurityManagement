@@ -31,12 +31,16 @@ class AnalysisScanService(Service):
         while True:
             print('Start analysis of host ' + ip)
 
+            print("Performing Nmap Scan (-sS -T4 -p1-65535 " + ip + ", " + current_process().name + ")")
             nmap_handler.custom_network_scan("-sS -T4 -p1-65535 " + ip)
 
             # get from database
             nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
             host_to_analyse = nmap_handler.get_single_host_including_ssh_information(nmap_report_db['nmaprun'], ip)
+
+            if host_to_analyse is None:
+                raise Exception('Cannot find host! It might be down.')
 
             host_analyser = HostAnalyser(should_configuration, host_to_analyse)
             host_analysis_result = host_analyser.analyse()

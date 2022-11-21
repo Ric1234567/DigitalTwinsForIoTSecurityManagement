@@ -24,7 +24,7 @@ class NmapScanService(Service):
 
 # execute an nmap network scan and write results to database
 def execute_nmap_scan(nmap_command: string):
-    print("Performing Nmap Scan (" + nmap_command + "," + current_process().name + ")")
+    print("Performing Nmap Scan (" + nmap_command + ", " + current_process().name + ")")
     nmap_handler = NmapHandler()
     nmap_report_json = nmap_handler.get_report_as_json(nmap_command)
 
