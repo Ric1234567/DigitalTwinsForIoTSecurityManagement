@@ -23,6 +23,9 @@ import constants
 from handler.DatabaseHandler import DatabaseHandler
 from handler.NmapHandler import NmapHandler
 
+# Main file of server backend.
+# Includes GET and POST methods for the frontend to get management data.
+
 # configuration
 DEBUG = True
 
@@ -35,24 +38,30 @@ mongo = PyMongo(app)
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
+# handler for this file to communicate with the database
 database_handler = DatabaseHandler(constants.MONGO_URI)
+
+# array to store all currently running services
 running_services = []
 
 
+# GET method to perform an nmap scan and get the results the scan.
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
 def get_custom_nmap_report(nmap_command: string):
     try:
         nmap_handler = NmapHandler()
         nmap_handler.custom_network_scan(nmap_command)
 
-        # get from database
+        # get nmap scan from database
         nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
+        # build response json object
         response_json = {
             "response": {
                 'nmap_unixTime': nmap_report_db['unixTime'],
                 'nmaprun': nmap_report_db['nmaprun']
             }}
+
         return Response(json.dumps(response_json), status=200, mimetype='application/json')
     except FileNotFoundError as e:
         return Response(str(e), status=404, mimetype='application/json')
@@ -63,17 +72,20 @@ def get_full_network_report(nmap_command: string):
     nmap_handler = NmapHandler()
     nmap_handler.custom_network_scan(nmap_command)
 
-    # get from database
+    # get nmap scan from database
     nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
+    # find all hosts in the network with ssh
     ssh_hosts = nmap_handler.ssh_service_discovery(nmap_report_db['nmaprun'])
 
     subnetwork_handler = SubnetworkHandler()
 
+    # scan the subnetwork for every host with ssh
     for host in ssh_hosts:
         subnetwork_handler.scan_subnetwork_host(host)
     subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
 
+    # build response json object
     response_json = {
         "response": {
             'nmap_unixTime': nmap_report_db['unixTime'],
@@ -81,9 +93,11 @@ def get_full_network_report(nmap_command: string):
             'subnetwork_unixTime': unix_time,
             'subnetwork': subnetwork
         }}
+
     return Response(json.dumps(response_json), status=200, mimetype='application/json')
 
 
+# GET method for the last network scan.
 @app.route('/last_network_scan', methods=['GET'])
 def get_last_network_report():
     try:
@@ -92,6 +106,7 @@ def get_last_network_report():
         subnetwork_handler = SubnetworkHandler()
         subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
 
+        # build response json object
         response_json = {
             "response": {
                 'nmap_unixTime': nmap_report_db['unixTime'],
@@ -104,15 +119,19 @@ def get_last_network_report():
         return Response(str(e), status=404, mimetype='application/json')
 
 
+# GET method for stopping a running service by its pid
 @app.route('/stop/<process_pid>', methods=['GET'])
 def stop_service(process_pid):
     try:
         for service in running_services:
             if service.process.pid == int(process_pid):
                 service.stop()
-                running_services.remove(service)
-                print("terminated process " + service.name + ", pid=" + str(service.process.pid))
 
+                # remove service from running list
+                running_services.remove(service)
+                print("Terminated process " + service.name + ", pid=" + str(service.process.pid))
+
+                # build response json object
                 response_json = {"response": 'Success! Stopped process ' + service.name}
                 return Response(json.dumps(response_json), status=200, mimetype='application/json')
 
@@ -120,71 +139,76 @@ def stop_service(process_pid):
         return Response(str(e), status=500, mimetype='application/json')
 
 
-@app.route('/start/<process_name>', methods=['GET'])
-def start_service(process_name):
+# GET method for starting a service with a given service_type
+@app.route('/start/<service_type>', methods=['GET'])
+def start_service(service_type):
     try:
+        # get all parameters from the URL (some might be None)
         nmap_command = request.args.get('cmd')
         ip_address = request.args.get('ip')
         ssh_port = request.args.get('ssh_port')
         delay = request.args.get('delay')
 
-        if (process_name == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME) or \
-                (process_name == ServiceConstants.PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME):
+        # differentiate between every service type by its name
+        if (service_type == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME) or \
+                (service_type == ServiceConstants.PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME):
 
             if (not nmap_command) or (not delay):
                 raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
 
-            if process_name == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
-                service = NmapScanService(process_name,
+            if service_type == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
+                service = NmapScanService(service_type,
                                           'Nmap-Scan with args: cmd=' +
                                           str(nmap_command) + ', delay=' + str(delay),
                                           (nmap_command, int(delay),))
-            else:  # full scan
-                service = FullScanService(process_name,
+            else:
+                service = FullScanService(service_type,
                                           'Full-Scan with args: cmd=' +
                                           str(nmap_command) + ', delay=' + str(delay),
                                           (nmap_command, int(delay),))
-        elif process_name == ServiceConstants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
+
+        elif service_type == ServiceConstants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
             if (not ip_address) or (not ssh_port) or (not delay):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) +
                                 ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
-            service = OsqueryScanService(process_name,
+            service = OsqueryScanService(service_type,
                                          'Osquery-Scan with args: ip=' +
                                          str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(delay),
                                          (ip_address, int(ssh_port), int(delay),))
 
-        elif process_name == ServiceConstants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
+        elif service_type == ServiceConstants.PROCESS_ENDLESS_ZIGBEE2MQTT_STATE_NAME:
             if (not delay) or (not ip_address) or (not ssh_port):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) +
                                 ', ssh_port=' + str(ssh_port) + ', delay=' + str(delay))
 
-            service = Zigbee2MqttScanService(process_name,
+            service = Zigbee2MqttScanService(service_type,
                                              'Zigbee2Mqtt-Scan with args: ip=' +
                                              str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(
                                                  delay),
                                              (ip_address, int(ssh_port), int(delay),))
 
-        elif process_name == ServiceConstants.PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME:
+        elif service_type == ServiceConstants.PROCESS_ENDLESS_MOSQUITTO_SCAN_NAME:
             if (not ip_address) or (not ssh_port) or (not delay):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
                                 ', delay=' + str(delay))
 
-            service = MosquittoScanService(process_name,
+            service = MosquittoScanService(service_type,
                                            'Mosquitto-Scan with args: ip=' +
                                            str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(
                                                delay),
                                            (ip_address, int(ssh_port), int(delay),))
-        elif process_name == ServiceConstants.PROCESS_ENDLESS_ANALYSIS_SCAN_NAME:
+        elif service_type == ServiceConstants.PROCESS_ENDLESS_ANALYSIS_SCAN_NAME:
             if (not ip_address) or (not delay):
                 raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
                                 ', delay=' + str(delay))
 
-            service = AnalysisScanService(process_name,
+            service = AnalysisScanService(service_type,
                                           'Analysis-Scan with args: ip=' +
                                           str(ip_address) + ', delay=' + str(delay),
                                           (ip_address, int(delay),))
         else:
+            # Process not found if an unknown service_name is given
             response_json = {"response": 'Process not found!'}
             return Response(json.dumps(response_json), status=500, mimetype='application/json')
 
@@ -202,18 +226,21 @@ def start_service(process_name):
         return Response(str(e), status=500, mimetype='application/json')
 
 
+# GET method for all available services
 @app.route('/available_services', methods=['GET'])
 def get_available_services():
     response = {"response": ServiceConstants.SERVICE_LIST}
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
+# GET method for all currently running services
 @app.route('/running_services', methods=['GET'])
 def get_running_services():
     response = {"response": running_services}
     return Response(json.dumps(response, cls=ComplexJsonEncoder), status=200, mimetype='application/json')
 
 
+# GET/POST method for getting or updating the network configuration (SOLL-Modell)
 @app.route('/network_configuration', methods=['GET', 'POST'])
 def get_configuration():
     if request.method == 'GET':
@@ -221,35 +248,41 @@ def get_configuration():
             configuration_json = file.read()
 
         return Response(configuration_json, status=200, mimetype='application/json')
+
     elif request.method == 'POST':
         with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'w') as file:
             file.write(request.data.decode('utf-8'))
 
         response = {"response": "Successfully submitted network configuration!"}
         return Response(json.dumps(response), status=200, mimetype='application/json')
+
     else:
         response = {"response": request.data.decode('utf-8')}
         return Response(json.dumps(response), status=405, mimetype='application/json')
 
 
+# GET method for performing an analysis for a given host
 @app.route('/analysis/<host_ip>', methods=['GET'])
 def get_analysis(host_ip):
     print('Starting analysis for host ' + host_ip)
 
     should_configuration = ConfigurationHelper.read_network_configuration()
 
+    # scan all ports of host
     nmap_handler = NmapHandler()
     nmap_handler.custom_network_scan("-sS -T4 -p1-65535 " + host_ip)
 
-    # get from database
+    # get nmap host scan from database
     nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
+    # get host information (including ssh information if host supports it)
     host_to_analyse = nmap_handler.get_single_host_including_ssh_information(nmap_report_db['nmaprun'], host_ip)
 
     if host_to_analyse is None:
         response = {"response": "Could not find host!"}
         return Response(json.dumps(response), status=500, mimetype='application/json')
 
+    # perform host analysis
     host_analyser = HostAnalyser(should_configuration, host_to_analyse)
     host_analysis_result = host_analyser.analyse()
 
@@ -266,6 +299,7 @@ def get_analysis(host_ip):
     return Response(host_analysis_result_json, status=200, mimetype='application/json')
 
 
+# GET method for fixing a specific security issue of given host
 @app.route('/fix/<host_ip>/<issue_type>', methods=['GET'])
 def get_fix(host_ip, issue_type):
     print('Fix ' + host_ip + ' ' + issue_type)
@@ -279,6 +313,7 @@ def get_fix(host_ip, issue_type):
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
+# GET method for getting the latest analysis result from the database
 @app.route('/latestanalysisresult', methods=['GET'])
 def get_latest_analysis_result():
     latest_analysis_result_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_HOST_ANALYSIS)
@@ -290,6 +325,7 @@ def get_latest_analysis_result():
     return Response(json.dumps(latest_analysis_result, cls=ComplexJsonEncoder), status=200, mimetype='application/json')
 
 
+# GET method for getting all connected hosts in network
 @app.route('/ip_hosts', methods=['GET'])
 def get_ip_hosts():
     print('Get hosts of last nmaprun...')
@@ -307,6 +343,7 @@ def get_ip_hosts():
                     mimetype='application/json')
 
 
+# main function which executes the program
 if __name__ == '__main__':
     app.run(use_reloader=False)
 
