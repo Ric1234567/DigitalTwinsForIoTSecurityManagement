@@ -1,6 +1,6 @@
 import json
 import string
-from multiprocessing import active_children
+from multiprocessing import active_children, current_process
 
 from flask import Flask, Response, request
 from flask_cors import CORS
@@ -10,7 +10,7 @@ from analysis.host.HostAnalysisResult import HostAnalysisResult
 from analysis.host.HostSolver import HostSolver
 from services import ServiceConstants
 from services.AnalysisScanService import AnalysisScanService
-from services.FullScanService import FullScanService
+from services.CompleteNetworkScanService import CompleteNetworkScanService
 from services.MosquittoScanService import MosquittoScanService
 from services.NmapScanService import NmapScanService
 from services.OsqueryScanService import OsqueryScanService
@@ -64,7 +64,8 @@ def get_custom_nmap_report(nmap_command: string):
     return Response(json.dumps(response_json), status=200, mimetype='application/json')
 
 
-# GET method for performing and getting an full network scan
+# GET method for performing and getting an full network scan.
+# This includes a nmap scan for all host in the network and all subnetwork of all hosts with ssh.
 @app.route('/full_network_scan/<nmap_command>', methods=['GET'])
 def get_full_network_report(nmap_command: string):
     nmap_handler = NmapHandler()
@@ -149,22 +150,23 @@ def start_service(service_type):
         delay = request.args.get('delay')
 
         # differentiate between every service type by its name
-        if (service_type == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME) or \
-                (service_type == ServiceConstants.PROCESS_ENDLESS_FULL_NETWORK_SCAN_NAME):
-
+        if service_type == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
             if (not nmap_command) or (not delay):
                 raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
 
-            if service_type == ServiceConstants.PROCESS_ENDLESS_NMAP_SCAN_NAME:
-                service = NmapScanService(service_type,
-                                          'Nmap-Scan with args: cmd=' +
-                                          str(nmap_command) + ', delay=' + str(delay),
-                                          (nmap_command, int(delay),))
-            else:
-                service = FullScanService(service_type,
-                                          'Full-Scan with args: cmd=' +
-                                          str(nmap_command) + ', delay=' + str(delay),
-                                          (nmap_command, int(delay),))
+            service = NmapScanService(service_type,
+                                      'Nmap-Scan with args: cmd=' +
+                                      str(nmap_command) + ', delay=' + str(delay),
+                                      (nmap_command, int(delay),))
+
+        elif service_type == ServiceConstants.PROCESS_ENDLESS_COMPLETE_NETWORK_SCAN_NAME:
+            if (not nmap_command) or (not delay):
+                raise Exception('Missing parameter! Given: cmd=' + str(nmap_command) + ', delay=' + str(delay))
+
+            service = CompleteNetworkScanService(service_type,
+                                                 'Complete-Scan with args: cmd=' +
+                                                 str(nmap_command) + ', delay=' + str(delay),
+                                                 (nmap_command, int(delay),))
 
         elif service_type == ServiceConstants.PROCESS_ENDLESS_OSQUERY_SCAN_NAME:
             if (not ip_address) or (not ssh_port) or (not delay):
@@ -197,10 +199,10 @@ def start_service(service_type):
                                            str(ip_address) + ', ssh_port=' + ssh_port + ', delay=' + str(
                                                delay),
                                            (ip_address, int(ssh_port), int(delay),))
+
         elif service_type == ServiceConstants.PROCESS_ENDLESS_ANALYSIS_SCAN_NAME:
             if (not ip_address) or (not delay):
-                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', ssh_port=' + str(ssh_port) +
-                                ', delay=' + str(delay))
+                raise Exception('Missing parameter! Given: ip=' + str(ip_address) + ', delay=' + str(delay))
 
             service = AnalysisScanService(service_type,
                                           'Analysis-Scan with args: ip=' +
@@ -275,6 +277,7 @@ def get_analysis(host_ip):
 
     # scan all ports of host
     nmap_handler = NmapHandler()
+    print("Performing Nmap Scan (" + "-sS -T4 -p1-65535 " + host_ip + ", " + current_process().name + ")")
     nmap_handler.custom_network_scan('-sS -T4 -p1-65535 ' + host_ip)
 
     # get nmap host scan from database
@@ -319,7 +322,7 @@ def get_fix(host_ip, issue_type):
 
 
 # GET method for getting the latest analysis result from the database
-@app.route('/latestanalysisresult', methods=['GET'])
+@app.route('/latest_analysis_result', methods=['GET'])
 def get_latest_analysis_result():
     latest_analysis_result_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_HOST_ANALYSIS)
 

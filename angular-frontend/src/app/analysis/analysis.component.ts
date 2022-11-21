@@ -30,7 +30,7 @@ export class AnalysisComponent implements OnInit {
     this.loading = true
     try {
       let util = new Util()
-      var response = await util.fetchFromBackend('GET', 'latestanalysisresult')
+      var response = await util.fetchFromBackend('GET', 'latest_analysis_result')
     } catch (error: any) {
       alert(error.message)
       return
@@ -70,9 +70,15 @@ export class AnalysisComponent implements OnInit {
     }
 
     this.loading = true
-    let util = new Util()
-    let response = await util.fetchFromBackend('GET', 'analysis/' + this.selectedHost.ip)
-    this.loading = false
+    try {
+      let util = new Util()
+      var response = await util.fetchFromBackend('GET', 'analysis/' + this.selectedHost.ip)
+    } catch (error: any) {
+      alert(error.message)
+      return
+    } finally {
+      this.loading = false
+    }
 
     if (response.response) {
       this.analysisResult = null
@@ -87,8 +93,16 @@ export class AnalysisComponent implements OnInit {
   async onClickFixHost(issue: any) {
     console.log(issue);
 
-    let util = new Util()
-    let response = await util.fetchFromBackend('GET', 'fix/' + this.analysisResult.host_information.ip + "/" + issue.issue_type)
+    this.loading = true
+    try {
+      let util = new Util()
+      var response = await util.fetchFromBackend('GET', 'fix/' + this.analysisResult.host_information.ip + "/" + issue.issue_type)
+    } catch (error: any) {
+      alert(error.message)
+      return
+    } finally {
+      this.loading = false
+    }
 
     alert(response.response)
   }

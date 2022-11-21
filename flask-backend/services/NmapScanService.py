@@ -6,6 +6,8 @@ from handler.NmapHandler import NmapHandler
 from services.Service import Service
 
 
+# Service which runs in an endless manner.
+# Executes nmap scan.
 class NmapScanService(Service):
     def __init__(self, name: string, description: string, args: tuple):
         process = Process(name=name,

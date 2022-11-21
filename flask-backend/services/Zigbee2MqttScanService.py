@@ -7,6 +7,8 @@ from handler.ssh.SshInformation import SshInformation
 from services.Service import Service
 
 
+# Service which runs in an endless manner.
+# Performs a zigbee2mqtt scan by getting the state.json file via ssh.
 class Zigbee2MqttScanService(Service):
     def __init__(self, name: string, description: string, args: tuple):
         process = Process(name=name,

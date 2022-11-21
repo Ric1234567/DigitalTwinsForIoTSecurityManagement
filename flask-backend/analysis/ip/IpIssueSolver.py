@@ -51,6 +51,6 @@ class IpIssueSolver:
 
         # return status
         if killed_ports:
-            return 'Killed ports ' + str(killed_ports) + ' on host ' + str(ip) + '!'
+            return 'Successfully killed ports ' + str(killed_ports) + ' on host ' + str(ip) + '!'
         else:
             return 'No ports killed!'

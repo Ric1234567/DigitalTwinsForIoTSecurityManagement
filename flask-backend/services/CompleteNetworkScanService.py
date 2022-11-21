@@ -10,24 +10,26 @@ from services import MosquittoScanService, OsqueryScanService, NmapScanService, 
 from services.Service import Service
 
 
-class FullScanService(Service):
+# Service which runs in an endless manner.
+# Performs a complete execution of all other service scans (except analysisScanService).
+class CompleteNetworkScanService(Service):
     def __init__(self, name: string, description: string, args: tuple):
         process = Process(name=name,
-                          target=self.start_full_network_scan_service,
+                          target=self.start_complete_network_scan_service,
                           args=args)
         super().__init__(name, description, args, process)
 
-    # static method which starts an endless full network scan with a given nmap command and its execution delay
-    def start_full_network_scan_service(self, nmap_command: string, delay: int):
+    # static method which starts an endless complete network scan with a given nmap command and its execution delay
+    def start_complete_network_scan_service(self, nmap_command: string, delay: int):
         while True:
-            execute_full_network_scan(nmap_command)
+            execute_complete_network_scan(nmap_command)
 
             # sleep for the delay time
             print(current_process().name + " sleeping for " + str(delay) + " seconds!")
             time.sleep(delay)
 
 
-def execute_full_network_scan(nmap_command: string):
+def execute_complete_network_scan(nmap_command: string):
     # execute nmap scan which gets written to the database
     NmapScanService.execute_nmap_scan(nmap_command)
 

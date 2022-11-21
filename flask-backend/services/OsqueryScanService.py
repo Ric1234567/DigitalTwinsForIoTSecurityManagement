@@ -9,6 +9,8 @@ from handler.ssh.SshInformation import SshInformation
 from services.Service import Service
 
 
+# Service which runs in an endless manner.
+# Performs osquery scans by getting the osquery log via ssh from the host.
 class OsqueryScanService(Service):
     def __init__(self, name: string, description: string, args: tuple):
         process = Process(name=name,

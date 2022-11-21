@@ -2,6 +2,7 @@ import string
 from multiprocessing import Process
 
 
+# Base service class for executing commands in an endless manner.
 class Service:
     def __init__(self, name: string, description: string, args: tuple, process: Process):
         self.name: string = name

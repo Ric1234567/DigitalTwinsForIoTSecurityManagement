@@ -6,14 +6,14 @@ from multiprocessing import Process, current_process
 import constants
 from analysis.host.HostAnalyser import HostAnalyser
 from handler.DatabaseHandler import DatabaseHandler
-from handler.HostInformation import HostInformation
 from handler.NmapHandler import NmapHandler
-from handler.ssh.SshInformation import SshInformation
 from services.Service import Service
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
 
 
+# Service which runs in an endless manner.
+# Performs the analysis of a host.
 class AnalysisScanService(Service):
 
     def __init__(self, name: string, description: string, args: tuple):
@@ -45,7 +45,7 @@ class AnalysisScanService(Service):
             host_analyser = HostAnalyser(should_configuration, host_to_analyse)
             host_analysis_result = host_analyser.analyse()
 
-            # convert to json
+            # convert analysis to json
             host_analysis_result_json = json.dumps(host_analysis_result, cls=ComplexJsonEncoder)
 
             print("Write host analysis of " + ip + " to database")

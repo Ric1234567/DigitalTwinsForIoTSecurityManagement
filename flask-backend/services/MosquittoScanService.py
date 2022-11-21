@@ -9,6 +9,8 @@ from handler.ssh.SshInformation import SshInformation
 from services.Service import Service
 
 
+# Service which runs in an endless manner.
+# Performs mosquitto scan by getting the configuration/acl via ssh.
 class MosquittoScanService(Service):
     def __init__(self, name: string, description: string, args: tuple):
         process = Process(name=name,
