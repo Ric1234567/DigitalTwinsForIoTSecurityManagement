@@ -32,7 +32,7 @@ DEBUG = True
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config["MONGO_URI"] = constants.MONGO_URI  # pi database
+app.config['MONGO_URI'] = constants.MONGO_URI  # pi database
 mongo = PyMongo(app)
 
 # enable CORS
@@ -48,25 +48,23 @@ running_services = []
 # GET method to perform an nmap scan and get the results the scan.
 @app.route('/custom_network_scan/<nmap_command>', methods=['GET'])
 def get_custom_nmap_report(nmap_command: string):
-    try:
-        nmap_handler = NmapHandler()
-        nmap_handler.custom_network_scan(nmap_command)
+    nmap_handler = NmapHandler()
+    nmap_handler.custom_network_scan(nmap_command)
 
-        # get nmap scan from database
-        nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+    # get nmap scan from database
+    nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
-        # build response json object
-        response_json = {
-            "response": {
-                'nmap_unixTime': nmap_report_db['unixTime'],
-                'nmaprun': nmap_report_db['nmaprun']
-            }}
+    # build response json object
+    response_json = {
+        'response': {
+            'nmap_unixTime': nmap_report_db['unixTime'],
+            'nmaprun': nmap_report_db['nmaprun']
+        }}
 
-        return Response(json.dumps(response_json), status=200, mimetype='application/json')
-    except FileNotFoundError as e:
-        return Response(str(e), status=404, mimetype='application/json')
+    return Response(json.dumps(response_json), status=200, mimetype='application/json')
 
 
+# GET method for performing and getting an full network scan
 @app.route('/full_network_scan/<nmap_command>', methods=['GET'])
 def get_full_network_report(nmap_command: string):
     nmap_handler = NmapHandler()
@@ -87,7 +85,7 @@ def get_full_network_report(nmap_command: string):
 
     # build response json object
     response_json = {
-        "response": {
+        'response': {
             'nmap_unixTime': nmap_report_db['unixTime'],
             'nmaprun': nmap_report_db['nmaprun'],
             'subnetwork_unixTime': unix_time,
@@ -100,23 +98,24 @@ def get_full_network_report(nmap_command: string):
 # GET method for the last network scan.
 @app.route('/last_network_scan', methods=['GET'])
 def get_last_network_report():
-    try:
-        nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
+    nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
 
-        subnetwork_handler = SubnetworkHandler()
-        subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
+    if nmap_report_db is None:
+        response_json = {'response': 'No last nmap scan found!'}
+        return Response(json.dumps(response_json), status=500, mimetype='application/json')
 
-        # build response json object
-        response_json = {
-            "response": {
-                'nmap_unixTime': nmap_report_db['unixTime'],
-                'nmaprun': nmap_report_db['nmaprun'],
-                'subnetwork_unixTime': unix_time,
-                'subnetwork': subnetwork
-            }}
-        return Response(json.dumps(response_json), status=200, mimetype='application/json')
-    except FileNotFoundError as e:
-        return Response(str(e), status=404, mimetype='application/json')
+    subnetwork_handler = SubnetworkHandler()
+    subnetwork, unix_time = subnetwork_handler.get_latest_subnetwork_information()
+
+    # build response json object
+    response_json = {
+        'response': {
+            'nmap_unixTime': nmap_report_db['unixTime'],
+            'nmaprun': nmap_report_db['nmaprun'],
+            'subnetwork_unixTime': unix_time,
+            'subnetwork': subnetwork
+        }}
+    return Response(json.dumps(response_json), status=200, mimetype='application/json')
 
 
 # GET method for stopping a running service by its pid
@@ -129,10 +128,10 @@ def stop_service(process_pid):
 
                 # remove service from running list
                 running_services.remove(service)
-                print("Terminated process " + service.name + ", pid=" + str(service.process.pid))
+                print('Terminated process ' + service.name + ', pid=' + str(service.process.pid))
 
                 # build response json object
-                response_json = {"response": 'Success! Stopped process ' + service.name}
+                response_json = {'response': 'Success! Stopped process ' + service.name}
                 return Response(json.dumps(response_json), status=200, mimetype='application/json')
 
     except Exception as e:
@@ -209,7 +208,7 @@ def start_service(service_type):
                                           (ip_address, int(delay),))
         else:
             # Process not found if an unknown service_name is given
-            response_json = {"response": 'Process not found!'}
+            response_json = {'response': 'Process not found!'}
             return Response(json.dumps(response_json), status=500, mimetype='application/json')
 
         # start service
@@ -219,7 +218,7 @@ def start_service(service_type):
         # convert to json
         service_json = json.dumps(service, cls=ComplexJsonEncoder)
 
-        response_json = {"response": 'Success! Started process ' + service_json}
+        response_json = {'response': 'Success! Started process ' + service_json}
         return Response(json.dumps(response_json), status=200, mimetype='application/json')
     except Exception as e:
         print(e)
@@ -229,36 +228,42 @@ def start_service(service_type):
 # GET method for all available services
 @app.route('/available_services', methods=['GET'])
 def get_available_services():
-    response = {"response": ServiceConstants.SERVICE_LIST}
+    response = {'response': ServiceConstants.SERVICE_LIST}
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
 # GET method for all currently running services
 @app.route('/running_services', methods=['GET'])
 def get_running_services():
-    response = {"response": running_services}
+    response = {'response': running_services}
     return Response(json.dumps(response, cls=ComplexJsonEncoder), status=200, mimetype='application/json')
 
 
 # GET/POST method for getting or updating the network configuration (SOLL-Modell)
 @app.route('/network_configuration', methods=['GET', 'POST'])
 def get_configuration():
-    if request.method == 'GET':
-        with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'r') as file:
-            configuration_json = file.read()
+    try:
+        if request.method == 'GET':
+            with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'r') as file:
+                configuration_json = file.read()
 
-        return Response(configuration_json, status=200, mimetype='application/json')
+            return Response(configuration_json, status=200, mimetype='application/json')
 
-    elif request.method == 'POST':
-        with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'w') as file:
-            file.write(request.data.decode('utf-8'))
+        elif request.method == 'POST':
+            with open(constants.NETWORK_CONFIGURATION_FILE_NAME, 'w') as file:
+                file.write(request.data.decode('utf-8'))
 
-        response = {"response": "Successfully submitted network configuration!"}
-        return Response(json.dumps(response), status=200, mimetype='application/json')
+            response = {'response': 'Successfully submitted network configuration!'}
+            return Response(json.dumps(response), status=200, mimetype='application/json')
 
-    else:
-        response = {"response": request.data.decode('utf-8')}
-        return Response(json.dumps(response), status=405, mimetype='application/json')
+        else:
+            response = {'response': request.data.decode('utf-8')}
+            return Response(json.dumps(response), status=405, mimetype='application/json')
+    except FileNotFoundError:
+        response_json = {'response': 'No configuration file found!'}
+        return Response(json.dumps(response_json), status=500, mimetype='application/json')
+    except Exception as e:
+        return Response(str(e), status=500, mimetype='application/json')
 
 
 # GET method for performing an analysis for a given host
@@ -270,7 +275,7 @@ def get_analysis(host_ip):
 
     # scan all ports of host
     nmap_handler = NmapHandler()
-    nmap_handler.custom_network_scan("-sS -T4 -p1-65535 " + host_ip)
+    nmap_handler.custom_network_scan('-sS -T4 -p1-65535 ' + host_ip)
 
     # get nmap host scan from database
     nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)
@@ -279,7 +284,7 @@ def get_analysis(host_ip):
     host_to_analyse = nmap_handler.get_single_host_including_ssh_information(nmap_report_db['nmaprun'], host_ip)
 
     if host_to_analyse is None:
-        response = {"response": "Could not find host!"}
+        response = {'response': 'Could not find host!'}
         return Response(json.dumps(response), status=500, mimetype='application/json')
 
     # perform host analysis
@@ -289,11 +294,11 @@ def get_analysis(host_ip):
     # convert to json
     host_analysis_result_json = json.dumps(host_analysis_result, cls=ComplexJsonEncoder)
 
-    print("Write host analysis of " + host_to_analyse.ip + " to database")
+    print('Write host analysis of ' + host_to_analyse.ip + ' to database')
     database_handler.insert_one_into(constants.COLLECTION_NAME_HOST_ANALYSIS, json.loads(host_analysis_result_json))
 
     if len(host_analysis_result.security_issues) == 0:
-        response = {"response": "No issues found!"}
+        response = {'response': 'No issues found!'}
         return Response(json.dumps(response), status=200, mimetype='application/json')
 
     return Response(host_analysis_result_json, status=200, mimetype='application/json')
@@ -309,7 +314,7 @@ def get_fix(host_ip, issue_type):
     host_solver = HostSolver(should_configuration)
     result = host_solver.solve(host_ip, issue_type)
 
-    response = {"response": result}
+    response = {'response': result}
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
@@ -317,6 +322,10 @@ def get_fix(host_ip, issue_type):
 @app.route('/latestanalysisresult', methods=['GET'])
 def get_latest_analysis_result():
     latest_analysis_result_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_HOST_ANALYSIS)
+
+    if latest_analysis_result_db is None:
+        response = {'response': 'No latest analysis found!'}
+        return Response(json.dumps(response), status=500, mimetype='application/json')
 
     latest_analysis_result = HostAnalysisResult(latest_analysis_result_db['host_information'])
     latest_analysis_result.security_issues = latest_analysis_result_db['security_issues']
@@ -331,7 +340,7 @@ def get_ip_hosts():
     print('Get hosts of last nmaprun...')
 
     nmap_handler = NmapHandler()
-    nmap_handler.custom_network_scan("-sn -T4 " + constants.IP_NETWORK_PREFIX + "*")
+    nmap_handler.custom_network_scan('-sn -T4 ' + constants.IP_NETWORK_PREFIX + '*')
 
     # get from database
     nmap_report_db = database_handler.select_latest_entry(constants.COLLECTION_NAME_NMAPRUN)

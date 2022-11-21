@@ -9,7 +9,7 @@ import { Util } from '../util';
 })
 export class ConfigurationComponent implements OnInit {
 
-  configuration?:NetworkConfiguration
+  configuration?: NetworkConfiguration
 
   constructor() { }
 
@@ -26,8 +26,13 @@ export class ConfigurationComponent implements OnInit {
   }
 
   async getConfiguration() {
-    let util = new Util
-    let configurationResponse = await util.fetchFromBackend('GET', 'network_configuration')
+    try {
+      let util = new Util
+      var configurationResponse = await util.fetchFromBackend('GET', 'network_configuration')
+    } catch (error: any) {
+      alert(error.message)
+      return
+    }
 
     this.configuration = configurationResponse as NetworkConfiguration
     console.log(configurationResponse);

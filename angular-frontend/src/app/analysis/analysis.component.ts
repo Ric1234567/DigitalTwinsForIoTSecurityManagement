@@ -28,9 +28,15 @@ export class AnalysisComponent implements OnInit {
 
   async getLatestAnalysis() {
     this.loading = true
-    let util = new Util()
-    let response = await util.fetchFromBackend('GET', 'latestanalysisresult')
-    this.loading = false
+    try {
+      let util = new Util()
+      var response = await util.fetchFromBackend('GET', 'latestanalysisresult')
+    } catch (error: any) {
+      alert(error.message)
+      return
+    } finally {
+      this.loading = false
+    }
 
     if (response.response) {
       this.analysisResult = null
@@ -40,7 +46,7 @@ export class AnalysisComponent implements OnInit {
 
     if (response?.security_issues.length == 0) {
       this.emptyIssues = true
-    } 
+    }
     else {
       this.emptyIssues = false
     }
@@ -101,7 +107,7 @@ export class AnalysisComponent implements OnInit {
     if (this.analysisResult?.host_information?.ip) {
       result += this.analysisResult.host_information.ip
     }
-    if(this.analysisResult?.host_information?.hostname) {
+    if (this.analysisResult?.host_information?.hostname) {
       result += ' (' + this.analysisResult.host_information.hostname + ')'
     }
 
