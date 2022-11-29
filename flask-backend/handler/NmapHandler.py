@@ -13,6 +13,7 @@ from handler.DatabaseHandler import DatabaseHandler
 from handler.HostInformation import HostInformation
 from handler.ssh.SshInformation import SshInformation
 from util import ConfigurationHelper
+import nmap
 
 
 # Class responsible for nmap related operations
