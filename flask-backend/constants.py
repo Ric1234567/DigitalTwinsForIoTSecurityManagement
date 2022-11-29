@@ -18,8 +18,10 @@ MOSQUITTO_FILE_NAME_ACL = 'mosquitto_acl.acl'
 OSQUERY_DAEMON_LOCAL_OUTPUT_LOG_FILE_NAME = 'osquery_daemon_output.log'
 OSQUERY_REMOTE_LOG_FILE_PATH = '/home/pi/osquery/logs/osqueryd.results.log'  # check permission of file; needs to be user 'pi'
 
+SUDO = 'sudo'
+
 NMAP_XML_REPORT_FILE_NAME = 'nmap_xml_result.xml'
-NMAP_STANDARD_COMMAND_PREFIX = 'sudo nmap -oX - '  # space char at the end required
+NMAP_STANDARD_COMMAND_PREFIX = 'nmap -oX - '  # space char at the end required
 NMAP_COMMAND_FULL_SCAN_SUFFIX = '-sS -T4 -F ' + IP_NETWORK_PREFIX + '* --traceroute'
 
 SSH_USER = 'pi'

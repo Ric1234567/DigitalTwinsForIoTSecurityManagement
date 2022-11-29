@@ -5,6 +5,7 @@ import subprocess
 import time
 import typing
 from multiprocessing import current_process
+from sys import platform
 
 from libnmap.parser import NmapParser
 
@@ -13,12 +14,15 @@ from handler.DatabaseHandler import DatabaseHandler
 from handler.HostInformation import HostInformation
 from handler.ssh.SshInformation import SshInformation
 from util import ConfigurationHelper
-import nmap
 
 
 # Class responsible for nmap related operations
 class NmapHandler:
     def __init__(self):
+        if platform == "linux" or platform == "linux2" or "darwin":  # Linux or Mac OS
+            self.standard_command = constants.SUDO + ' ' + constants.NMAP_STANDARD_COMMAND_PREFIX
+        elif platform == "win32":  # Windows
+            self.standard_command = constants.NMAP_STANDARD_COMMAND_PREFIX
         self.database_handler = DatabaseHandler(constants.MONGO_URI)
 
     # Runs nmap commands and return xml string
@@ -35,7 +39,7 @@ class NmapHandler:
     # execute a nmap network scan with the given command_suffix.
     # The prefix needs to be constant to operate as sudo, and to return an xml result.
     def scan_network(self, command_suffix):
-        nmap_xml_result = self.run_command(constants.NMAP_STANDARD_COMMAND_PREFIX + command_suffix)
+        nmap_xml_result = self.run_command(self.standard_command + command_suffix)
         self.save_report(nmap_xml_result)
         return nmap_xml_result
 
