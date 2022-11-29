@@ -2,4 +2,6 @@ xmltodict==0.13.0
 PyYAML==6.0
 Flask==2.2.2
 paramiko==2.11.0
-python-nmap==0.7.1
+Flask-PyMongo==2.3.0
+Flask-Cors==3.0.10
+python-libnmap==0.7.3
