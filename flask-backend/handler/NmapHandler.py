@@ -19,9 +19,9 @@ from util import ConfigurationHelper
 # Class responsible for nmap related operations
 class NmapHandler:
     def __init__(self):
-        if platform == "linux" or platform == "linux2" or "darwin":  # Linux or Mac OS
+        if (platform == 'linux') or (platform == 'linux2') or (platform == 'darwin'):  # Linux or Mac OS
             self.standard_command = constants.SUDO + ' ' + constants.NMAP_STANDARD_COMMAND_PREFIX
-        elif platform == "win32":  # Windows
+        elif platform == 'win32':  # Windows
             self.standard_command = constants.NMAP_STANDARD_COMMAND_PREFIX
         self.database_handler = DatabaseHandler(constants.MONGO_URI)
 
