@@ -10,14 +10,8 @@ export class HostInformation {
     }
 
     getAddressesString() {
-        if (Array.isArray(this.hostInformationType?.address)) {
-            let result: string = ''
-            for (const address of this.hostInformationType?.address) {
-                result += address["@addr"] + '(' + address['@addrtype'] + '), '
-            }
-            return result
-        }
-        return this.hostInformationType?.address["@addr"] + '(' + this.hostInformationType?.address['@addrtype'] + ')'
+        let addresses = this.getAddressesArray()
+        return addresses.map((x: any) => x["@addr"]).join(', ')
     }
 
     getAddressesArray() {
@@ -30,19 +24,16 @@ export class HostInformation {
     }
 
     getHostNamesString() {
-        if (Array.isArray(this.hostInformationType?.hostnames)) {
-            let result: string = ''
-            for (const hostname of this.hostInformationType?.hostnames) {
-                result += hostname["@name"] + '(' + hostname['@type'] + '), '
-            }
-            return result
-        }
-        return this.hostInformationType?.hostnames.hostname["@name"] + '(' + this.hostInformationType?.hostnames.hostname['@type'] + ')'
+        let hostnames = this.getHostNamesArray()
+        return hostnames.map((x: any) => x['@name']).join(', ')
     }
 
     getHostNamesArray() {
         if (Array.isArray(this.hostInformationType?.hostnames)) {
             return this.hostInformationType?.hostnames
+        }
+        if (Array.isArray(this.hostInformationType?.hostnames?.hostname)) {
+            return this.hostInformationType?.hostnames?.hostname
         }
         let array = []
         array.push(this.hostInformationType?.hostnames.hostname)
@@ -50,14 +41,8 @@ export class HostInformation {
     }
 
     getExtraPortsString() {
-        let result: string = ''
-        if (Array.isArray(this.hostInformationType?.ports.extraports)) {
-            for (const extraPort of this.hostInformationType?.ports.extraports) {
-                result += extraPort['@count'] + '(' + extraPort['@state'] + '), '
-            }
-            return result
-        }
-        return this.hostInformationType?.ports.extraports['@count'] + '(' + this.hostInformationType?.ports.extraports['@state'] + ')'
+        let ports = this.getExtraPortsArray()
+        return ports.map((x: any) => x['@count']).join(', ')
     }
 
     getExtraPortsArray() {
@@ -70,14 +55,8 @@ export class HostInformation {
     }
 
     getOpenPortsString() {
-        let result: string = ''
-        if (Array.isArray(this.hostInformationType?.ports.port)) {
-            for (const extraPort of this.hostInformationType?.ports.port) {
-                result += extraPort['@portid'] + '(' + extraPort['@protocol'] + '), '
-            }
-            return result
-        }
-        return this.hostInformationType?.ports.port['@portid'] + '(' + this.hostInformationType?.ports.port['@protocol'] + ')'
+        let openPorts = this.getOpenPortsArray()
+        return openPorts.map((x:any) => x['@portid']).join(', ')
     }
 
     getOpenPortsArray() {
