@@ -3,19 +3,10 @@
         "color_mode": "xy"
     },
     "0x00158d000363d9a3": {
-        "voltage": 2935,
-        "battery": 57,
-        "power_outage_count": 119,
-        "temperature": 17.48,
-        "humidity": 70.18,
-        "linkquality": 113
-    },
-    "0x00158d0003a28b20": {
-        "temperature": 18.1,
-        "humidity": 67.73,
-        "voltage": 2885,
-        "battery": 23,
-        "power_outage_count": 122,
-        "linkquality": 102
+        "voltage": 2925,
+        "battery": 50,
+        "power_outage_count": 132,
+        "temperature": 18.33,
+        "humidity": 69.03
     }
 }
