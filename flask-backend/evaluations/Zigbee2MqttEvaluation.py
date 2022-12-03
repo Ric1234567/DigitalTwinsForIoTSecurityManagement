@@ -9,6 +9,7 @@ from services.Zigbee2MqttScanService import execute_zigbee2mqtt_scan
 from util import ConfigurationHelper
 
 
+# Evaluation of zigbee2mqtt subnetwork monitoring.
 def evaluate_zigbee2mqtt(host_ip, ssh_port):
     # scan ###########################################################
     start_scan = time.time()

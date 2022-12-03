@@ -16,7 +16,10 @@ class SshHandler:
     # connect to ssh server
     def connect(self):
         self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.ssh_client.connect(hostname=self.host, port=self.port, username=self.user, password=self.password)
+        try:
+            self.ssh_client.connect(hostname=self.host, port=self.port, username=self.user, password=self.password)
+        except Exception as e:
+            print(e)
 
     # disconnect from ssh server
     def disconnect(self):

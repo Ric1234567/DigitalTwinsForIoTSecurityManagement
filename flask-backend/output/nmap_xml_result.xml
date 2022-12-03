@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.93 scan initiated Thu Dec  1 17:08:50 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.51 -->
-<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.51" start="1669910930" startstr="Thu Dec  1 17:08:50 2022" version="7.93" xmloutputversion="1.05">
+<!-- Nmap 7.93 scan initiated Sat Dec  3 15:23:14 2022 as: nmap -oX - -sS -T4 -p1-65535 192.168.178.51 -->
+<nmaprun scanner="nmap" args="nmap -oX - -sS -T4 -p1-65535 192.168.178.51" start="1670077394" startstr="Sat Dec  3 15:23:14 2022" version="7.93" xmloutputversion="1.05">
 <scaninfo type="syn" protocol="tcp" numservices="65535" services="1-65535"/>
 <verbose level="0"/>
 <debugging level="0"/>
@@ -12,21 +12,26 @@
 <hostnames>
 </hostnames>
 </hosthint>
-<host starttime="1669910930" endtime="1669910968"><status state="up" reason="arp-response" reason_ttl="0"/>
+<host starttime="1670077395" endtime="1670077435"><status state="up" reason="arp-response" reason_ttl="0"/>
 <address addr="192.168.178.51" addrtype="ipv4"/>
 <address addr="B8:27:EB:50:FB:C1" addrtype="mac" vendor="Raspberry Pi Foundation"/>
 <hostnames>
 <hostname name="raspberrypi.fritz.box" type="PTR"/>
 </hostnames>
-<ports><extraports state="closed" count="65532">
-<extrareasons reason="reset" count="65532" proto="tcp" ports="1-21,23-1882,1884-8079,8081-65535"/>
+<ports><extraports state="closed" count="65527">
+<extrareasons reason="reset" count="65527" proto="tcp" ports="1-21,23-1882,1884-2019,2025-8079,8081-65535"/>
 </extraports>
 <port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" method="table" conf="3"/></port>
 <port protocol="tcp" portid="1883"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="mqtt" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2020"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="xinupageserver" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2021"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="servexec" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2022"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="down" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2023"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="xinuexpansion3" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2024"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="xinuexpansion4" method="table" conf="3"/></port>
 <port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http-proxy" method="table" conf="3"/></port>
 </ports>
-<times srtt="21317" rttvar="1127" to="100000"/>
+<times srtt="9087" rttvar="2167" to="100000"/>
 </host>
-<runstats><finished time="1669910968" timestr="Thu Dec  1 17:09:28 2022" summary="Nmap done at Thu Dec  1 17:09:28 2022; 1 IP address (1 host up) scanned in 38.23 seconds" elapsed="38.23" exit="success"/><hosts up="1" down="0" total="1"/>
+<runstats><finished time="1670077435" timestr="Sat Dec  3 15:23:55 2022" summary="Nmap done at Sat Dec  3 15:23:55 2022; 1 IP address (1 host up) scanned in 40.27 seconds" elapsed="40.27" exit="success"/><hosts up="1" down="0" total="1"/>
 </runstats>
 </nmaprun>

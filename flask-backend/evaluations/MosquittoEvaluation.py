@@ -12,6 +12,7 @@ from services.MosquittoScanService import execute_mosquitto_scan
 from util import ConfigurationHelper
 
 
+# Evaluation of mosquitto scan, analysis, response.
 def evaluate_mosquitto(host_ip, ssh_port):
     # scan ###########################################################
     start_scan = time.time()

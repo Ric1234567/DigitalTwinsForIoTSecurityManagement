@@ -9,6 +9,7 @@ from services.OsqueryScanService import execute_osquery_scan
 from util import ConfigurationHelper
 
 
+# Evaluation of osquery device monitoring.
 def evaluate_osquery(host_ip, ssh_port):
     # scan ###########################################################
     start_scan = time.time()
@@ -32,7 +33,7 @@ def evaluate_osquery(host_ip, ssh_port):
     print('Analysis ' + str(duration_analysis))
 
     # response ###########################################################
-    print('No automatic resonse available!')
+    print('No automatic response available!')
 
     # complete duration
     print('Sum ' + str(duration_scan + duration_analysis))

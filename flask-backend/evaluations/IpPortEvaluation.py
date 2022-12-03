@@ -12,6 +12,7 @@ from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
 
 
+# Evaluation for the port analysis.
 def evaluate_port(host_ip):
     # scan ###########################################################
     start_scan = time.time()
@@ -42,6 +43,7 @@ def evaluate_port(host_ip):
 
     host_solver = HostSolver(should_configuration)
     status = host_solver.solve(host_ip, SecurityIssueTypes.IP_TOO_MANY_OPEN_PORTS)
+    print(status)
 
     duration_response = time.time() - start_response
     print('Response ' + str(duration_response))
