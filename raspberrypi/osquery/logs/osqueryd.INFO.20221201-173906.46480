@@ -1,0 +1,8 @@
+Log file created at: 2022/12/01 17:39:06
+Running on machine: raspberrypi
+Running duration (h:mm:ss): 0:00:00
+Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1201 17:39:06.809546 46480 eventfactory.cpp:156] Event publisher not enabled: BPFEventPublisher: Publisher disabled via configuration
+I1201 17:39:06.811319 46480 eventfactory.cpp:156] Event publisher not enabled: auditeventpublisher: Publisher disabled via configuration
+I1201 17:39:06.811784 46480 eventfactory.cpp:156] Event publisher not enabled: inotify: Publisher disabled via configuration
+I1201 17:39:06.812105 46480 eventfactory.cpp:156] Event publisher not enabled: syslog: Publisher disabled via configuration

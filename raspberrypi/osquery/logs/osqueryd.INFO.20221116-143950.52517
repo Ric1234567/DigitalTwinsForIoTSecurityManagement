@@ -1,0 +1,9 @@
+Log file created at: 2022/11/16 14:39:50
+Running on machine: raspberrypi
+Running duration (h:mm:ss): 0:00:00
+Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1116 14:39:50.788993 52517 eventfactory.cpp:156] Event publisher not enabled: BPFEventPublisher: Publisher disabled via configuration
+I1116 14:39:50.790535 52517 eventfactory.cpp:156] Event publisher not enabled: auditeventpublisher: Publisher disabled via configuration
+I1116 14:39:50.790745 52517 eventfactory.cpp:156] Event publisher not enabled: inotify: Publisher disabled via configuration
+I1116 14:39:50.790903 52517 eventfactory.cpp:156] Event publisher not enabled: syslog: Publisher disabled via configuration
+I1116 14:40:03.015528 52659 query.cpp:110] Scheduled query has been updated: listening_ports

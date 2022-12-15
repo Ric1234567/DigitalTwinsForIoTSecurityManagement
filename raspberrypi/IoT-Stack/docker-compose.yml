@@ -1,0 +1,49 @@
+version: '3'
+services:
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:latest
+    hostname: mosquitto
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 125M
+    ports:
+       - "1883:1883"
+       - "9001:9001"
+    volumes:
+      - ./data/mosquitto/config:/mosquitto/config:ro
+      - ./data/mosquitto/data:/mosquitto/data
+      - ./data/mosquitto/log:/mosquitto/log
+    networks:
+      - testnet
+  
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mosquitto
+    image: koenkk/zigbee2mqtt
+    volumes:
+      - ./data/zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: always
+    privileged: true
+    environment:
+      - TZ=Europe/Berlin
+    depends_on:
+      - mosquitto
+    networks:
+      - testnet
+    
+networks:
+  testnet:
+    driver: bridge

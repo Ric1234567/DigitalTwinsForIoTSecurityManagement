@@ -1,0 +1,39 @@
+select * from cpu_info
+;
+select * from cpu_info;
+select * from cpu_time;
+select * from cpuid;
+select * from cpu_info;
+select devive_id from cpu_info;
+select devive_id from cpuinfo;
+.help
+.tables
+Select * from cpu_info;
+Select * from listening_ports;
+select * from iptables;
+select * from cpu_info;
+SELECT pid, uid, name, ROUND((
+  (user_time + system_time) / (cpu_time.tsb - cpu_time.itsb)
+) * 100, 2) AS percentage
+FROM processes, (
+SELECT (
+  SUM(user) + SUM(nice) + SUM(system) + SUM(idle) * 1.0) AS tsb,
+  SUM(COALESCE(idle, 0)) + SUM(COALESCE(iowait, 0)) AS itsb
+  FROM cpu_time
+) AS cpu_time
+ORDER BY user_time+system_time DESC
+LIMIT 5;
+select * from process_envs
+;
+select * from routes;
+select * from listening_ports;
+select * from routes where interface=wlan0;
+select * from routes where interface='wlan0';
+select * from time;
+select hostname,cpu_type from system_info
+;
+select * from disk_encryption
+;
+select * from usb_devices
+;
+select * from usb_devices;

@@ -1,0 +1,25 @@
+info  2022-12-03 14:34:40: Logging to console and directory: '/app/data/log/2022-12-03.14-34-40' filename: log.txt
+info  2022-12-03 14:34:40: Starting Zigbee2MQTT version 1.28.0 (commit #03ba647)
+info  2022-12-03 14:34:41: Starting zigbee-herdsman (0.14.62)
+info  2022-12-03 14:34:43: zigbee-herdsman started (resumed)
+info  2022-12-03 14:34:43: Coordinator firmware version: '{"meta":{"maintrel":3,"majorrel":2,"minorrel":6,"product":0,"revision":20201127,"transportrev":2},"type":"zStack12"}'
+info  2022-12-03 14:34:43: Currently 2 devices are joined:
+info  2022-12-03 14:34:43: Lab_Actuator_Bulb1 (0x804b50fffeb2206e): LED1733G7 - IKEA TRADFRI LED bulb E14 600 lumen, dimmable, white spectrum, opal white (Router)
+info  2022-12-03 14:34:43: 0x00158d000363d9a3 (0x00158d000363d9a3): WSDCGQ01LM - Xiaomi MiJia temperature & humidity sensor (EndDevice)
+info  2022-12-03 14:34:43: Zigbee: disabling joining new devices.
+info  2022-12-03 14:34:44: Connecting to MQTT server at mqtt://mosquitto:1883
+info  2022-12-03 14:34:44: Connected to MQTT server
+info  2022-12-03 14:34:44: MQTT publish: topic 'SOAR4IoT/bridge/state', payload 'online'
+info  2022-12-03 14:34:45: Started frontend on port 0.0.0.0:8080
+info  2022-12-03 14:34:45: MQTT publish: topic 'SOAR4IoT/bridge/config', payload '{"commit":"03ba647","coordinator":{"meta":{"maintrel":3,"majorrel":2,"minorrel":6,"product":0,"revision":20201127,"transportrev":2},"type":"zStack12"},"log_level":"info","network":{"channel":25,"extendedPanID":"0xdddddddddddddddd","panID":6754},"permit_join":false,"version":"1.28.0"}'
+info  2022-12-03 14:34:45: MQTT publish: topic 'SOAR4IoT/Lab_Actuator_Bulb1', payload '{"color_mode":"xy","device":{"applicationVersion":32,"dateCode":"20220112","friendlyName":"Lab_Actuator_Bulb1","hardwareVersion":1,"ieeeAddr":"0x804b50fffeb2206e","manufacturerID":4476,"manufacturerName":"IKEA of Sweden","model":"LED1733G7","networkAddress":14804,"powerSource":"Mains (single phase)","softwareBuildID":"2.3.091","stackVersion":98,"type":"Router","zclVersion":2}}'
+info  2022-12-03 14:34:45: MQTT publish: topic 'SOAR4IoT/0x00158d000363d9a3', payload '{"battery":50,"device":{"applicationVersion":2,"dateCode":"20160516","friendlyName":"0x00158d000363d9a3","hardwareVersion":30,"ieeeAddr":"0x00158d000363d9a3","manufacturerID":4151,"manufacturerName":"LUMI","model":"WSDCGQ01LM","networkAddress":23358,"powerSource":"Battery","softwareBuildID":"3000-0001","stackVersion":2,"type":"EndDevice","zclVersion":1},"humidity":68.59,"linkquality":99,"power_outage_count":133,"temperature":18.45,"voltage":2925}'
+info  2022-12-03 14:38:39: MQTT publish: topic 'SOAR4IoT/0x00158d000363d9a3', payload '{"battery":43,"device":{"applicationVersion":2,"dateCode":"20160516","friendlyName":"0x00158d000363d9a3","hardwareVersion":30,"ieeeAddr":"0x00158d000363d9a3","manufacturerID":4151,"manufacturerName":"LUMI","model":"WSDCGQ01LM","networkAddress":23358,"powerSource":"Battery","softwareBuildID":"3000-0001","stackVersion":2,"type":"EndDevice","zclVersion":1},"humidity":68.01,"linkquality":97,"power_outage_count":133,"temperature":18.77,"voltage":2915}'
+error 2022-12-03 14:42:45: Not connected to MQTT server!
+info  2022-12-03 14:42:48: Connected to MQTT server
+info  2022-12-03 14:42:48: MQTT publish: topic 'SOAR4IoT/bridge/state', payload 'online'
+info  2022-12-03 14:42:49: MQTT publish: topic 'SOAR4IoT/bridge/state', payload 'offline'
+info  2022-12-03 14:42:49: Disconnecting from MQTT server
+info  2022-12-03 14:42:49: Stopping zigbee-herdsman...
+info  2022-12-03 14:42:49: Stopped zigbee-herdsman
+info  2022-12-03 14:42:49: Stopped Zigbee2MQTT

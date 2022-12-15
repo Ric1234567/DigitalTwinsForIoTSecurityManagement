@@ -1,0 +1,13 @@
+{
+    "0x804b50fffeb2206e": {
+        "color_mode": "xy"
+    },
+    "0x00158d000363d9a3": {
+        "voltage": 2915,
+        "battery": 43,
+        "power_outage_count": 133,
+        "temperature": 18.71,
+        "humidity": 67.71,
+        "linkquality": 99
+    }
+}
