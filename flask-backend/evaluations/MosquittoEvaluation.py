@@ -1,12 +1,9 @@
 import time
 
-import constants
 from analysis import SecurityIssueTypes
 from analysis.host.HostAnalyser import HostAnalyser
 from analysis.host.HostSolver import HostSolver
-from handler.DatabaseHandler import DatabaseHandler
 from handler.HostInformation import HostInformation
-from handler.NmapHandler import NmapHandler
 from handler.ssh.SshInformation import SshInformation
 from services.MosquittoScanService import execute_mosquitto_scan
 from util import ConfigurationHelper

@@ -1,7 +1,6 @@
 import string
 
 from analysis.Recommendation import Recommendation
-from handler.HostInformation import HostInformation
 
 
 # Class which holds data to security issues with its type and recommendation.

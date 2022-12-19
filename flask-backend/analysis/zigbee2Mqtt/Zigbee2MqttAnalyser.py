@@ -1,5 +1,3 @@
-import string
-
 import constants
 from analysis import SecurityIssueTypes
 from analysis.Recommendation import Recommendation

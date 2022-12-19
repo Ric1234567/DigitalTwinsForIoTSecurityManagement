@@ -6,8 +6,13 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 
+import constants
+from analysis.host.HostAnalyser import HostAnalyser
 from analysis.host.HostAnalysisResult import HostAnalysisResult
 from analysis.host.HostSolver import HostSolver
+from handler.DatabaseHandler import DatabaseHandler
+from handler.NmapHandler import NmapHandler
+from handler.SubnetworkHandler import SubnetworkHandler
 from services import ServiceConstants
 from services.AnalysisScanService import AnalysisScanService
 from services.CompleteNetworkScanService import CompleteNetworkScanService
@@ -17,11 +22,6 @@ from services.OsqueryScanService import OsqueryScanService
 from services.Zigbee2MqttScanService import Zigbee2MqttScanService
 from util import ConfigurationHelper
 from util.ComplexJsonEncoder import ComplexJsonEncoder
-from analysis.host.HostAnalyser import HostAnalyser
-from handler.SubnetworkHandler import SubnetworkHandler
-import constants
-from handler.DatabaseHandler import DatabaseHandler
-from handler.NmapHandler import NmapHandler
 
 # Main file of server backend.
 # Includes GET and POST methods for the frontend to get management data.

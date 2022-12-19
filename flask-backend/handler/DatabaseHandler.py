@@ -1,7 +1,5 @@
 import array
-import json
 import string
-import time
 
 from flask_pymongo import MongoClient
 

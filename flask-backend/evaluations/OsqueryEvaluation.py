@@ -1,8 +1,6 @@
 import time
 
-from analysis import SecurityIssueTypes
 from analysis.host.HostAnalyser import HostAnalyser
-from analysis.host.HostSolver import HostSolver
 from handler.HostInformation import HostInformation
 from handler.ssh.SshInformation import SshInformation
 from services.OsqueryScanService import execute_osquery_scan

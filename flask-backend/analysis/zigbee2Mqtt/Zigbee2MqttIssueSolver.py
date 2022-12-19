@@ -1,11 +1,10 @@
 import string
 
-from util import ConfigurationHelper
 import constants
-from handler.DatabaseHandler import DatabaseHandler
-from handler.NmapHandler import NmapHandler
 from analysis import SecurityIssueTypes, DockerConstants
+from handler.NmapHandler import NmapHandler
 from handler.ssh.SshHandler import SshHandler
+from util import ConfigurationHelper
 
 
 # Solver class for Zigbee2Mqtt security issues. (ssh to fix required)

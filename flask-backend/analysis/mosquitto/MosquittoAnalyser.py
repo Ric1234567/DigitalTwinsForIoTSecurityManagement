@@ -1,5 +1,4 @@
 import collections
-import string
 
 import constants
 from analysis import SecurityIssueTypes
