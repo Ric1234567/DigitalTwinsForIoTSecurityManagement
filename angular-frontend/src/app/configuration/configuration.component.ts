@@ -17,6 +17,7 @@ export class ConfigurationComponent implements OnInit {
     this.getConfiguration()
   }
 
+  // Save the network configuration to the backend
   async onClickSubmitConfiguration() {
     // send changes to server
     let util = new Util
@@ -25,6 +26,7 @@ export class ConfigurationComponent implements OnInit {
     alert(response.response)
   }
 
+  // Get the current network configuration
   async getConfiguration() {
     try {
       let util = new Util

@@ -28,6 +28,7 @@ export class ServicesComponent implements OnInit {
     this.getAvailableServices()
   }
 
+  // Start the autmatic refresh interval.
   private startRefreshInterval() {
     this.isRefreshing = true
     console.log('auto-refresh started');
@@ -37,6 +38,7 @@ export class ServicesComponent implements OnInit {
     }, 3000);
   }
 
+  // Get current running services in the backend 
   async getRunningServices() {
     let util = new Util
     let response = await util.fetchFromBackend('GET', 'running_services') as any
@@ -44,6 +46,7 @@ export class ServicesComponent implements OnInit {
     this.runningServices = response.response
   }
 
+  // Get a list of the available services
   async getAvailableServices() {
     let util = new Util
     let response = await util.fetchFromBackend('GET', 'available_services') as any
@@ -51,6 +54,7 @@ export class ServicesComponent implements OnInit {
     this.availableServices = response.response
   }
 
+  // Stop a given service
   async stopService(element: any) {
     let util = new Util
     // stop with pid
@@ -60,6 +64,7 @@ export class ServicesComponent implements OnInit {
     this.getRunningServices()
   }
 
+  // Toggle the auto refresh
   onChangeAutoRefresh(event: any) {
     if (this.isRefreshing) {
       this.startRefreshInterval()
@@ -70,6 +75,7 @@ export class ServicesComponent implements OnInit {
     }
   }
 
+  // Start a given service
   async onClickStartService(event: any) {
     if (this.selectedStartService) {
       let util = new Util

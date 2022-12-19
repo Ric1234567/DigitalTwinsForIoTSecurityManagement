@@ -4,6 +4,7 @@ type lineStyle = {
     type: string
 }
 
+// Class of a connection link in the network graph
 export default class GraphLink {
     source: string
     target: string

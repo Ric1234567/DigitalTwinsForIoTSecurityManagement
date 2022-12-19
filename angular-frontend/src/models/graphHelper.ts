@@ -11,12 +11,13 @@ type GraphContent = {
     linkList: GraphLink[]
 }
 
+// Class to help to setting the network graphs content
 export default class GraphHelper {
     nodeList: GraphNode[] = []
     linkList: GraphLink[] = []
     averageRtt: AverageRtt = { min: -1, max: -1 }
 
-
+    // Method which returns the data to display in the graph
     getGraphContent(nmaprun: any, subnetwork: any, nodeColorstyle: string): GraphContent {
         if (!Array.isArray(nmaprun.host)) {
             let tmpArray = []
@@ -90,6 +91,7 @@ export default class GraphHelper {
         return { nodeList: this.nodeList, linkList: this.linkList }
     }
 
+    // Add Nodes found only in the traces section of the nmap report
     addNodesFoundInTraces(targetName: string) {
         var found = false;
         for (var i = 0; i < this.nodeList.length; i++) {
@@ -149,11 +151,12 @@ export default class GraphHelper {
         }
     }
 
+    // Normalize a value
     static normalize(min: number, max: number, value: number) {
-        // zi = (xi – min(x)) / (max(x) – min(x))
         return (value - min) / (max - min)
     }
 
+    // Get the max and min rtt value to normalize
     static getMaxMinRtt(nmaprun: any): AverageRtt {
         let max = -1
         let min = -1
@@ -180,6 +183,7 @@ export default class GraphHelper {
         return { min, max }
     }
 
+    // Get the color for a host node by its amount of open ports
     static getNodeColorOnPorts(host: any): string {
         if (host.ports == null) {
             return "gray"

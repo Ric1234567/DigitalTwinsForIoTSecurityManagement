@@ -1,3 +1,4 @@
+// Wrapper class for host information 
 export class HostInformation {
     hostInformationType?: any;
 

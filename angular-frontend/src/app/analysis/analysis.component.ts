@@ -26,6 +26,7 @@ export class AnalysisComponent implements OnInit {
     await this.getLatestAnalysis()
   }
 
+  // Get the latest analysis results from the backend/database
   async getLatestAnalysis() {
     this.loading = true
     try {
@@ -54,6 +55,7 @@ export class AnalysisComponent implements OnInit {
     this.analysisResult = response
   }
 
+  // Execute nmap scan to find all available ip hosts.
   private async getIpHosts() {
     this.loading = true
     let util = new Util()
@@ -63,6 +65,7 @@ export class AnalysisComponent implements OnInit {
     this.ipHosts = response
   }
 
+  // Execute an analysis for a given IP
   async getAnalysisResult() {
     if (!this.selectedHost) {
       alert('Select host first!')
@@ -90,6 +93,7 @@ export class AnalysisComponent implements OnInit {
     this.analysisResult = response
   }
 
+  // fix a specific security issue of a given host
   async onClickFixHost(issue: any) {
     console.log(issue);
 

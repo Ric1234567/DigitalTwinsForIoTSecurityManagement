@@ -39,12 +39,12 @@ export class NetworkScanComponent implements OnInit {
     this.networkgraphDOM = document.getElementById("networkgraph")! as HTMLElement
     this.networkGraph = echarts.init(this.networkgraphDOM)
 
+    // init graph plotter
     let options: EChartsCoreOption = {
       title: {
         text: "Topology"
       },
       tooltip: {},
-      // animationDurationUpdate: 1000,
       animationEasingUpdate: "linear",
       draggable: true,
 
@@ -73,11 +73,8 @@ export class NetworkScanComponent implements OnInit {
           edgeLabel: {
             fontSize: 20
           },
-          // data: this.networkScan,
-          // links: [],
           lineStyle: {
             opacity: 1,
-            // width: 1,
             curveness: 0
           }
         }
@@ -91,6 +88,7 @@ export class NetworkScanComponent implements OnInit {
     this.getLastNetworkReport()
   }
 
+  // Execute a nmap scan command
   async onClickExecuteCustomNetworkScan() {
     let nmapCustomNetworkScan = await this.fetchNetworkScan('GET', 'custom_network_scan/' + this.nmapCustomCommandSuffix) as any
     this.nmapNetworkScan = nmapCustomNetworkScan.response.nmaprun
@@ -103,6 +101,7 @@ export class NetworkScanComponent implements OnInit {
     this.setNetworkReport()
   }
 
+  // Show host information if a node in the network graph plotter is clicked
   private onClickGraph(params: any) {
     if (params.dataType == 'node') {
       console.log((params.name));
@@ -120,11 +119,10 @@ export class NetworkScanComponent implements OnInit {
           this.hostInformation = new HostInformation(host)
         }
       }
-    } else if (params.dataType == 'edge') {
-      // todo
     }
   }
 
+  // Get the last network report from the backend/database
   async getLastNetworkReport() {
     let lastReport = await this.fetchNetworkScan('GET', 'last_network_scan') as any
     this.nmapNetworkScan = lastReport.response.nmaprun
@@ -137,6 +135,7 @@ export class NetworkScanComponent implements OnInit {
     this.setNetworkReport()
   }
 
+  // perform a full network scan including the zigbee subnetworks
   async onClickGetFullNetworkReport() {
     let networkScan = await this.fetchNetworkScan('GET', 'full_network_scan/' + this.nmapCustomCommandSuffix) as any
 
@@ -150,6 +149,7 @@ export class NetworkScanComponent implements OnInit {
     this.setNetworkReport()
   }
 
+  // Fetch a network scan from the backend
   private async fetchNetworkScan(method: string, route: string) {
     let networkScanReport
     try {
@@ -166,6 +166,7 @@ export class NetworkScanComponent implements OnInit {
     return networkScanReport
   }
 
+  // Set the network report to the model of this view
   private setNetworkReport() {
     // check if hosts found
     if (this.nmapNetworkScan?.host == null) {
@@ -176,7 +177,7 @@ export class NetworkScanComponent implements OnInit {
 
     this.hostInformation = new HostInformation(this.nmapNetworkScan.host[0])
 
-    // graph
+    // set graph
     let graphHelper: GraphHelper = new GraphHelper()
     let graphContent = graphHelper.getGraphContent(this.nmapNetworkScan, this.subNetwork, this.selectedStyle)
 
@@ -186,7 +187,6 @@ export class NetworkScanComponent implements OnInit {
         links: graphContent.linkList
       }
     })
-    // console.log(this.networkGraph.getOption()["series"])
   }
 
   onChangeNodeColorStyle(event: any) {
